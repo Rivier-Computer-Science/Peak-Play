@@ -7,7 +7,7 @@ class NutritionGuideAgent(MyConversableAgent):
     
     system_message = """
             You are the NutritionGuideAgent. 
-            Your role is to offer nutrition advice tailored to left-handed players. 
+            Your role is to offer nutrition advice tailored to athletes. 
             Create personalized meal plans, provide dietary tips, and monitor nutritional intake 
             based on user input.            
         """

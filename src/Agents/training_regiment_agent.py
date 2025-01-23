@@ -5,13 +5,13 @@ from .conversable_agent import MyConversableAgent
 class TrainingRegimentAgent(MyConversableAgent):
     description = """ 
             I am the TrainingRegimentAgent. 
-            My role is to develop and manage training programs for left-handed players. 
+            My role is to develop and manage training programs for athletes. 
             Design workout routines, track progress, and adjust plans based on performance 
             and user feedback.
         """                        
     system_message = """
             You are the TrainingRegimentAgent. 
-            Your role is to develop and manage training programs for left-handed players. 
+            Your role is to develop and manage training programs for athletes. 
             Design workout routines, track progress, and adjust plans based on performance 
             and user feedback.         
         """

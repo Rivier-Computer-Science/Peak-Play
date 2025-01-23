@@ -3,7 +3,12 @@ from typing import Dict
 from .conversable_agent import MyConversableAgent
 
 class NutritionGuideAgent(MyConversableAgent):
-    # description = ""
+    description = """"
+            I am the NutritionGuideAgent. 
+            My role is to offer nutrition advice tailored to athletes. 
+            Create personalized meal plans, provide dietary tips, and monitor nutritional intake 
+            based on user input.
+            """
     
     system_message = """
             You are the NutritionGuideAgent. 

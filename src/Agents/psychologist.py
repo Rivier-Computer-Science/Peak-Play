@@ -31,7 +31,7 @@ class Psychologist(MyConversableAgent):
                 name="Psychologist",
                 human_input_mode="NEVER",
                 system_message=kwargs.pop('system_message', self.system_message),
-                description=kwargs.pop('description',self.system_message),
+                description=kwargs.pop('description',self.description),
                 **kwargs
             )
     

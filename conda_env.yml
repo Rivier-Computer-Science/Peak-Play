@@ -1,23 +1,14 @@
-name: adaptive
+name: peakplay
 channels:
   - conda-forge
   - defaults
 dependencies:
-  - docker-py
-  - numpy
-  - openai
-  - pandas
-  - panel
-  - pip
-  - pyautogen
-  - pydantic
-  - python=3.12
-  - regex
-  - requests
-  - scikit-learn
-  - scipy
-  - transitions
+  - anaconda
   - pip:
-      - httplib2
-      - firebase-admin
-prefix: /opt/conda/envs/adaptive
+      - crewai
+      - crewai-tools
+      - langchain
+      - langchain-community
+      - openai
+      - pydantic
+prefix: /opt/conda/envs/peakplay

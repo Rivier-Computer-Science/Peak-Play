@@ -40,3 +40,14 @@ class ConditioningCoachAgent(BaseAgent):
             agent=self,
             expected_output="A daily plan for 1 month with a conditioning routine."
         )        
+    def modify_training_plan(self):
+        # Preprocessing goes here
+        return crewai.Task(
+            description=dedent(f"""
+                Based on feedback from the user, you are to dynamically update your previously prescribed
+                training plan. Update exercise selection, reps, number of sets as needed.
+            """),
+            agent=self,
+            expected_output="An updated daily plan for one month.",
+            context=["create_conditioning_program"]
+        )        

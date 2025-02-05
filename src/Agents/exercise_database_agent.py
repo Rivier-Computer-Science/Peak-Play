@@ -3,7 +3,7 @@ from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
 
 
-class ExerciseDataBaseAgent(BaseAgent):
+class ExerciseDataBaseAgent(BaseAgent): # Need to add to run_crewai.py
     role: str
     goal: str
     backstory: str
@@ -30,7 +30,7 @@ class ExerciseDataBaseAgent(BaseAgent):
             **kwargs
         )
 
-    def recommend_exercises(self):
+    def recommend_exercises(self):   # Need to add to run_crewai.py
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""

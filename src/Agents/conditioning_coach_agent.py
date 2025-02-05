@@ -31,7 +31,7 @@ class ConditioningCoachAgent(BaseAgent):
             **kwargs
         )
 
-    def create_conditioning_program(self):
+    def create_conditioning_program(self):  # Need to add to run_crewai.py
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
@@ -40,7 +40,7 @@ class ConditioningCoachAgent(BaseAgent):
             agent=self,
             expected_output="A daily plan for 1 month with a conditioning routine."
         )        
-    def modify_training_plan(self):
+    def modify_training_plan(self):  # Need to add to run_crewai.py
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""

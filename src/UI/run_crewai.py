@@ -14,6 +14,7 @@ from src.Agents.nutrition_agent import NutritionAgent
 from src.Agents.physiology_agent import PhysiologyAgent
 from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
+from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 
 # Load environment variables
 load_dotenv()
@@ -56,6 +57,7 @@ class AssessmentCrew:
         physiology_agent = PhysiologyAgent(input_file=self.input_file)
         position_coach_agent = PositionCoachAgent(input_file=self.input_file)
         psychology_agent = PsychologyAgent(input_file=self.input_file)
+        comprehensive_report_agent = ComprehensiveReportAgent()
 
         agents = [
             biomechanics_coach_agent, 
@@ -75,7 +77,9 @@ class AssessmentCrew:
             physiology_agent.generate_physiology_report(),
             position_coach_agent.generate_position_advice(),
             psychology_agent.generate_psychology_report(),
+            comprehensive_report_agent.compile_report()
         ]
+        
 
         # Run tasks
         crew = crewai.Crew(

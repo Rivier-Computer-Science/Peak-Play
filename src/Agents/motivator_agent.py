@@ -4,14 +4,10 @@ from src.Agents.base_agent import BaseAgent
 
 
 class MotivatorAgent(BaseAgent):
-    role: str
-    goal: str
-    backstory: str
-    input_file: str  
-
     def __init__(self, input_file: str, **kwargs):
+        name = "Sarah Johnson - Mental Coach"
         role = """
-            You are a dedicated Motivator Coach, specializing in inspiring athletes to stay focused, 
+            You are a dedicated Motivator Agent, specializing in inspiring athletes to stay focused, 
             build resilience, and maximize their potential. Your role is to uplift and drive them forward 
             using their personal performance data.
             """
@@ -30,6 +26,7 @@ class MotivatorAgent(BaseAgent):
             """
 
         super().__init__(
+            name=kwargs.pop('name', name),
             input_file=input_file,
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),

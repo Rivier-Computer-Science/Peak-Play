@@ -4,14 +4,10 @@ from src.Agents.base_agent import BaseAgent
 
 
 class NutritionAgent(BaseAgent):
-    role: str
-    goal: str
-    backstory: str
-    input_file: str  
-
     def __init__(self, input_file: str, **kwargs):
+        name = "Dr. Emily Carter - Sports Nutritionist"
         role = """
-            You are a Sports Nutrition Coach specializing in optimizing athlete performance through diet.
+            You are a Sports Nutrition Agent specializing in optimizing athlete performance through diet.
             Your role is to **analyze player-specific data** and design **customized meal plans** 
             that enhance energy, endurance, recovery, and overall health.
             """
@@ -29,6 +25,7 @@ class NutritionAgent(BaseAgent):
             """
 
         super().__init__(
+            name=kwargs.pop('name', name),
             input_file=input_file,
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),

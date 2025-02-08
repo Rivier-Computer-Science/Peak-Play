@@ -5,14 +5,10 @@ from src.Agents.base_agent import BaseAgent
 
 
 class BiomechanicsCoachAgent(BaseAgent):
-    role: str
-    goal: str
-    backstory: str
-    input_file: str  
-
     def __init__(self, input_file: str, **kwargs):
+        name = "Dr. Alex Thompson - Biomechanics Expert"
         role = """
-            You are the Biomechanics Coach, responsible for analyzing the player's biomechanical performance
+            You are the Biomechanics Coach Agent, responsible for analyzing the player's biomechanical performance
             based on structured input data. You provide expert feedback to optimize movement efficiency
             and prevent injuries.
             """
@@ -28,6 +24,7 @@ class BiomechanicsCoachAgent(BaseAgent):
             """
     
         super().__init__(
+            name=kwargs.pop('name', name),
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
             backstory=kwargs.pop('backstory', backstory),

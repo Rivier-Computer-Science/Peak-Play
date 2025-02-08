@@ -4,12 +4,8 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PositionCoachAgent(BaseAgent):
-    role: str
-    goal: str
-    backstory: str
-    input_file: str  
-
     def __init__(self, input_file: str, **kwargs):
+        name = "Coach Daniel Morgan - Positional Specialist"
         role = """
             You are a **Position Coach**, specializing in coaching techniques specific to an athlete’s  
             field position. You analyze **player data** to provide **targeted skill development strategies**  
@@ -28,6 +24,7 @@ class PositionCoachAgent(BaseAgent):
             """
 
         super().__init__(
+            name=kwargs.pop('name', name),
             input_file=input_file,
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),

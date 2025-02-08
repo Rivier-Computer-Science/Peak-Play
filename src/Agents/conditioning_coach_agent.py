@@ -4,14 +4,10 @@ from src.Agents.base_agent import BaseAgent
 
 
 class ConditioningCoachAgent(BaseAgent):
-    role: str
-    goal: str
-    backstory: str
-    input_file: str  
-
     def __init__(self, input_file: str, **kwargs):
+        name = "Coach Mike Reynolds - Strength & Conditioning"
         role = """
-            You are the Conditioning Coach, responsible for designing and managing athletic training programs.
+            You are the Conditioning Coach Agent, responsible for designing and managing athletic training programs.
             Your expertise ensures athletes develop strength, endurance, and injury resilience.
             You will analyze player-specific data from an input file to create personalized workout plans.
             """
@@ -29,6 +25,7 @@ class ConditioningCoachAgent(BaseAgent):
             """
 
         super().__init__(
+            name=kwargs.pop('name', name),
             input_file=input_file,
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),

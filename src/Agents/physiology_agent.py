@@ -4,12 +4,8 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PhysiologyAgent(BaseAgent):
-    role: str
-    goal: str
-    backstory: str
-    input_file: str  
-
     def __init__(self, input_file: str, **kwargs):
+        name = "Dr. Robert Lee - Physiology Specialist"
         role = """
             You are a Sports Physiologist specializing in optimizing athletic performance through 
             **exercise science, injury prevention, and recovery techniques**. Your role is to analyze 
@@ -31,6 +27,7 @@ class PhysiologyAgent(BaseAgent):
             """
 
         super().__init__(
+            name=kwargs.pop('name', name),
             input_file=input_file,
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),

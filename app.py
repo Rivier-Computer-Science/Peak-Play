@@ -1,4 +1,5 @@
 from fastapi import FastAPI, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uuid
 import crewai as crewai
@@ -13,6 +14,15 @@ from src.Agents.psychology_agent import PsychologyAgent
 
 # Initialize FastAPI app
 app = FastAPI()
+
+# Enable CORS to allow requests from WordPress
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with your domain, e.g., ["https://yourwordpresssite.com"]
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Store task results in memory
 task_results = {}

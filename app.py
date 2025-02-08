@@ -15,16 +15,15 @@ from src.Agents.psychology_agent import PsychologyAgent
 # Initialize FastAPI app
 app = FastAPI()
 
-# Enable CORS for WordPress requests
+# Enable CORS with explicit OPTIONS method
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can restrict this to WordPress domain
+    allow_origins=["*"],  # You can replace "*" with your WordPress domain
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],  # ✅ Explicitly allow OPTIONS
     allow_headers=["*"],
 )
 
-# Root endpoint (fixes the 404 issue)
 @app.get("/")
 def read_root():
     return {"message": "FastAPI CrewAI server is running!"}
@@ -84,6 +83,10 @@ class AssessmentCrew:
         
         # Store result in memory
         task_results[task_id] = result
+
+@app.options("/run_assessment")  # ✅ Allow OPTIONS requests for CORS
+def preflight_check():
+    return {"message": "Preflight OK"}
 
 @app.post("/run_assessment")
 def run_assessment(input_data: AssessmentInput, background_tasks: BackgroundTasks):

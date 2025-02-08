@@ -37,7 +37,6 @@ class BaseAgent(crewai.Agent):
             max_rpm=kwargs.pop('max_rpm', 60*4), # Optional
             max_execution_time=kwargs.pop('max_execution_time', None), # Optional
             verbose=kwargs.pop('verbose', True),  # Optional
-            allow_delegation=kwargs.pop('allow_delegation', True),  # Optional
             #step_callback=my_intermediate_step_callback,  # Optional
             cache=kwargs.pop('cache', True),  # Optional
             #system_template=my_system_template,  # Optional

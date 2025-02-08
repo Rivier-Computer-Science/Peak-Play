@@ -1,6 +1,6 @@
-from fastapi import FastAPI
-from dotenv import load_dotenv
-import os
+from fastapi import FastAPI, BackgroundTasks
+from pydantic import BaseModel
+import uuid
 import crewai as crewai
 from crewai.knowledge.source.text_file_knowledge_source import TextFileKnowledgeSource
 from src.Agents.biomechanics_coach_agent import BiomechanicsCoachAgent
@@ -11,20 +11,20 @@ from src.Agents.physiology_agent import PhysiologyAgent
 from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
 
-# RUN LOCALLY
-# uvicorn app:app --host 0.0.0.0 --port 8000
-
-# Load environment variables
-load_dotenv("/etc/secrets")
-
 # Initialize FastAPI app
 app = FastAPI()
+
+# Store task results in memory
+task_results = {}
+
+class AssessmentInput(BaseModel):
+    input: str
 
 class AssessmentCrew:
     def __init__(self):
         self.is_init = True
 
-    def run(self):
+    def run(self, input_text: str, task_id: str):
         player_profile = TextFileKnowledgeSource(file_paths=["player_profile.txt"])
 
         # Initialize agents
@@ -47,13 +47,13 @@ class AssessmentCrew:
         ]
 
         tasks = [
-            biomechanics_coach_agent.analyze_biometrics(),
-            conditioning_coach_agent.create_conditioning_program(),
-            motivator_agent.motivate_athelete(),
-            nutrition_agent.generate_meal_plan(),
-            physiology_agent.generate_physiology_report(),
-            position_coach_agent.generate_position_advice(),
-            psychology_agent.generate_psychology_report()
+            biomechanics_coach_agent.analyze_biometrics(input_text),
+            conditioning_coach_agent.create_conditioning_program(input_text),
+            motivator_agent.motivate_athelete(input_text),
+            nutrition_agent.generate_meal_plan(input_text),
+            physiology_agent.generate_physiology_report(input_text),
+            position_coach_agent.generate_position_advice(input_text),
+            psychology_agent.generate_psychology_report(input_text)
         ]
     
         # Run tasks
@@ -66,13 +66,18 @@ class AssessmentCrew:
         )
 
         result = crew.kickoff()
-        return result
+        
+        # Store result in memory
+        task_results[task_id] = result
 
 @app.post("/run_assessment")
-def run_assessment():
-    assessment_crew = AssessmentCrew()
-    try:
-        crew_output = assessment_crew.run()
-        return {"success": True, "crew_output": crew_output}
-    except Exception as e:
-        return {"success": False, "error": str(e)}
+def run_assessment(input_data: AssessmentInput, background_tasks: BackgroundTasks):
+    task_id = str(uuid.uuid4())  # Generate a unique task ID
+    background_tasks.add_task(AssessmentCrew().run, input_data.input, task_id)
+    
+    return {"success": True, "task_id": task_id}
+
+@app.get("/get_result/{task_id}")
+def get_result(task_id: str):
+    result = task_results.get(task_id, "Processing...")
+    return {"success": True, "result": result}

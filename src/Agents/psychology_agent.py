@@ -7,39 +7,60 @@ class PsychologyAgent(BaseAgent):
     role: str
     goal: str
     backstory: str
+    input_file: str  
 
-    def __init__(self, **kwargs):
+    def __init__(self, input_file: str, **kwargs):
         role = """
-            I am a sports psychologist specializing in mental well-being, resilience, and performance optimization.
+            You are a **Sports Psychologist**, specializing in **mental well-being, resilience,  
+            and performance optimization**. Your expertise helps athletes strengthen their  
+            **mental toughness, focus, and confidence** for peak performance.
             """
     
         goal = """
-            My role is to support users
-                in managing stress, building confidence, enhancing focus, and maintaining a healthy mindset. 
-            I apply evidence-based psychological principles, such as cognitive-behavioral techniques, 
-                mindfulness, and goal-setting strategies, to help athlete's navigate challenges 
-                and achieve their personal and professional aspirations. 
-            I tailor my responses to each athlete's unique needs
+            Analyze the athlete’s **psychological profile** and provide **personalized strategies**  
+            to improve **focus, stress management, confidence, and emotional resilience**.  
+            Apply **evidence-based techniques** such as **cognitive-behavioral strategies,  
+            mindfulness, goal-setting, and visualization** to enhance performance.
             """
 
         backstory = """
-            I have decades of experience as a professional sports psychologist.
+            With **decades of experience as a professional sports psychologist**,  
+            you have guided elite athletes in **managing pressure, overcoming self-doubt,  
+            and maintaining a championship mindset**.  
+            Your approach is always **empathetic, science-based, and athlete-focused**.
             """
-    
+
         super().__init__(
-            role = kwargs.pop('role', role),
-            goal = kwargs.pop('goal', goal),
-            backstory = kwargs.pop('backstory', backstory),
-            tools=[],
+            input_file=input_file,
+            role=kwargs.pop('role', role),
+            goal=kwargs.pop('goal', goal),
+            backstory=kwargs.pop('backstory', backstory),
             **kwargs
         )
 
     def generate_psychology_report(self):
-        # Preprocessing goes here
+        """ Reads the input file and generates a psychology report """
+        player_data = self._read_input_file()  # Fetch player profile dynamically
+
         return crewai.Task(
             description=dedent(f"""
-                Given data in the knowledge folder, provide a psychological analysis of the athelete.
+                Read the following player profile and generate a **psychological assessment report**  
+                with **personalized recommendations** for **mental performance optimization**.
+
+                **Player Data:**
+                {player_data}
+
+                Your response should include:
+                - **Mental resilience techniques** to handle pressure and setbacks
+                - **Confidence-building strategies** based on the athlete’s strengths
+                - **Focus and concentration exercises** tailored to their sport
+                - **Stress management techniques** (pre-game nerves, in-game stress)
+                - **Motivation enhancement methods** (goal-setting, visualization)
+                - **Emotional regulation advice** for consistency and peak performance
+
+                Ensure that all recommendations are **evidence-based** and aligned with  
+                the athlete’s **specific psychological needs and competitive environment**.
             """),
             agent=self,
-            expected_output="A report that presents a psychological analysis of the athlete."
-        )                        
+            expected_output="A structured psychology report with personalized strategies to enhance the athlete’s mental game."
+        )

@@ -11,7 +11,7 @@ import logging
 class BaseAgent(crewai.Agent):
     model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
 
-    def __init__(self, **kwargs):
+    def __init__(self, input_file: str = None, **kwargs):
         # require role, goal, and backstory to be initialized
         role = kwargs.pop('role', None)
         goal = kwargs.pop('goal', None)
@@ -51,6 +51,8 @@ class BaseAgent(crewai.Agent):
             **kwargs
         )
 
+        self.input_file = input_file
+
       # Initialize the logger
         self.logger = logging.getLogger(self.__class__.__name__)
         if not self.logger.handlers:
@@ -60,3 +62,26 @@ class BaseAgent(crewai.Agent):
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
             self.logger.setLevel(logging.INFO)
+
+    def read_input_file(self):
+        """ Reads the input file and returns formatted data for analysis. """
+        if not self.input_file:
+            return "No input file provided."
+
+        try:
+            if self.input_file.endswith(".json"):
+                with open(self.input_file, "r", encoding="utf-8") as file:
+                    return json.dumps(json.load(file), indent=4)  # Format JSON nicely
+
+            elif self.input_file.endswith(".txt"):
+                with open(self.input_file, "r", encoding="utf-8") as file:
+                    return file.read()
+
+            else:
+                return "Unsupported file format. Please provide a .txt or .json file."
+
+        except FileNotFoundError:
+            return f"Error: The file '{self.input_file}' was not found."
+
+        except Exception as e:
+            return f"Error reading file: {str(e)}"

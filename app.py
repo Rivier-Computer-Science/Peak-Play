@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uuid
 import crewai as crewai
-from crewai.knowledge.source.text_file_knowledge_source import TextFileKnowledgeSource
 from src.Agents.biomechanics_coach_agent import BiomechanicsCoachAgent
 from src.Agents.conditioning_coach_agent import ConditioningCoachAgent
 from src.Agents.motivator_agent import MotivatorAgent
@@ -15,7 +14,7 @@ from src.Agents.psychology_agent import PsychologyAgent
 # Initialize FastAPI app
 app = FastAPI()
 
-# Enable CORS with explicit OPTIONS method
+# Enable CORS to allow requests from WordPress
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # You can replace "*" with your WordPress domain
@@ -32,23 +31,21 @@ def read_root():
 task_results = {}
 
 class AssessmentInput(BaseModel):
-    input: str
+    file_path: str  # WordPress passes file URL or local path
 
 class AssessmentCrew:
-    def __init__(self):
-        self.is_init = True
+    def __init__(self, input_file: str):
+        self.input_file = input_file
 
-    def run(self, input_text: str, task_id: str):
-        player_profile = TextFileKnowledgeSource(file_paths=["player_profile.txt"])
-
-        # Initialize agents
-        biomechanics_coach_agent = BiomechanicsCoachAgent()
-        conditioning_coach_agent = ConditioningCoachAgent()
-        motivator_agent = MotivatorAgent()
-        nutrition_agent = NutritionAgent()
-        physiology_agent = PhysiologyAgent()
-        position_coach_agent = PositionCoachAgent()
-        psychology_agent = PsychologyAgent()
+    def run(self, task_id: str):
+        # Initialize agents with file input
+        biomechanics_coach_agent = BiomechanicsCoachAgent(input_file=self.input_file)
+        conditioning_coach_agent = ConditioningCoachAgent(input_file=self.input_file)
+        motivator_agent = MotivatorAgent(input_file=self.input_file)
+        nutrition_agent = NutritionAgent(input_file=self.input_file)
+        physiology_agent = PhysiologyAgent(input_file=self.input_file)
+        position_coach_agent = PositionCoachAgent(input_file=self.input_file)
+        psychology_agent = PsychologyAgent(input_file=self.input_file)
 
         agents = [
             biomechanics_coach_agent, 
@@ -61,20 +58,19 @@ class AssessmentCrew:
         ]
 
         tasks = [
-            biomechanics_coach_agent.analyze_biometrics(input_text),
-            conditioning_coach_agent.create_conditioning_program(input_text),
-            motivator_agent.motivate_athelete(input_text),
-            nutrition_agent.generate_meal_plan(input_text),
-            physiology_agent.generate_physiology_report(input_text),
-            position_coach_agent.generate_position_advice(input_text),
-            psychology_agent.generate_psychology_report(input_text)
+            biomechanics_coach_agent.analyze_biometrics(),
+            conditioning_coach_agent.create_conditioning_program(),
+            motivator_agent.motivate_athlete(),
+            nutrition_agent.generate_meal_plan(),
+            physiology_agent.generate_physiology_report(),
+            position_coach_agent.generate_position_advice(),
+            psychology_agent.generate_psychology_report()
         ]
     
         # Run tasks
         crew = crewai.Crew(
             agents=agents,
             tasks=tasks,
-            knowledge_sources=[player_profile],
             process=crewai.Process.sequential,
             verbose=False
         )
@@ -91,7 +87,7 @@ def preflight_check():
 @app.post("/run_assessment")
 def run_assessment(input_data: AssessmentInput, background_tasks: BackgroundTasks):
     task_id = str(uuid.uuid4())  # Generate a unique task ID
-    background_tasks.add_task(AssessmentCrew().run, input_data.input, task_id)
+    background_tasks.add_task(AssessmentCrew(input_data.file_path).run, task_id)
     
     return {"success": True, "task_id": task_id}
 

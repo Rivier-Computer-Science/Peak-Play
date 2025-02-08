@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+crewai
+crewai-tools
+langchain
+langchain-community
+openai

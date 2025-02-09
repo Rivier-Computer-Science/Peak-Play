@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class NutritionAgent(BaseAgent):
-    def __init__(self, input_file: str, **kwargs):
+    def __init__(self, **kwargs):
         name = "Dr. Emily Carter - Sports Nutritionist"
         role = """
             You are a Sports Nutrition Agent specializing in optimizing athlete performance through diet.
@@ -26,7 +26,6 @@ class NutritionAgent(BaseAgent):
 
         super().__init__(
             name=kwargs.pop('name', name),
-            input_file=input_file,
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
             backstory=kwargs.pop('backstory', backstory),
@@ -34,15 +33,11 @@ class NutritionAgent(BaseAgent):
         )
 
     def generate_meal_plan(self):
-        """ Reads the input file and generates a personalized meal plan """
-        player_data = self.read_input_file()  # Fetch player profile dynamically
-
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and create a **customized 1-month meal plan**:
 
-                **Player Data:**
-                {player_data}
+                Use knowledge in the Crew's context
 
                 The meal plan should:
                 - Be **tailored to the athlete’s specific training** and performance needs.

@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PositionCoachAgent(BaseAgent):
-    def __init__(self, input_file: str, **kwargs):
+    def __init__(self, **kwargs):
         name = "Coach Daniel Morgan - Positional Specialist"
         role = """
             You are a **Position Coach**, specializing in coaching techniques specific to an athlete’s  
@@ -25,7 +25,6 @@ class PositionCoachAgent(BaseAgent):
 
         super().__init__(
             name=kwargs.pop('name', name),
-            input_file=input_file,
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
             backstory=kwargs.pop('backstory', backstory),
@@ -33,16 +32,12 @@ class PositionCoachAgent(BaseAgent):
         )
 
     def generate_position_advice(self):
-        """ Reads the input file and provides position-specific coaching advice """
-        player_data = self.read_input_file()  # Fetch player profile dynamically
-
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and generate **customized position coaching advice**  
                 to enhance their **on-field performance, skill execution, and game awareness**.
 
-                **Player Data:**
-                {player_data}
+                Use knowledge in the Crew's context
 
                 Your response should include:
                 - **Technical adjustments** specific to their **position**

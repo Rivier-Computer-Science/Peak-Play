@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class ConditioningCoachAgent(BaseAgent):
-    def __init__(self, input_file: str, **kwargs):
+    def __init__(self, **kwargs):
         name = "Coach Mike Reynolds - Strength & Conditioning"
         role = """
             You are the Conditioning Coach Agent, responsible for designing and managing athletic training programs.
@@ -25,8 +25,7 @@ class ConditioningCoachAgent(BaseAgent):
             """
 
         super().__init__(
-            name=kwargs.pop('name', name),
-            input_file=input_file,
+            name=kwargs.pop('name', name),            
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
             backstory=kwargs.pop('backstory', backstory),
@@ -34,16 +33,12 @@ class ConditioningCoachAgent(BaseAgent):
         )
 
     def create_conditioning_program(self):
-        """ Reads the input file and generates a personalized conditioning program """
-        player_data = self.read_input_file()  
-
         return crewai.Task(
             description=dedent(f"""
                 Using the provided player data, design a personalized conditioning program 
                 that enhances performance while preventing injuries.
 
-                Player Data:
-                {player_data}
+                Use knowledge in the Crew's context               
 
                 The program should include:
                 - Strength training (targeting key muscle groups)

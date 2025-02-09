@@ -1,3 +1,4 @@
+docling
 fastapi[all]
 uvicorn
 crewai
@@ -5,3 +6,4 @@ crewai-tools
 langchain
 langchain-community
 openai
+pydantic

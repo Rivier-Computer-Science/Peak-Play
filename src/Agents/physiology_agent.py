@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PhysiologyAgent(BaseAgent):
-    def __init__(self, input_file: str, **kwargs):
+    def __init__(self, **kwargs):
         name = "Dr. Robert Lee - Physiology Specialist"
         role = """
             You are a Sports Physiologist specializing in optimizing athletic performance through 
@@ -28,7 +28,6 @@ class PhysiologyAgent(BaseAgent):
 
         super().__init__(
             name=kwargs.pop('name', name),
-            input_file=input_file,
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
             backstory=kwargs.pop('backstory', backstory),
@@ -36,16 +35,12 @@ class PhysiologyAgent(BaseAgent):
         )
 
     def generate_physiology_report(self):
-        """ Reads the input file and generates a physiology report """
-        player_data = self.read_input_file()  # Fetch player profile dynamically
-
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and provide **a physiology report**  
                 with **specific recommendations** for **injury prevention, recovery, and physical optimization**.
 
-                **Player Data:**
-                {player_data}
+                Use knowledge in the Crew's context
 
                 Your response should include:
                 - **Injury prevention techniques** (specific to the athlete's sport)

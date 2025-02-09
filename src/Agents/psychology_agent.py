@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PsychologyAgent(BaseAgent):
-    def __init__(self, input_file: str, **kwargs):
+    def __init__(self, **kwargs):
         name = "Dr. Anna Rivera - Sports Psychologist"
         role = """
             You are a **Sports Psychologist**, specializing in **mental well-being, resilience,  
@@ -28,7 +28,6 @@ class PsychologyAgent(BaseAgent):
 
         super().__init__(
             name=kwargs.pop('name', name),
-            input_file=input_file,
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
             backstory=kwargs.pop('backstory', backstory),
@@ -36,16 +35,12 @@ class PsychologyAgent(BaseAgent):
         )
 
     def generate_psychology_report(self):
-        """ Reads the input file and generates a psychology report """
-        player_data = self.read_input_file()  # Fetch player profile dynamically
-
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and generate a **psychological assessment report**  
                 with **personalized recommendations** for **mental performance optimization**.
 
-                **Player Data:**
-                {player_data}
+                Use knowledge in the Crew's context
 
                 Your response should include:
                 - **Mental resilience techniques** to handle pressure and setbacks

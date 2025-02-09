@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class MotivatorAgent(BaseAgent):
-    def __init__(self, input_file: str, **kwargs):
+    def __init__(self, **kwargs):
         name = "Sarah Johnson - Mental Coach"
         role = """
             You are a dedicated Motivator Agent, specializing in inspiring athletes to stay focused, 
@@ -27,7 +27,6 @@ class MotivatorAgent(BaseAgent):
 
         super().__init__(
             name=kwargs.pop('name', name),
-            input_file=input_file,
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
             backstory=kwargs.pop('backstory', backstory),
@@ -35,15 +34,11 @@ class MotivatorAgent(BaseAgent):
         )
 
     def motivate_athlete(self):
-        """ Reads the input file and generates a personalized motivational message """
-        player_data = self.read_input_file()  # Fetch player profile dynamically
-
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and create a **personalized** motivational message:
 
-                **Player Data:**
-                {player_data}
+                Use knowledge in the Crew's context
 
                 Your response should:
                 - Highlight the athlete’s **strengths** and achievements.

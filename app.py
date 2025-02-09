@@ -1,5 +1,6 @@
 from fastapi import FastAPI, BackgroundTasks, Body
 from fastapi.middleware.cors import CORSMiddleware
+import os
 from pydantic import BaseModel
 import logging
 import uuid
@@ -18,6 +19,8 @@ from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 
 import src.Utils.utils as utils
 
+
+PORT = int(os.environ.get("PORT", 8000))  # Default to 8000 for local testing
 
 logger = utils.configure_logger(logging.INFO)
 

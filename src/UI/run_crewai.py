@@ -1,17 +1,16 @@
 from dotenv import load_dotenv
 import os
-load_dotenv()
-for key, value in os.environ.items():
-    print(f"{key}: {value}")
-
 import sys
 import logging
+import json
+import pathlib as Path
+
 import crewai as crewai
 import langchain_openai as lang_oai
 import crewai_tools as crewai_tools
-from crewai.knowledge.source.excel_knowledge_source import ExcelKnowledgeSource
-from crewai.knowledge.source.text_file_knowledge_source import TextFileKnowledgeSource
 from src.Helpers.pretty_print_crewai_output import display_crew_output
+from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
+from crewai.knowledge.source.json_knowledge_source import JSONKnowledgeSource
 
 
 from src.Agents.biomechanics_coach_agent import BiomechanicsCoachAgent
@@ -21,92 +20,90 @@ from src.Agents.nutrition_agent import NutritionAgent
 from src.Agents.physiology_agent import PhysiologyAgent
 from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
+from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
+
+import src.Utils.utils as utils
+
+# Load environment variables
+load_dotenv("/etc/secrets")
 
 # Initialize logger
-logger = logging.getLogger(__name__)
-if not logger.hasHandlers():
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    logger.setLevel(logging.DEBUG)
+logger = utils.configure_logger(logging.INFO)
 
 
 
 class AssessmentCrew:
-  def __init__(self):
-      self.is_init = True
+    def __init__(self, input_file_path="data/player_profile.txt"):        
+        self.knowledge_data = utils.get_knowledge_type(input_file_path)
 
-  def run(self):
+    def run(self):
+        # Initialize agents with the player profile
+        biomechanics_coach_agent = BiomechanicsCoachAgent()
+        conditioning_coach_agent = ConditioningCoachAgent()
+        motivator_agent = MotivatorAgent()
+        nutrition_agent = NutritionAgent()
+        physiology_agent = PhysiologyAgent()
+        position_coach_agent = PositionCoachAgent()
+        psychology_agent = PsychologyAgent()
+        comprehensive_report_agent = ComprehensiveReportAgent()
 
-    player_profile = TextFileKnowledgeSource(
-       file_paths=["player_profile.txt"]
-    )
+        agents = [
+            biomechanics_coach_agent, 
+            conditioning_coach_agent,
+            motivator_agent,
+            nutrition_agent,
+            physiology_agent,
+            position_coach_agent,
+            psychology_agent,
+            comprehensive_report_agent,
+        ]
 
-    # assignment_to_course_outcomes_source = ExcelKnowledgeSource(
-    #    file_paths=["comp_405_assignment_to_course_outcomes_map.xlsx"]
-    # )
-    # course_outcomes_agent = CourseOutcomesAgent(knowledge_sources=[grades_source, assignment_to_course_outcomes_source])
+        tasks = [
+            biomechanics_coach_agent.analyze_biometrics(),
+            conditioning_coach_agent.create_conditioning_program(),
+            motivator_agent.motivate_athlete(),
+            nutrition_agent.generate_meal_plan(),
+            physiology_agent.generate_physiology_report(),
+            position_coach_agent.generate_position_advice(),
+            psychology_agent.generate_psychology_report(),
+            comprehensive_report_agent.compile_report()
+        ]
+        
 
-    biomechanics_coach_agent = BiomechanicsCoachAgent()
-    conditioning_coach_agent = ConditioningCoachAgent()
-    motivator_agent = MotivatorAgent()
-    nutrition_agent = NutritionAgent()
-    physiology_agent = PhysiologyAgent()
-    position_coach_agent = PositionCoachAgent()
-    psychology_agent = PsychologyAgent()
+        # Run tasks
+        crew = crewai.Crew(
+            agents=agents,
+            tasks=tasks,
+            knowledge_sources=[self.knowledge_data],
+            process=crewai.Process.sequential,
+            verbose=True
+        )
 
+        # Register crew with BaseAgent        
+        for agent in crew.agents:
+            logger.info(f"Agent Name: '{agent.role}'")
+            agent.register_crew(crew)
 
-    agents = [ biomechanics_coach_agent, 
-               conditioning_coach_agent,
-               motivator_agent,
-               nutrition_agent,
-               physiology_agent,
-               position_coach_agent,
-               psychology_agent,
-             ]
+        result = crew.kickoff()
+        return result
 
-    tasks = [ biomechanics_coach_agent.analyze_biometrics(),
-              conditioning_coach_agent.create_conditioning_program(),
-              motivator_agent.motivate_athelete(),
-              nutrition_agent.generate_meal_plan(),
-              physiology_agent.generate_physiology_report(),
-              position_coach_agent.generate_position_advice(),
-              psychology_agent.generate_psychology_report()
-            ]
-    
-
-    # Run tasks
-    crew = crewai.Crew(
-        agents=agents,
-        tasks=tasks,
-        knowledge_sources=[player_profile],
-        process=crewai.Process.sequential,
-        verbose=True
-    )
-
-    for agent in crew.agents:
-      logger.info(f"Agent Name: '{agent.role}'")
-
-    result = crew.kickoff()
-
-    return result
 
 if __name__ == "__main__":
     print("## Assessment Analysis")
     print('-------------------------------')
-  
+
     assessment_crew = AssessmentCrew()
-    logging.info("Assessment crew initialized successfully")
+    logger.info("Assessment crew initialized successfully")
 
     try:
         crew_output = assessment_crew.run()
-        logging.info("Assessment crew execution run() successfully")
+        #crew_output = assessment_crew.run(inputs={"job": "Create a comprehensive overview of the athlete"})
+        logger.info("Assessment crew execution run() successfully")
     except Exception as e:
-        logging.error(f"Error during crew execution: {e}")
+        logger.error(f"Error during crew execution: {e}")
         sys.exit(1)
-    
-    # Accessing the crew output
+
+    # Display the output
     print("\n\n########################")
     print("## Here is the Report")
     print("########################\n")

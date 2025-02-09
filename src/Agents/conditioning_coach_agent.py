@@ -4,50 +4,49 @@ from src.Agents.base_agent import BaseAgent
 
 
 class ConditioningCoachAgent(BaseAgent):
-    role: str
-    goal: str
-    backstory: str
-
     def __init__(self, **kwargs):
+        name = "Coach Mike Reynolds - Strength & Conditioning"
         role = """
-            You are the ConditioningCoachAgent
+            You are the Conditioning Coach Agent, responsible for designing and managing athletic training programs.
+            Your expertise ensures athletes develop strength, endurance, and injury resilience.
+            You will analyze player-specific data from an input file to create personalized workout plans.
             """
     
         goal = """
-            develop and manage training programs for athletes. 
-            Design workout routines, track progress, and adjust plans based on performance 
-            and user feedback.
+            Use the player's performance data to design a comprehensive conditioning program.
+            This program should target strength, endurance, flexibility, and injury prevention.
+            Adjust training intensity based on individual fitness levels and game demands.
             """
 
         backstory = """
-            You are an expert in fitness and conditioning with decades of experience.
+            With decades of experience in sports conditioning, you specialize in tailoring 
+            training regimens to optimize athletic performance. You have worked with elite 
+            athletes across multiple sports, focusing on injury prevention and peak conditioning.
             """
-    
+
         super().__init__(
-            role = kwargs.pop('role', role),
-            goal = kwargs.pop('goal', goal),
-            backstory = kwargs.pop('backstory', backstory),
-            tools=[],
+            name=kwargs.pop('name', name),            
+            role=kwargs.pop('role', role),
+            goal=kwargs.pop('goal', goal),
+            backstory=kwargs.pop('backstory', backstory),
             **kwargs
         )
 
-    def create_conditioning_program(self):  # Need to add to run_crewai.py
-        # Preprocessing goes here
+    def create_conditioning_program(self):
         return crewai.Task(
             description=dedent(f"""
-                Given data in the knowledge folder, create a conditioning program.
+                Using the provided player data, design a personalized conditioning program 
+                that enhances performance while preventing injuries.
+
+                Use knowledge in the Crew's context               
+
+                The program should include:
+                - Strength training (targeting key muscle groups)
+                - Endurance workouts (intervals, stamina-building routines)
+                - Flexibility and mobility exercises
+                - Recovery protocols (rest, nutrition, injury prevention)
+                - Weekly progression plans
             """),
             agent=self,
-            expected_output="A daily plan for 1 month with a conditioning routine."
-        )        
-    def modify_training_plan(self):  # Need to add to run_crewai.py
-        # Preprocessing goes here
-        return crewai.Task(
-            description=dedent(f"""
-                Based on feedback from the user, you are to dynamically update your previously prescribed
-                training plan. Update exercise selection, reps, number of sets as needed.
-            """),
-            agent=self,
-            expected_output="An updated daily plan for one month.",
-            context=["create_conditioning_program"]
-        )        
+            expected_output="A structured 1-month conditioning plan with weekly adjustments."
+        )

@@ -25,17 +25,18 @@ class BaseAgent(crewai.Agent):
             raise ValueError("The 'backstory' parameter must be provided.")       
 
         super().__init__(
+            name=kwargs.pop('name', None),
             role=role,
             goal=goal,
             backstory=backstory,
             #tools=kwargs.get('tools', []),   #[my_tool1, my_tool2],  # Optional, defaults to an empty list
             llm=kwargs.pop('llm', llm_config.gpt_4o_llm),
+            allow_delegation=kwargs.pop('allow_delegation', False),
             #function_calling_llm=my_llm,  # Optional
             max_iter=kwargs.pop('max_iter', 15),  # Optional
             max_rpm=kwargs.pop('max_rpm', 60*4), # Optional
             max_execution_time=kwargs.pop('max_execution_time', None), # Optional
             verbose=kwargs.pop('verbose', True),  # Optional
-            allow_delegation=kwargs.pop('allow_delegation', True),  # Optional
             #step_callback=my_intermediate_step_callback,  # Optional
             cache=kwargs.pop('cache', True),  # Optional
             #system_template=my_system_template,  # Optional
@@ -60,3 +61,8 @@ class BaseAgent(crewai.Agent):
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
             self.logger.setLevel(logging.INFO)
+        
+    def register_crew(self, crew):
+        self.crew = crew
+ 
+

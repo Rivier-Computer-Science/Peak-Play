@@ -23,6 +23,8 @@ from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 
+import src.Utils.utils as utils
+
 # Load environment variables
 load_dotenv("/etc/secrets")
 
@@ -37,35 +39,9 @@ if not logger.hasHandlers():
 
 
 
-
 class AssessmentCrew:
     def __init__(self, input_file_path="data/player_profile.txt"):        
-        self.input_file_path = input_file_path
-        self.knowledge_data = self.get_knowledge_type()
-
-    def get_knowledge_type(self):        
-        if not self.input_file_path:
-            return "Error: No input file provided."
-        
-        # Handle JSON input
-        if self.input_file_path.endswith(".json"):
-            return JSONKnowledgeSource(file_paths=[self.input_file_path])
-
-        # Handle TXT input
-        elif self.input_file_path.endswith(".txt"):
-            try:
-                with open(self.input_file_path, "r", encoding="utf-8") as file:
-                    return StringKnowledgeSource(content=file.read())
-            except FileNotFoundError:
-                return f"Error: File '{self.input_file_path}' not found."
-            except Exception as e:
-                return f"Error reading file: {e}"
-                       
-        # Unsupported file type
-        else:
-            return "Error: Unsupported file format. Please provide a .txt or .json file."
-
-
+        self.knowledge_data = utils.get_knowledge_type(input_file_path)
 
     def run(self):
         # Initialize agents with the player profile

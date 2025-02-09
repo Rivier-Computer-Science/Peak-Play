@@ -10,7 +10,6 @@ import langchain_openai as lang_oai
 import crewai_tools as crewai_tools
 from src.Helpers.pretty_print_crewai_output import display_crew_output
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
-from crewai.knowledge.source.crew_docling_source import CrewDoclingSource
 from crewai.knowledge.source.json_knowledge_source import JSONKnowledgeSource
 
 

@@ -1,4 +1,3 @@
-docling
 fastapi[all]
 uvicorn
 crewai

@@ -29,13 +29,7 @@ import src.Utils.utils as utils
 load_dotenv("/etc/secrets")
 
 # Initialize logger
-logger = logging.getLogger(__name__)
-if not logger.hasHandlers():
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    logger.setLevel(logging.DEBUG)
+logger = utils.configure_logger(logging.INFO)
 
 
 
@@ -100,14 +94,14 @@ if __name__ == "__main__":
     print('-------------------------------')
 
     assessment_crew = AssessmentCrew()
-    logging.info("Assessment crew initialized successfully")
+    logger.info("Assessment crew initialized successfully")
 
     try:
         crew_output = assessment_crew.run()
         #crew_output = assessment_crew.run(inputs={"job": "Create a comprehensive overview of the athlete"})
-        logging.info("Assessment crew execution run() successfully")
+        logger.info("Assessment crew execution run() successfully")
     except Exception as e:
-        logging.error(f"Error during crew execution: {e}")
+        logger.error(f"Error during crew execution: {e}")
         sys.exit(1)
 
     # Display the output

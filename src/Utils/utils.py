@@ -1,3 +1,5 @@
+import logging
+
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 from crewai.knowledge.source.crew_docling_source import CrewDoclingSource
 from crewai.knowledge.source.json_knowledge_source import JSONKnowledgeSource
@@ -23,3 +25,24 @@ def get_knowledge_type(input_file_path:str):
     # Unsupported file type
     else:
         return "Error: Unsupported file format. Please provide a .txt or .json file."
+
+import logging
+
+def configure_logger(
+    logLevel: int = logging.DEBUG, 
+    logger: logging.Logger = None
+) -> logging.Logger:
+    """Configures and returns a logger with the specified log level."""
+    
+    if logger is None:
+        logger = logging.getLogger(__name__)  
+
+    logger.setLevel(logLevel)
+
+    if not logger.handlers:
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter('%(levelname)s - %(module)s - %(filename)s - %(funcName)s - line %(lineno)d - %(asctime)s - %(name)s - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
+    return logger

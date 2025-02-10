@@ -34,7 +34,7 @@ class ExerciseDataBaseAgent(BaseAgent): # Need to add to run_crewai.py
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
-                Recommend exercises based on sport, fitness level, and goals.
+                Recommend exercises for the condition coach agent based on sport, fitness level, and goals.
             """),
             agent=self,
             expected_output="A bulleted list of exercises."

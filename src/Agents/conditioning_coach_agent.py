@@ -50,3 +50,20 @@ class ConditioningCoachAgent(BaseAgent):
             agent=self,
             expected_output="A structured 1-month conditioning plan with weekly adjustments."
         )
+    
+    def modify_training_program(self):
+        return crewai.Task(
+            description=dedent(f"""
+                Analyze updated player performance data and adjust the training plan accordingly.
+
+                Adaptations should include:
+                - Increasing intensity if performance is improving.
+                - Reducing intensity if signs of fatigue or overtraining appear.
+                - Modifying exercises based on weaknesses or injury risks.
+                - Updating recovery strategies if necessary.
+
+                The goal is to ensure **continuous improvement** while preventing injuries.
+            """),
+            agent=self,
+            expected_output="An updated training plan reflecting new performance insights."
+        )

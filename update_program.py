@@ -7,6 +7,7 @@ import uuid
 import crewai as crewai
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 
+from src.Agents.analyst_agent import AnalystAgent
 from src.Agents.conditioning_coach_agent import ConditioningCoachAgent
 from src.Agents.motivator_agent import MotivatorAgent
 from src.Agents.nutrition_agent import NutritionAgent
@@ -37,15 +38,16 @@ app.add_middleware(
 # Store task results
 task_results = {}
 
-class AssessmentInput(BaseModel):
+class UpdateInput(BaseModel):
     file_path: str  # WordPress passes file URL or local path
 
-class AssessmentCrew:
+class UpdateCrew:
     def __init__(self, player_data: str):
         self.player_data = StringKnowledgeSource(content=player_data)
 
     def run(self, task_id: str):
         # Initialize agents with file input
+        analyst_agent = AnalystAgent()
         conditioning_coach_agent = ConditioningCoachAgent()
         motivator_agent = MotivatorAgent()
         nutrition_agent = NutritionAgent()
@@ -53,6 +55,7 @@ class AssessmentCrew:
         comprehensive_report_agent = ComprehensiveReportAgent()
 
         agents = [
+            analyst_agent,
             conditioning_coach_agent,
             motivator_agent,
             nutrition_agent,
@@ -61,6 +64,7 @@ class AssessmentCrew:
         ]
 
         tasks = [
+            analyst_agent.analyze_data(),
             conditioning_coach_agent.modify_training_program(),
             motivator_agent.motivate_athlete(),
             nutrition_agent.generate_meal_plan(),
@@ -91,20 +95,20 @@ def preflight_check():
     return {"message": "Preflight OK"}
 
 
-@app.post("/run_assessment")
-async def run_assessment(
+@app.post("/update_program")
+async def update_program(
     input_text: str = Body(..., media_type="text/plain"),
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):
-    """Starts the assessment as a background task and returns a task_id."""
+    """Starts the Update as a background task and returns a task_id."""
     task_id = str(uuid.uuid4())  # Generate a unique task ID
     background_tasks.add_task(run_and_store_result, task_id, input_text)
     return {"success": True, "task_id": task_id}
 
 def run_and_store_result(task_id: str, input_text: str):
-    """Runs the assessment and stores the result for later retrieval."""
-    assessment_crew = AssessmentCrew(input_text)
-    result = assessment_crew.run(task_id)  # ✅ Runs synchronously in the background
+    """Runs the Update and stores the result for later retrieval."""
+    update_crew = UpdateCrew(input_text)
+    result = Update_crew.run(task_id)  # ✅ Runs synchronously in the background
     task_results[task_id] = result  # ✅ Store result for polling
 
 

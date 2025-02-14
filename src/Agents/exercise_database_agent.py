@@ -3,7 +3,7 @@ from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
 
 
-class ExerciseDataBaseAgent(BaseAgent): # Need to add to run_crewai.py
+class ExerciseDatabaseAgent(BaseAgent):
     role: str
     goal: str
     backstory: str

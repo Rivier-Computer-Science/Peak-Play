@@ -15,6 +15,7 @@ from src.Agents.physiology_agent import PhysiologyAgent
 from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
+from src.Agents.analyst_agent import AnalystAgent
 
 
 import src.Utils.utils as utils
@@ -92,6 +93,53 @@ class AssessmentCrew:
         result = crew.kickoff()       
         return result
 
+class UpdateInput(BaseModel):
+    file_path: str  # WordPress passes file URL or local path
+
+class UpdateCrew:
+    def __init__(self, player_data: str):
+        self.player_data = StringKnowledgeSource(content=player_data)
+
+    def run(self, task_id: str):
+        # Initialize agents with file input
+        analyst_agent = AnalystAgent()
+        conditioning_coach_agent = ConditioningCoachAgent()
+        motivator_agent = MotivatorAgent()
+        nutrition_agent = NutritionAgent()
+        physiology_agent = PhysiologyAgent()
+        comprehensive_report_agent = ComprehensiveReportAgent()
+
+        agents = [
+            analyst_agent,
+            conditioning_coach_agent,
+            motivator_agent,
+            nutrition_agent,
+            physiology_agent,
+            comprehensive_report_agent,
+        ]
+
+        tasks = [
+            analyst_agent.analyze_data(),
+            conditioning_coach_agent.modify_training_program(),
+            motivator_agent.motivate_athlete(),
+            nutrition_agent.generate_meal_plan(),
+            physiology_agent.generate_physiology_report(),
+            comprehensive_report_agent.compile_report()
+        ]
+    
+        # Run tasks
+        crew = crewai.Crew(
+            agents=agents,
+            tasks=tasks,
+            knowledge_sources=[self.player_data],
+            process=crewai.Process.sequential,
+            verbose=False
+        )
+
+        result = crew.kickoff()       
+        return result
+
+
 
 @app.get("/")
 def read_root():
@@ -112,6 +160,25 @@ async def run_assessment(
     task_id = str(uuid.uuid4())  # Generate a unique task ID
     background_tasks.add_task(run_and_store_result, task_id, input_text)
     return {"success": True, "task_id": task_id}
+
+
+@app.post("/update_program")
+async def update_program(
+    input_text: str = Body(..., media_type="text/plain"),
+    background_tasks: BackgroundTasks = BackgroundTasks()
+):
+    """Starts the Update as a background task and returns a task_id."""
+    task_id = str(uuid.uuid4())  # Generate a unique task ID
+    background_tasks.add_task(run_and_store_assessment_result, task_id, input_text)
+    return {"success": True, "task_id": task_id}
+
+
+def run_and_store_assessment_result(task_id: str, input_text: str):
+    """Runs the Update and stores the result for later retrieval."""
+    update_crew = UpdateCrew(input_text)
+    result = update_crew.run(task_id)  # ✅ Runs synchronously in the background
+    task_results[task_id] = result  # ✅ Store result for polling
+
 
 def run_and_store_result(task_id: str, input_text: str):
     """Runs the assessment and stores the result for later retrieval."""

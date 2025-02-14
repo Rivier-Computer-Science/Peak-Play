@@ -108,7 +108,7 @@ async def update_program(
 def run_and_store_result(task_id: str, input_text: str):
     """Runs the Update and stores the result for later retrieval."""
     update_crew = UpdateCrew(input_text)
-    result = Update_crew.run(task_id)  # ✅ Runs synchronously in the background
+    result = update_crew.run(task_id)  # ✅ Runs synchronously in the background
     task_results[task_id] = result  # ✅ Store result for polling
 
 

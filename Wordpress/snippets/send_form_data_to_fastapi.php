@@ -1,16 +1,16 @@
 <?php
-function async_crewai_shortcode() {
+function async_send_form_data_to_fastapi() {
     ob_start();
     ?>
     <script>
-    function runAssessment() {
+    function runUpdateAssessment() {
         document.getElementById("loading").style.display = "block";
         document.getElementById("result").innerHTML = "";
 
         let form = document.getElementById("wpforms-236");  // Get WPForms form
         let formData = new FormData(form);  // Extract form data
 
-        fetch("https://peakplay.onrender.com/update_plan", {
+        fetch("https://peakplay.onrender.com/update_program", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -64,10 +64,10 @@ function async_crewai_shortcode() {
     }
     </script>
 
-    <button onclick="runAssessment()">Run Assessment</button>
+    <button onclick="runUpdateProgram()">Run Assessment</button>
     <div id="loading" style="display:none;">Processing...</div>
     <div id="result"></div>
     <?php
     return ob_get_clean();
 }
-add_shortcode('async_crewai', 'async_crewai_shortcode');
+add_shortcode('async_send_form_data_to_fastapi', 'async_update_program_shortcode');

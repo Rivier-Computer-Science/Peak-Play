@@ -161,6 +161,9 @@ async def run_assessment(
     background_tasks.add_task(run_and_store_result, task_id, input_text)
     return {"success": True, "task_id": task_id}
 
+@app.options("/update_program")  # ✅ Allow OPTIONS requests for CORS
+def preflight_check():
+    return {"message": "Preflight OK"}
 
 @app.post("/update_program")
 async def update_program(

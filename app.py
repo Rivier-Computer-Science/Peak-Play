@@ -13,7 +13,7 @@ import logging
 import uuid
 
 from src.WebFunctions.run_full_assement import RunFullAssessmentCrew
-from WebFunctions.analyze_fitbit_data import AnalyzeFitbitDataCrew
+from src.WebFunctions.analyze_fitbit_data import AnalyzeFitbitDataCrew
 
 import src.Utils.utils as utils
 

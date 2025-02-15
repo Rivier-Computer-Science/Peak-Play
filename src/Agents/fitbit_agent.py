@@ -3,7 +3,7 @@ from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
 
 
-class AnalystAgent(BaseAgent):
+class FitbitAgent(BaseAgent):
     role: str
     goal: str
     backstory: str

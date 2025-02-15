@@ -10,7 +10,7 @@ from src.Agents.physiology_agent import PhysiologyAgent
 from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
-from src.Agents.analyst_agent import AnalystAgent
+from Agents.fitbit_agent import FitbitAgent
 
 
 class AnalyzeFitbitDataCrew:
@@ -19,7 +19,7 @@ class AnalyzeFitbitDataCrew:
 
     def run(self, task_id: str):
         # Initialize agents with file input
-        analyst_agent = AnalystAgent()
+        fitbit_agent = FitbitAgent()
         conditioning_coach_agent = ConditioningCoachAgent()
         motivator_agent = MotivatorAgent()
         nutrition_agent = NutritionAgent()
@@ -27,7 +27,7 @@ class AnalyzeFitbitDataCrew:
         comprehensive_report_agent = ComprehensiveReportAgent()
 
         agents = [
-            analyst_agent,
+            fitbit_agent,
             conditioning_coach_agent,
             motivator_agent,
             nutrition_agent,
@@ -36,7 +36,7 @@ class AnalyzeFitbitDataCrew:
         ]
 
         tasks = [
-            analyst_agent.analyze_data(),
+            fitbit_agent.analyze_data(),
             conditioning_coach_agent.modify_training_program(),
             motivator_agent.motivate_athlete(),
             nutrition_agent.generate_meal_plan(),

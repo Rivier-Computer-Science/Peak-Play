@@ -1,29 +1,12 @@
 function async_run_full_assessment_markdown_shortcode() {
     ob_start();
     ?>
+    <!-- Include Marked.js from a CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Helper function to convert JSON to Markdown.
-        function jsonToMarkdown(json) {
-            let md = "";
-            if (typeof json === "object" && json !== null) {
-                for (const key in json) {
-                    if (json.hasOwnProperty(key)) {
-                        const value = json[key];
-                        if (typeof value === "object" && value !== null) {
-                            md += `### ${key}\n\n` + jsonToMarkdown(value) + "\n";
-                        } else {
-                            md += `- **${key}**: ${value}\n`;
-                        }
-                    }
-                }
-            } else {
-                md = String(json);
-            }
-            return md;
-        }
 
-        // Function to poll for results using setInterval.
+        // Poll for the assessment result using setInterval.
         function pollForResult(taskId) {
             let attempts = 0;
             const maxAttempts = 30;  // Approximately 5 minutes if polling every 10 seconds.
@@ -35,7 +18,6 @@ function async_run_full_assessment_markdown_shortcode() {
                 return;
             }
 
-            // Set up a polling interval.
             const pollingInterval = setInterval(() => {
                 attempts++;
                 const remaining = maxAttempts - attempts;
@@ -50,11 +32,27 @@ function async_run_full_assessment_markdown_shortcode() {
                         return response.json();
                     })
                     .then(data => {
+                        // When the result is no longer "Processing..."
                         if (data.result !== "Processing...") {
                             clearInterval(pollingInterval);
                             loadingElem.style.display = "none";
-                            const markdown = jsonToMarkdown(data.result);
-                            resultElem.innerHTML = `<pre>${markdown}</pre>`;
+                            
+                            // Extract the markdown string from the JSON response.
+                            let markdown = "";
+                            if (typeof data.result === "object") {
+                                // If the object has a 'markdown' property, use it.
+                                if (data.result.markdown && typeof data.result.markdown === "string") {
+                                    markdown = data.result.markdown;
+                                } else {
+                                    // Otherwise, convert the object to a string.
+                                    markdown = JSON.stringify(data.result, null, 2);
+                                }
+                            } else {
+                                markdown = data.result;
+                            }
+                            
+                            // Use Marked.js to convert the markdown string to HTML.
+                            resultElem.innerHTML = marked.parse(markdown);
                         } else if (attempts >= maxAttempts) {
                             clearInterval(pollingInterval);
                             loadingElem.style.display = "none";
@@ -70,7 +68,7 @@ function async_run_full_assessment_markdown_shortcode() {
             }, 10000);  // Poll every 10 seconds.
         }
 
-        // Function to initiate the full assessment.
+        // Initiate the assessment process.
         function runFullAssessment() {
             const loadingElem = document.getElementById("loading");
             const resultElem = document.getElementById("result");
@@ -96,7 +94,7 @@ function async_run_full_assessment_markdown_shortcode() {
                     })
                     .then(response => response.json())
                     .then(data => {
-                        // Once we have a task id, start polling for the result.
+                        // Once we have the task id, start polling for the result.
                         pollForResult(data.task_id);
                     })
                     .catch(error => {

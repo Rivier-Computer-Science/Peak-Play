@@ -10,7 +10,7 @@ from src.Agents.physiology_agent import PhysiologyAgent
 from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
-from Agents.fitbit_agent import FitbitAgent
+from src.Agents.fitbit_agent import FitbitAgent
 
 
 class AnalyzeFitbitDataCrew:

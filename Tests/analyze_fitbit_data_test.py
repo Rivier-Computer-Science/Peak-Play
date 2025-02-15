@@ -1,11 +1,11 @@
 # Test cases
 
 # TODO: Turn these into real unit tests
-# URL Local:  http://localhost:8000/analyze_user_data
-# URL Remote: https://peakplay.onrender.com/analyze_user_data
+# URL Local:  http://localhost:8000/analyze_fitbit_data
+# URL Remote: https://peakplay.onrender.com/analyze_fitbit_data
 
 """
-curl -X POST "http://localhost:8000/analyze_user_data" \
+curl -X POST "http://localhost:8000/analyze_fitbit_data" \
      -H "Content-Type: text/plain" \
      -d "Player Profile: 16-Year-Old Left-Handed Starting Pitcher (Honors Student)
 Name: John Ball

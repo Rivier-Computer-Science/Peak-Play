@@ -53,7 +53,7 @@ class RunFullAssessmentCrew:
             tasks=tasks,
             knowledge_sources=[self.player_data],
             process=crewai.Process.sequential,
-            verbose=False
+            verbose=True
         )
 
         result = crew.kickoff()       

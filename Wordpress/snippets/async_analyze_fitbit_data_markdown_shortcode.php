@@ -1,4 +1,4 @@
-function async_run_full_assessment_markdown_shortcode() {
+function async_analyze_fitbit_data_markdown_shortcode() {
     ob_start();
     ?>
     <!-- Include Marked.js from a CDN -->
@@ -66,7 +66,7 @@ function async_run_full_assessment_markdown_shortcode() {
         }
 
         // Function to initiate the assessment.
-        function runFullAssessment() {
+        function analyzeFitbitData() {
             const loadingElem = document.getElementById("loading");
             const resultElem = document.getElementById("result");
             if (loadingElem) {
@@ -82,7 +82,7 @@ function async_run_full_assessment_markdown_shortcode() {
             fetch(fileUrl)
                 .then(response => response.text())
                 .then(fileContent => {
-                    fetch("https://peakplay.onrender.com/run_full_assessment", {
+                    fetch("https://peakplay.onrender.com/analyze_fitbit_data", {
                         method: "POST",
                         headers: {
                             "Content-Type": "text/plain"
@@ -99,9 +99,9 @@ function async_run_full_assessment_markdown_shortcode() {
                             loadingElem.style.display = "none";
                         }
                         if (resultElem) {
-                            resultElem.innerHTML = "Error occurred starting the assessment.";
+                            resultElem.innerHTML = "Error occurred starting the fitbit analysis.";
                         }
-                        console.error("Error starting assessment:", error);
+                        console.error("Error starting fitbit analysis:", error);
                     });
                 })
                 .catch(error => {
@@ -116,17 +116,17 @@ function async_run_full_assessment_markdown_shortcode() {
         }
 
         // Attach the runFullAssessment function to the button.
-        const btn = document.getElementById("runAssessmentBtn");
+        const btn = document.getElementById("analyzeFitbitDataBtn");
         if (btn) {
-            btn.addEventListener("click", runFullAssessment);
+            btn.addEventListener("click", analyszeFitbitData);
         }
     });
     </script>
 
-    <button id="runAssessmentBtn">Run Full Assessment</button>
+    <button id="analyzeFitbitDataBtn">Analyze Fitbit Data</button>
     <div id="loading" style="display:none;">Processing...</div>
     <div id="result"></div>
     <?php
     return ob_get_clean();
 }
-add_shortcode('async_run_full_assessment_markdown', 'async_run_full_assessment_markdown_shortcode');
+add_shortcode('async_analyze_fitbit_markdown', 'async_analyze_fitbit_markdown_shortcode');

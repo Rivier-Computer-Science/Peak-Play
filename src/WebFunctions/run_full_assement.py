@@ -9,6 +9,9 @@ from src.Agents.physiology_agent import PhysiologyAgent
 from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
+import src.Agents.agent_helpers as agent_helpers
+
+
 
 class RunFullAssessmentCrew:
     def __init__(self, player_data: str):
@@ -51,10 +54,12 @@ class RunFullAssessmentCrew:
         crew = crewai.Crew(
             agents=agents,
             tasks=tasks,
+            #task_callback=agent_callback.crewai_callback_task_completion,
             knowledge_sources=[self.player_data],
             process=crewai.Process.sequential,
             verbose=True
         )
 
-        result = crew.kickoff()       
-        return result
+        result = crew.kickoff()
+
+        return agent_helpers.concatente_task_outputs(result)

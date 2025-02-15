@@ -38,14 +38,12 @@ function async_analyze_fitbit_data_markdown_shortcode() {
                             loadingElem.style.display = "none";
                             
                             // Extract the markdown content from the JSON response.
-                            // We assume that data.result is an object with a "result" field containing markdown.
+                            // We assume that data.result is either an object with a "result" field or a string.
                             let markdown = "";
                             if (typeof data.result === "object" && data.result.result && typeof data.result.result === "string") {
                                 markdown = data.result.result;
                             } else if (typeof data.result === "string") {
                                 markdown = data.result;
-                            } else {
-                                markdown = "";
                             }
                             
                             // Use Marked.js to convert the markdown string to HTML.
@@ -77,7 +75,7 @@ function async_analyze_fitbit_data_markdown_shortcode() {
                 resultElem.innerHTML = "";
             }
 
-            const fileUrl = "https://peakplaysports.com/wp-content/uploads/2025/02/player_profile.txt"; 
+            const fileUrl = "https://peakplaysports.com/wp-content/uploads/2025/02/fitbit_data.txt"; 
 
             fetch(fileUrl)
                 .then(response => response.text())
@@ -99,9 +97,9 @@ function async_analyze_fitbit_data_markdown_shortcode() {
                             loadingElem.style.display = "none";
                         }
                         if (resultElem) {
-                            resultElem.innerHTML = "Error occurred starting the fitbit analysis.";
+                            resultElem.innerHTML = "Error occurred starting the Fitbit analysis.";
                         }
-                        console.error("Error starting fitbit analysis:", error);
+                        console.error("Error starting Fitbit analysis:", error);
                     });
                 })
                 .catch(error => {
@@ -115,10 +113,10 @@ function async_analyze_fitbit_data_markdown_shortcode() {
                 });
         }
 
-        // Attach the runFullAssessment function to the button.
+        // Attach the analyzeFitbitData function to the button.
         const btn = document.getElementById("analyzeFitbitDataBtn");
         if (btn) {
-            btn.addEventListener("click", analyszeFitbitData);
+            btn.addEventListener("click", analyzeFitbitData);
         }
     });
     </script>
@@ -129,4 +127,4 @@ function async_analyze_fitbit_data_markdown_shortcode() {
     <?php
     return ob_get_clean();
 }
-add_shortcode('async_analyze_fitbit_markdown', 'async_analyze_fitbit_markdown_shortcode');
+add_shortcode('async_analyze_fitbit_data_markdown', 'async_analyze_fitbit_data_markdown_shortcode');

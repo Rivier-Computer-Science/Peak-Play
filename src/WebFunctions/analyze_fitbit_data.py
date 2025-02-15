@@ -13,7 +13,7 @@ from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 from src.Agents.analyst_agent import AnalystAgent
 
 
-class AnalyzeUserDataCrew:
+class AnalyzeFitbitDataCrew:
     def __init__(self, player_data: str):
         self.player_data = StringKnowledgeSource(content=player_data)
 

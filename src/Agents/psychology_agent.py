@@ -34,12 +34,12 @@ class PsychologyAgent(BaseAgent):
             **kwargs
         )
 
-    def generate_psychology_report(self):
+    def generate_psychology_report(self, age: str = '21'):
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and generate a **psychological assessment report**  
-                with **personalized recommendations** for **mental performance optimization**.
-
+                If no age is provided in the profile, assume the athlete's age is {age}.
+                
                 Use knowledge in the Crew's context
 
                 Your response should include:
@@ -51,8 +51,8 @@ class PsychologyAgent(BaseAgent):
                 - **Emotional regulation advice** for consistency and peak performance
 
                 Ensure that all recommendations are **evidence-based** and aligned with  
-                the athlete’s **specific psychological needs and competitive environment**.
+                the athlete’s age **specific psychological needs and competitive environment**.
             """),
             agent=self,
-            expected_output="A structured psychology report with personalized strategies to enhance the athlete’s mental game."
+            expected_output="An age-appropriate structured psychology report with personalized strategies to enhance the athlete’s mental game."
         )

@@ -31,11 +31,12 @@ class PositionCoachAgent(BaseAgent):
             **kwargs
         )
 
-    def generate_position_advice(self):
+    def generate_position_advice(self, age: str = '21'):
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and generate **customized position coaching advice**  
                 to enhance their **on-field performance, skill execution, and game awareness**.
+                If no age is provided in the profile, assume the athlete's age is {age}.
 
                 Use knowledge in the Crew's context
 
@@ -46,8 +47,9 @@ class PositionCoachAgent(BaseAgent):
                 - **Tactical advice** based on **real-game scenarios**
                 - **Corrective feedback** on common **positional weaknesses**
                 
-                Ensure that all recommendations align with **the athlete’s skill level and long-term development**.
+                Ensure that all recommendations are **evidence-based** and aligned with
+                the athlete’s age **specific skill level and long-term development**.
             """),
             agent=self,
-            expected_output="A structured coaching report tailored to the athlete’s position."
+            expected_output="An age-appropriate structured coaching report tailored to the athlete’s position."
         )

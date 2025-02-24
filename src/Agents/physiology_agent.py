@@ -54,5 +54,5 @@ class PhysiologyAgent(BaseAgent):
                 the athlete’s age **tailored to the athlete's physical condition**.
             """),
             agent=self,
-            expected_output="A structured physiology report detailing injury prevention and performance enhancement strategies."
+            expected_output="An age-appropriate structured physiology report detailing injury prevention and performance enhancement strategies."
         )

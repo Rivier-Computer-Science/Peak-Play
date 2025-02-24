@@ -51,5 +51,5 @@ class NutritionAgent(BaseAgent):
                 Ensure the plan is aligned with the athlete's age and **enhances endurance, strength, and recovery**, while preventing fatigue and injury.
             """),
             agent=self,
-            expected_output="A structured 1-month meal plan designed to optimize the athlete’s performance."
+            expected_output="An age-appropriate structured 1-month meal plan designed to optimize the athlete’s performance."
         )

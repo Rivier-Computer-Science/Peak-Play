@@ -52,7 +52,7 @@ class ConditioningCoachAgent(BaseAgent):
 
             """),
             agent=self,
-            expected_output="A structured 1-month conditioning plan with weekly adjustments."
+            expected_output="An age-appropriate structured 1-month conditioning plan with weekly adjustments."
         )
     
     def modify_training_program(self, age: str = '21'):

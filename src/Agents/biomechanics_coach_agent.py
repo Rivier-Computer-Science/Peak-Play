@@ -54,6 +54,6 @@ class BiomechanicsCoachAgent(BaseAgent):
 
             """),
             agent=self,
-            expected_output="A biomechanics assessment report highlighting strengths, weaknesses, and recommendations."
+            expected_output="An age-appropriate biomechanics assessment report highlighting strengths, weaknesses, and recommendations."
         )
 

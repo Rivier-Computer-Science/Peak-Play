@@ -32,11 +32,12 @@ class ConditioningCoachAgent(BaseAgent):
             **kwargs
         )
 
-    def create_conditioning_program(self):
+    def create_conditioning_program(self, age: str = '21'):
         return crewai.Task(
             description=dedent(f"""
                 Using the provided player data, design a personalized conditioning program 
                 that enhances performance while preventing injuries.
+                If no age is provided in the profile, assume the athlete's age is {age}.
 
                 Use knowledge in the Crew's context               
 
@@ -46,15 +47,19 @@ class ConditioningCoachAgent(BaseAgent):
                 - Flexibility and mobility exercises
                 - Recovery protocols (rest, nutrition, injury prevention)
                 - Weekly progression plans
+
+                Ensure the program is aligned with the athlete's age, **sport-specific**, and **goal-oriented**.
+
             """),
             agent=self,
             expected_output="A structured 1-month conditioning plan with weekly adjustments."
         )
     
-    def modify_training_program(self):
+    def modify_training_program(self, age: str = '21'):
         return crewai.Task(
             description=dedent(f"""
                 Analyze updated player performance data and adjust the training plan accordingly.
+                If no age is provided in the profile, assume the athlete's age is {age}.
 
                 Adaptations should include:
                 - Increasing intensity if performance is improving.
@@ -62,7 +67,7 @@ class ConditioningCoachAgent(BaseAgent):
                 - Modifying exercises based on weaknesses or injury risks.
                 - Updating recovery strategies if necessary.
 
-                The goal is to ensure **continuous improvement** while preventing injuries.
+                Ensure the program is aligned with the athlete's age, with the goal of **continuous improvement** while preventing injuries.
             """),
             agent=self,
             expected_output="An updated training plan reflecting new performance insights."

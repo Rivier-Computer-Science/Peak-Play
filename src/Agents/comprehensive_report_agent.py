@@ -49,7 +49,7 @@ class ComprehensiveReportAgent(BaseAgent):
                 - **Injury Prevention & Physiology**: Advice on preventing injuries and improving endurance.
                 - **Position-Specific Coaching**: Tactical improvements based on the athlete’s role.
                 
-                Ensure the report is **professional, structured, and formatted for easy reading**.
+                **professional, structured, and formatted for easy reading**.
             """),
             agent=self,
             expected_output="A professionally formatted comprehensive report summarizing all agent insights."

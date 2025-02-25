@@ -25,6 +25,7 @@ from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 from src.Agents.exercise_database_agent import ExerciseDatabaseAgent
+from src.Agents.fitbit_agent import FitbitAgent
 
 import src.Utils.utils as utils
 
@@ -43,6 +44,7 @@ class AssessmentCrew:
         # Initialize agents with the player profile
         biomechanics_coach_agent = BiomechanicsCoachAgent()
         exercise_database_agent = ExerciseDatabaseAgent()
+        fitbit_agent = FitbitAgent()
         conditioning_coach_agent = ConditioningCoachAgent()
         motivator_agent = MotivatorAgent()
         nutrition_agent = NutritionAgent()

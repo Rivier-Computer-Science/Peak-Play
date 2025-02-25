@@ -44,12 +44,14 @@ class AssessmentCrew:
         biomechanics_coach_agent = BiomechanicsCoachAgent()
         conditioning_coach_agent = ConditioningCoachAgent()
         exercise_database_agent = ExerciseDatabaseAgent()
+        fitbit_agent = FitbitAgent()
         motivator_agent = MotivatorAgent()
         nutrition_agent = NutritionAgent()
         physiology_agent = PhysiologyAgent()
         position_coach_agent = PositionCoachAgent()
         psychology_agent = PsychologyAgent()
         comprehensive_report_agent = ComprehensiveReportAgent()
+        from src.Agents.fitbit_agent import FitbitAgent
 
         agents = [
             position_coach_agent,

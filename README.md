@@ -13,6 +13,6 @@ Peak Play Sports uses CrewAI agents to help athletes optimize their training, tr
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** [WordPress]
-- **Backend:** [Python/FastAPI, PHP]
-- **AI Agents:** [CrewAI]  
+- **Frontend:** WordPress
+- **Backend:** Python/FastAPI, PHP
+- **AI Agents:** CrewAI

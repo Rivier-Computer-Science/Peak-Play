@@ -2,7 +2,7 @@
 # Peak Play Sports
 
 **Achieve your peak performance with AI-powered insights!**  
-Peak Play Sports uses CrewAI agents to help athletes optimize their training, track progress, and reach their full potential.
+Peak Play Sports uses CrewAI agents to help athletes optimize their training, track progress, and reach their **peak performance!**
 
 ## 🚀 Features
 

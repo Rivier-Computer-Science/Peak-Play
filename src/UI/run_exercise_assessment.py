@@ -50,15 +50,13 @@ class AssessmentCrew:
         position_coach_agent = PositionCoachAgent()
         psychology_agent = PsychologyAgent()
         comprehensive_report_agent = ComprehensiveReportAgent()
-        
 
         agents = [
-            conditioning_coach_agent
+            exercise_database_agent
         ]
 
         tasks = [
-            conditioning_coach_agent.create_conditioning_program(),
-            conditioning_coach_agent.modify_training_program(),
+            exercise_database_agent.recommend_exercises(),
         ]
         
 

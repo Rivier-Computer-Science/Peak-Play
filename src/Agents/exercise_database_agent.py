@@ -49,5 +49,5 @@ class ExerciseDatabaseAgent(BaseAgent):
                 
             """),
             agent=self,
-            expected_output="A bulleted list of exercises."
+            expected_output="An age-appropriate bulleted list of exercises."
         )        

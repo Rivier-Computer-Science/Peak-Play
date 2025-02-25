@@ -70,5 +70,5 @@ class ConditioningCoachAgent(BaseAgent):
                 Ensure the program is aligned with the athlete's age, with the goal of **continuous improvement** while preventing injuries.
             """),
             agent=self,
-            expected_output="An updated training plan reflecting new performance insights."
+            expected_output="An age-appropriate updated training plan reflecting new performance insights."
         )

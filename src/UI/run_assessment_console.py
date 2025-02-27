@@ -22,6 +22,7 @@ from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 from src.Agents.exercise_database_agent import ExerciseDatabaseAgent
+from src.Agents.fitbit_agent import FitbitAgent
 
 import src.Utils.utils as utils
 
@@ -40,8 +41,9 @@ class AssessmentCrew:
     def run(self):
         # Initialize agents with the player profile
         biomechanics_coach_agent = BiomechanicsCoachAgent()
-        exercise_database_agent = ExerciseDatabaseAgent()
         conditioning_coach_agent = ConditioningCoachAgent()
+        exercise_database_agent = ExerciseDatabaseAgent()
+        fitbit_agent = FitbitAgent()
         motivator_agent = MotivatorAgent()
         nutrition_agent = NutritionAgent()
         physiology_agent = PhysiologyAgent()
@@ -51,8 +53,9 @@ class AssessmentCrew:
 
         agents = [
             biomechanics_coach_agent, 
-            exercise_database_agent,
             conditioning_coach_agent,
+            exercise_database_agent,
+            fitbit_agent,
             motivator_agent,
             nutrition_agent,
             physiology_agent,
@@ -63,8 +66,9 @@ class AssessmentCrew:
 
         tasks = [
             biomechanics_coach_agent.analyze_biometrics(),
-            exercise_database_agent.recommend_exercises(),
             conditioning_coach_agent.create_conditioning_program(),
+            exercise_database_agent.recommend_exercises(),
+            fitbit_agent.analyze_data(),
             motivator_agent.motivate_athlete(),
             nutrition_agent.generate_meal_plan(),
             physiology_agent.generate_physiology_report(),

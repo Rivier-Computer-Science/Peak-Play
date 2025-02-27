@@ -25,6 +25,7 @@ from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 from src.Agents.exercise_database_agent import ExerciseDatabaseAgent
+from src.Agents.fitbit_agent import FitbitAgent
 
 import src.Utils.utils as utils
 
@@ -51,7 +52,6 @@ class AssessmentCrew:
         position_coach_agent = PositionCoachAgent()
         psychology_agent = PsychologyAgent()
         comprehensive_report_agent = ComprehensiveReportAgent()
-        from src.Agents.fitbit_agent import FitbitAgent
 
         agents = [
             position_coach_agent,

@@ -43,9 +43,9 @@ class AssessmentCrew:
     def run(self):
         # Initialize agents with the player profile
         biomechanics_coach_agent = BiomechanicsCoachAgent()
+        conditioning_coach_agent = ConditioningCoachAgent()
         exercise_database_agent = ExerciseDatabaseAgent()
         fitbit_agent = FitbitAgent()
-        conditioning_coach_agent = ConditioningCoachAgent()
         motivator_agent = MotivatorAgent()
         nutrition_agent = NutritionAgent()
         physiology_agent = PhysiologyAgent()

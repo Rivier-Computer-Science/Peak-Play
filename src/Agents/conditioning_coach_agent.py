@@ -67,3 +67,15 @@ class ConditioningCoachAgent(BaseAgent):
             agent=self,
             expected_output="An updated training plan reflecting new performance insights."
         )
+
+    def generate_report(self):
+        return crewai.Task(
+            description=dedent(f"""
+                This agent takes input from a user-submitted form detailing their workout session and generates 
+                a concise summary. The report highlights key aspects such as exercises performed, sets and reps, 
+                weights used, workout duration, and any notable observations. 
+                The goal is to provide a brief yet informative recap of the session without tracking long-term progress.
+            """),
+            agent=self,
+            expected_output="A report summarizing key infomration about a user's training session."
+        )

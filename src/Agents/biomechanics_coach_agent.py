@@ -32,14 +32,28 @@ class BiomechanicsCoachAgent(BaseAgent):
             **kwargs
         )
 
-    def analyze_biometrics(self):
+    def analyze_biometrics(self, age: str = '21'):
         return crewai.Task(
             description=dedent(f"""
                 Analyze the following player data and generate a biomechanics assessment:
+                If no age is provided in the profile, assume the athlete's age is {age}.
 
                 Use knowledge in the Crew's context
+
+                The biomechanics assessment should include:
+                - **Movement Efficiency**: Evaluate mobility, balance, and joint alignment.
+                - **Asymmetry & Imbalances**: Identify left vs. right-side discrepancies.
+                - **Force & Load Distribution**: Assess stress on joints and risk of overuse injuries.
+                - **Sport-Specific Mechanics**: Analyze movement patterns relevant to the athlete’s sport.
+                - **Injury Risk Factors**: Highlight potential weaknesses and instability.
+                - **Recommendations**: Provide corrective exercises and technique improvements.
+
+                Ensure that all recommendations are *evidence-based** and aligned with  
+                the athlete’s age **specific biomechanic needs and competitive environment**.
+
+
             """),
             agent=self,
-            expected_output="A biomechanics assessment report highlighting strengths, weaknesses, and recommendations."
+            expected_output="An age-appropriate biomechanics assessment report highlighting strengths, weaknesses, and recommendations."
         )
 

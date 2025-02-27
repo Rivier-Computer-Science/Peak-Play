@@ -32,10 +32,11 @@ class NutritionAgent(BaseAgent):
             **kwargs
         )
 
-    def generate_meal_plan(self):
+    def generate_meal_plan(self, age: str = '21'):
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and create a **customized 1-month meal plan**:
+                If no age is provided in the profile, assume the athlete's age is {age}.
 
                 Use knowledge in the Crew's context
 
@@ -47,8 +48,8 @@ class NutritionAgent(BaseAgent):
                 - Incorporate **pre-game and post-game nutrition strategies**.
                 - Recommend **meal timing and portion sizes**.
 
-                Ensure the plan **enhances endurance, strength, and recovery**, while preventing fatigue and injury.
+                Ensure the plan is aligned with the athlete's age and **enhances endurance, strength, and recovery**, while preventing fatigue and injury.
             """),
             agent=self,
-            expected_output="A structured 1-month meal plan designed to optimize the athlete’s performance."
+            expected_output="An age-appropriate structured 1-month meal plan designed to optimize the athlete’s performance."
         )

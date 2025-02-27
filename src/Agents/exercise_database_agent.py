@@ -30,12 +30,24 @@ class ExerciseDatabaseAgent(BaseAgent):
             **kwargs
         )
 
-    def recommend_exercises(self):   # Need to add to run_crewai.py
+    def recommend_exercises(self, age: str = '21'):   # Need to add to run_crewai.py
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
                 Recommend exercises for the condition coach agent based on sport, fitness level, and goals.
+                If no age is provided in the profile, assume the athlete's age is {age}.
+
+                The program should include:  
+                - **Warm-Up & Mobility**: Dynamic stretching, activation drills, and movement prep for sport-specific readiness.  
+                - **Strength & Power Development**: Sport-relevant resistance training, plyometrics, and core stabilization exercises.  
+                - **Speed, Agility & Endurance**: Acceleration drills, agility ladders, lateral quickness training, and HIIT conditioning.  
+                - **Sport-Specific Skill Work**: Movement patterns directly related to the athlete’s sport (e.g., cutting drills for soccer, jump mechanics for basketball).  
+                - **Recovery & Injury Prevention**: Flexibility routines, mobility work, prehab exercises, and proper cooldown strategies.  
+
+                Ensure exercises are **personalized based on the athlete’s sport, skill level, and training goals**, 
+                with a structured **progression plan** for continuous improvement.  
+                
             """),
             agent=self,
-            expected_output="A bulleted list of exercises."
+            expected_output="An age-appropriate bulleted list of exercises."
         )        

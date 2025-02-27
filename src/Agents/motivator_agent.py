@@ -33,10 +33,11 @@ class MotivatorAgent(BaseAgent):
             **kwargs
         )
 
-    def motivate_athlete(self):
+    def motivate_athlete(self, age: str = '21'):
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and create a **personalized** motivational message:
+                If no age is provided in the profile, assume the athlete's age is {age}.
 
                 Use knowledge in the Crew's context
 
@@ -45,7 +46,10 @@ class MotivatorAgent(BaseAgent):
                 - Encourage them in areas where they are improving.
                 - Offer **mental strategies** for overcoming challenges.
                 - End with a **powerful, uplifting message** to fuel their motivation.
+
+                Ensure that all recommendations are **evidence-based** and aligned with  
+                the athlete’s age **specific needs and competitive environment**.
             """),
             agent=self,
-            expected_output="An inspiring, personalized message tailored to the athlete’s data."
+            expected_output="An age-appropriate inspiring, personalized message tailored to the athlete’s data."
         )

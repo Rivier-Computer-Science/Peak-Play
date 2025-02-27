@@ -30,13 +30,25 @@ class FitbitAgent(BaseAgent):
             **kwargs
         )
 
-    def analyze_data(self): 
+    def analyze_data(self, age: str = '21'): 
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
-                Analyze the feedback from the user and summarize/distill important imformation for the other agents to provide
+                Analyze the feedback from the user and summarize/distill important information for the other agents to provide
                 personalized recommendations to the user's training program.
+                If no age is provided in the profile, assume the athlete's age is {age}.
+
+                **The summary report should include:**
+                - **Performance Trends**: Identify strengths, weaknesses, and improvements over time.  
+                - **Biomechanical Analysis**: Highlight movement inefficiencies, imbalances, and injury risks.  
+                - **Training Effectiveness**: Assess the impact of workouts on performance metrics.  
+                - **Nutritional Insights**: Summarize dietary habits and potential adjustments for better recovery and energy.  
+                - **Recovery & Readiness**: Evaluate fatigue levels, sleep quality, and overall recovery status.  
+                - **Personalized Recommendations**: Provide actionable insights for training, conditioning, and nutrition.  
+
+                Ensure the analysis is **concise, data-driven, and tailored** to the athlete's sport and goals.  
+
             """),
             agent=self,
-            expected_output="Summary of key data points. Analysis of data."
+            expected_output="An age-appropriate summary of key data points and analysis of data."
         )        

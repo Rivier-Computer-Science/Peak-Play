@@ -1,4 +1,7 @@
 from dotenv import load_dotenv
+# Load environment variables
+load_dotenv("/etc/secrets")
+
 import os
 import sys
 import logging
@@ -26,8 +29,7 @@ from src.Agents.fitbit_agent import FitbitAgent
 
 import src.Utils.utils as utils
 
-# Load environment variables
-load_dotenv("/etc/secrets")
+
 
 # Initialize logger
 logger = utils.configure_logger(logging.INFO)
@@ -35,7 +37,7 @@ logger = utils.configure_logger(logging.INFO)
 
 
 class AssessmentCrew:
-    def __init__(self, input_file_path="data/player_profile.txt"):        
+    def __init__(self, input_file_path="data/pitcher_10yrs_old_profile.txt"):        
         self.knowledge_data = utils.get_knowledge_type(input_file_path)
 
     def run(self):
@@ -52,29 +54,11 @@ class AssessmentCrew:
         comprehensive_report_agent = ComprehensiveReportAgent()
 
         agents = [
-            biomechanics_coach_agent, 
-            conditioning_coach_agent,
-            exercise_database_agent,
-            fitbit_agent,
-            motivator_agent,
-            nutrition_agent,
-            physiology_agent,
-            position_coach_agent,
-            psychology_agent,
-            comprehensive_report_agent,
+            motivator_agent
         ]
 
         tasks = [
-            biomechanics_coach_agent.analyze_biometrics(),
-            conditioning_coach_agent.create_conditioning_program(),
-            exercise_database_agent.recommend_exercises(),
-            fitbit_agent.analyze_data(),
             motivator_agent.motivate_athlete(),
-            nutrition_agent.generate_meal_plan(),
-            physiology_agent.generate_physiology_report(),
-            position_coach_agent.generate_position_advice(),
-            psychology_agent.generate_psychology_report(),
-            comprehensive_report_agent.compile_report()
         ]
         
 

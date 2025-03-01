@@ -13,7 +13,7 @@ class MotivatorAgent(BaseAgent):
             """
     
         goal = """
-            Analyze the athlete's player profile to provide **personalized motivation**.  
+            Analyze the athlete's player profile in the CrewAI context to provide personalized motivation.  
             Offer encouragement based on their strengths, improvements, and aspirations.  
             Use positive reinforcement, goal-setting techniques, and visualization strategies  
             to help them overcome self-doubt and stay committed to success.
@@ -21,7 +21,7 @@ class MotivatorAgent(BaseAgent):
 
         backstory = """
             You have worked with elite athletes and understand the psychology of motivation.  
-            Your guidance is always **positive, enthusiastic, and actionable**, helping athletes  
+            Your guidance is always positive, enthusiastic, and actionable, helping athletes  
             push through mental barriers and reach their peak performance.
             """
 
@@ -36,20 +36,19 @@ class MotivatorAgent(BaseAgent):
     def motivate_athlete(self, age: str = '21'):
         return crewai.Task(
             description=dedent(f"""
-                Read the following player profile and create a **personalized** motivational message:
+                Analyze player athlete information in the CrewAI's context.
+                Create a personalized motivational message:
                 If no age is provided in the profile, assume the athlete's age is {age}.
 
                 Use knowledge in the Crew's context
 
                 Your response should:
-                - Highlight the athlete’s **strengths** and achievements.
+                - Highlight the athlete’s strengths and achievements.
                 - Encourage them in areas where they are improving.
-                - Offer **mental strategies** for overcoming challenges.
-                - End with a **powerful, uplifting message** to fuel their motivation.
+                - End with a powerful, uplifting message to encourage them.
 
-                Ensure that all recommendations are **evidence-based** and aligned with  
-                the athlete’s age **specific needs and competitive environment**.
+                Make sure the motivational message is appropriate to the athlete's age.
             """),
             agent=self,
-            expected_output="An age-appropriate inspiring, personalized message tailored to the athlete’s data."
+            expected_output="An age-appropriate inspiring, personalized message tailored to the athlete’s information."
         )

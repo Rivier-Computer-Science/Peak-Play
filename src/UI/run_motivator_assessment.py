@@ -36,7 +36,7 @@ logger = utils.configure_logger(logging.INFO)
 
 
 
-class AssessmentCrew:
+class MotivationCrew:
     def __init__(self, input_file_path="data/pitcher_10yrs_old_profile.txt"):        
         self.knowledge_data = utils.get_knowledge_type(input_file_path)
 
@@ -54,7 +54,7 @@ class AssessmentCrew:
         comprehensive_report_agent = ComprehensiveReportAgent()
 
         agents = [
-            motivator_agent
+            motivator_agent, psychology_agent, 
         ]
 
         tasks = [
@@ -66,7 +66,7 @@ class AssessmentCrew:
         crew = crewai.Crew(
             agents=agents,
             tasks=tasks,
-            knowledge_sources=[self.knowledge_data],
+            #knowledge_sources=[self.knowledge_data],
             process=crewai.Process.sequential,
             verbose=True
         )
@@ -80,27 +80,31 @@ class AssessmentCrew:
         return result
 
 
-if __name__ == "__main__":
-    print("## Assessment Analysis")
-    print('-------------------------------')
-
-    assessment_crew = AssessmentCrew()
-    logger.info("Assessment crew initialized successfully")
+def run_motivation_update(player_profile_file: str = "data/pitcher_10yrs_old_profile.txt"):
+    motivation_crew = MotivationCrew(input_file_path=player_profile_file)
+    logger.info(f"Motivation crew initialized successfully for {player_profile_file}")
 
     try:
-        crew_output = assessment_crew.run()
-        #crew_output = assessment_crew.run(inputs={"job": "Create a comprehensive overview of the athlete"})
-        logger.info("Assessment crew execution run() successfully")
+        crew_output = motivation_crew.run()
+        logger.info(f"Motivation crew execution run() successfully for file {player_profile_file}")
     except Exception as e:
-        logger.error(f"Error during crew execution: {e}")
+        logger.error(f"Error during crew execution of {player_profile_file}: {e}")
         sys.exit(1)
 
     # Display the output
-    print("\n\n########################")
-    print("## Here is the Report")
-    print("########################\n")
+    print("\n\n##########################################################")
+    print(f"## Here is the Report for {player_profile_file}")
+    print("############################################################\n")
 
     display_crew_output(crew_output)
+
+
+if __name__ == "__main__":
+    print("## Motivation Update")
+    print('-------------------------------')
+
+    run_motivation_update("data/pitcher_10yrs_old_profile.txt")
+    run_motivation_update("data/pitcher_16yrs_old_profile.txt")
 
     print("Collaboration complete")
     sys.exit(0)

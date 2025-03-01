@@ -34,31 +34,25 @@ import src.Utils.utils as utils
 # Initialize logger
 logger = utils.configure_logger(logging.INFO)
 
-
-
 class MotivationCrew:
-    def __init__(self, input_file_path="data/pitcher_10yrs_old_profile.txt"):        
-        self.knowledge_data = utils.get_knowledge_type(input_file_path)
+    def __init__(self, player_profile_file_path: str =None, player_age: str = '21'):      
+        if(player_profile_file_path == None):
+            logger.error("player_profile_file_path must be specified")
+        
+        self.player_profile_file_path = player_profile_file_path
+        self.knowledge_data = utils.get_knowledge_type(player_profile_file_path)
+        self.player_age = player_age
 
     def run(self):
-        # Initialize agents with the player profile
-        biomechanics_coach_agent = BiomechanicsCoachAgent()
-        conditioning_coach_agent = ConditioningCoachAgent()
-        exercise_database_agent = ExerciseDatabaseAgent()
-        fitbit_agent = FitbitAgent()
         motivator_agent = MotivatorAgent()
-        nutrition_agent = NutritionAgent()
-        physiology_agent = PhysiologyAgent()
-        position_coach_agent = PositionCoachAgent()
         psychology_agent = PsychologyAgent()
-        comprehensive_report_agent = ComprehensiveReportAgent()
 
         agents = [
-            motivator_agent, psychology_agent, 
+             psychology_agent, motivator_agent,
         ]
 
         tasks = [
-            motivator_agent.motivate_athlete(),
+            motivator_agent.motivate_athlete(age=self.player_age),
         ]
         
 
@@ -66,7 +60,7 @@ class MotivationCrew:
         crew = crewai.Crew(
             agents=agents,
             tasks=tasks,
-            #knowledge_sources=[self.knowledge_data],
+            knowledge_sources=[self.knowledge_data],
             process=crewai.Process.sequential,
             verbose=True
         )
@@ -77,34 +71,31 @@ class MotivationCrew:
             agent.register_crew(crew)
 
         result = crew.kickoff()
+        display_crew_output(result)
+
         return result
 
-
-def run_motivation_update(player_profile_file: str = "data/pitcher_10yrs_old_profile.txt"):
-    motivation_crew = MotivationCrew(input_file_path=player_profile_file)
-    logger.info(f"Motivation crew initialized successfully for {player_profile_file}")
-
-    try:
-        crew_output = motivation_crew.run()
-        logger.info(f"Motivation crew execution run() successfully for file {player_profile_file}")
-    except Exception as e:
-        logger.error(f"Error during crew execution of {player_profile_file}: {e}")
-        sys.exit(1)
-
-    # Display the output
-    print("\n\n##########################################################")
-    print(f"## Here is the Report for {player_profile_file}")
-    print("############################################################\n")
-
-    display_crew_output(crew_output)
 
 
 if __name__ == "__main__":
     print("## Motivation Update")
     print('-------------------------------')
 
-    run_motivation_update("data/pitcher_10yrs_old_profile.txt")
-    run_motivation_update("data/pitcher_16yrs_old_profile.txt")
+    print("\n\n##########################################################")
+    print(f"## Starting 10 year old profile")
+    print("############################################################\n")
+    pitcher_10yr_old_file_path = "data/pitcher_10yrs_old_profile.txt"
+    pitcher_10yr_crew = MotivationCrew(pitcher_10yr_old_file_path, '10')
+    logger.info(f"Motivation crew initialized successfully for {pitcher_10yr_old_file_path}")
+    pitcher_10yr_crew.run()
 
-    print("Collaboration complete")
+    print("\n\n##########################################################")
+    print(f"## Starting 16 year old profile")
+    print("############################################################\n")
+    pitcher_16yr_old_file_path = "data/pitcher_16yrs_old_profile.txt"
+    pitcher_16yr_crew = MotivationCrew(pitcher_16yr_old_file_path, '16')
+    logger.info(f"Motivation crew initialized successfully for {pitcher_16yr_old_file_path}")
+    pitcher_16yr_crew.run()
+
+    print("All Tasks are complete")
     sys.exit(0)

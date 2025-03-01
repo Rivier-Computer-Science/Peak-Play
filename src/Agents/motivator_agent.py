@@ -36,11 +36,12 @@ class MotivatorAgent(BaseAgent):
     def motivate_athlete(self, age: str = '21'):
         return crewai.Task(
             description=dedent(f"""
-                Analyze player athlete information in the CrewAI's context.
-                Create a personalized motivational message:
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                Analyze player athlete information in the Crew's context.
+                Create a personalized age-specific motivational message:
+                
+                The athlete's age is {age}.
 
-                Use knowledge in the Crew's context
+                Use the knowledge in the Crew's context
 
                 Your response should:
                 - Highlight the athlete’s strengths and achievements.

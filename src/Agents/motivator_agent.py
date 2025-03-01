@@ -4,8 +4,8 @@ from src.Agents.base_agent import BaseAgent
 
 
 class MotivatorAgent(BaseAgent):
-    def __init__(self, **kwargs):
-        name = "Sarah Johnson - Mental Coach"
+    def __init__(self, athlete_age: str ='21', **kwargs):
+        name = "Sarah Johnson - Motivator Coach"
         role = """
             You are a dedicated Motivator Agent, specializing in inspiring athletes to stay focused, 
             build resilience, and maximize their potential. Your role is to uplift and drive them forward 
@@ -33,13 +33,15 @@ class MotivatorAgent(BaseAgent):
             **kwargs
         )
 
-    def motivate_athlete(self, age: str = '21'):
+        self.athlete_age = athlete_age
+
+    def motivate_athlete(self):
         return crewai.Task(
             description=dedent(f"""
                 Analyze player athlete information in the Crew's context.
                 Create a personalized age-specific motivational message:
                 
-                The athlete's age is {age}.
+                The athlete's age is {self.athlete_age}.
 
                 Use the knowledge in the Crew's context
 

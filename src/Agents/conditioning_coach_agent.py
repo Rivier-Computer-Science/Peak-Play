@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class ConditioningCoachAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self, athlete_age: str ='21', **kwargs):
         name = "Coach Mike Reynolds - Strength & Conditioning"
         role = """
             You are the Conditioning Coach Agent, responsible for designing and managing athletic training programs.
@@ -32,12 +32,14 @@ class ConditioningCoachAgent(BaseAgent):
             **kwargs
         )
 
-    def create_conditioning_program(self, age: str = '21'):
+        self.athlete_age = athlete_age
+
+    def create_conditioning_program(self):
         return crewai.Task(
             description=dedent(f"""
                 Using the provided player data, design a personalized conditioning program 
                 that enhances performance while preventing injuries.
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
 
                 Use knowledge in the Crew's context               
 

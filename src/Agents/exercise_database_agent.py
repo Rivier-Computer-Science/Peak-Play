@@ -8,7 +8,7 @@ class ExerciseDatabaseAgent(BaseAgent):
     goal: str
     backstory: str
 
-    def __init__(self, **kwargs):
+    def __init__(self, athlete_age: str ='21', **kwargs):
         role = """
             You are the Exercise Database Agent.
             """
@@ -30,12 +30,14 @@ class ExerciseDatabaseAgent(BaseAgent):
             **kwargs
         )
 
-    def recommend_exercises(self, age: str = '21'):   # Need to add to run_crewai.py
+        self.athlete_age = athlete_age
+
+    def recommend_exercises(self):   # Need to add to run_crewai.py
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
                 Recommend exercises for the condition coach agent based on sport, fitness level, and goals.
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
 
                 The program should include:  
                 - **Warm-Up & Mobility**: Dynamic stretching, activation drills, and movement prep for sport-specific readiness.  

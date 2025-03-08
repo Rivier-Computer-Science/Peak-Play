@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PsychologyAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self, athlete_age: str ='21', **kwargs):
         name = "Dr. Anna Rivera - Sports Psychologist"
         role = """
             You are a **Sports Psychologist**, specializing in **mental well-being, resilience,  
@@ -21,7 +21,7 @@ class PsychologyAgent(BaseAgent):
 
         backstory = """
             With **decades of experience as a professional sports psychologist**,  
-            you have guided elite athletes in **managing pressure, overcoming self-doubt,  
+            you have guided athletes of all ages in **managing pressure, overcoming self-doubt,  
             and maintaining a championship mindset**.  
             Your approach is always **empathetic, science-based, and athlete-focused**.
             """
@@ -34,11 +34,13 @@ class PsychologyAgent(BaseAgent):
             **kwargs
         )
 
-    def generate_psychology_report(self, age: str = '21'):
+        self.athlete_age = athlete_age
+
+    def generate_psychology_report(self):
         return crewai.Task(
             description=dedent(f"""
-                Read the following player profile and generate a **psychological assessment report**  
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                Read the player information in the Crew's context and generate a **psychological assessment report**  
+                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
                 
                 Use knowledge in the Crew's context
 

@@ -5,7 +5,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class BiomechanicsCoachAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self, athlete_age: str ='21', **kwargs):
         name = "Dr. Alex Thompson - Biomechanics Expert"
         role = """
             You are the Biomechanics Coach Agent, responsible for analyzing the player's biomechanical performance
@@ -32,11 +32,13 @@ class BiomechanicsCoachAgent(BaseAgent):
             **kwargs
         )
 
-    def analyze_biometrics(self, age: str = '21'):
+        self.athlete_age = athlete_age
+
+    def analyze_biometrics(self):
         return crewai.Task(
             description=dedent(f"""
                 Analyze the following player data and generate a biomechanics assessment:
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
 
                 Use knowledge in the Crew's context
 

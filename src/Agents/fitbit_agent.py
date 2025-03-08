@@ -8,7 +8,7 @@ class FitbitAgent(BaseAgent):
     goal: str
     backstory: str
 
-    def __init__(self, **kwargs):
+    def __init__(self, athlete_age: str ='21', **kwargs):
         role = """
             You are the Analyst Agent.
             """
@@ -30,13 +30,15 @@ class FitbitAgent(BaseAgent):
             **kwargs
         )
 
-    def analyze_data(self, age: str = '21'): 
+        self.athlete_age = athlete_age
+
+    def analyze_data(self): 
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
                 Analyze the feedback from the user and summarize/distill important information for the other agents to provide
                 personalized recommendations to the user's training program.
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
 
                 **The summary report should include:**
                 - **Performance Trends**: Identify strengths, weaknesses, and improvements over time.  

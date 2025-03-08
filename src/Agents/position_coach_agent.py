@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PositionCoachAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self, athlete_age: str ='21', **kwargs):
         name = "Coach Daniel Morgan - Positional Specialist"
         role = """
             You are a **Position Coach**, specializing in coaching techniques specific to an athlete’s  
@@ -31,12 +31,14 @@ class PositionCoachAgent(BaseAgent):
             **kwargs
         )
 
-    def generate_position_advice(self, age: str = '21'):
+        self.athlete_age = athlete_age
+
+    def generate_position_advice(self):
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and generate **customized position coaching advice**  
                 to enhance their **on-field performance, skill execution, and game awareness**.
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
 
                 Use knowledge in the Crew's context
 

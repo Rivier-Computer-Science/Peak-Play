@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PhysiologyAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self, athlete_age: str ='21', **kwargs):
         name = "Dr. Robert Lee - Physiology Specialist"
         role = """
             You are a Sports Physiologist specializing in optimizing athletic performance through 
@@ -34,12 +34,14 @@ class PhysiologyAgent(BaseAgent):
             **kwargs
         )
 
-    def generate_physiology_report(self, age: str = '21'):
+        self.athlete_age = athlete_age
+
+    def generate_physiology_report(self):
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and provide **a physiology report**  
                 with **specific recommendations** for **injury prevention, recovery, and physical optimization**.
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
 
                 Use knowledge in the Crew's context
 

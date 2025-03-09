@@ -1,6 +1,13 @@
 import langchain_openai as lang_oai
 
 # LLM Models
+gpt_4o_llm_random = lang_oai.ChatOpenAI(
+    model_name="gpt-4o",  
+    temperature=0.7,  
+    max_tokens=1500,      
+    presence_penalty=0.5,      
+)
+
 gpt_4o_llm = lang_oai.ChatOpenAI(
     # The model name to use, like GPT-3.5 or GPT-4
     model_name="gpt-4o",  

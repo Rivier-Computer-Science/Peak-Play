@@ -150,36 +150,7 @@ class UpdateCrew:
         result = crew.kickoff()       
         return result
     
-class LogCrew:
-    def __init__(self, player_data: str):
-        self.player_data = StringKnowledgeSource(content=player_data)
 
-    def run(self, task_id: str):
-        # Initialize agents with file input
-        conditioning_coach_agent = ConditioningCoachAgent()
-        motivator_agent = MotivatorAgent()
-
-        agents = [
-            conditioning_coach_agent,
-            motivator_agent
-        ]
-
-        tasks = [
-            conditioning_coach_agent.generate_report(),
-            motivator_agent.motivate_athlete(),
-        ]
-
-        # Run tasks
-        crew = crewai.Crew(
-            agents=agents,
-            tasks=tasks,
-            knowledge_sources=[self.player_data],
-            process=crewai.Process.sequential,
-            verbose=True
-        )
-
-        result = crew.kickoff()       
-        return concatente_task_outputs(result)
     
 
 

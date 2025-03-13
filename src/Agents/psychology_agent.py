@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PsychologyAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self, athlete_age: str ='21', **kwargs):
         name = "Dr. Anna Rivera - Sports Psychologist"
         role = """
             You are a **Sports Psychologist**, specializing in **mental well-being, resilience,  

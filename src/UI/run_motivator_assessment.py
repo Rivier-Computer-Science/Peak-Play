@@ -34,27 +34,21 @@ import src.Utils.utils as utils
 # Initialize logger
 logger = utils.configure_logger(logging.INFO)
 
-
-
-class AssessmentCrew:
-    def __init__(self, input_file_path="data/pitcher_10yrs_old_profile.txt"):        
-        self.knowledge_data = utils.get_knowledge_type(input_file_path)
+class MotivationCrew:
+    def __init__(self, athlete_profile_file_path: str =None, athlete_age: str = '21'):      
+        if(athlete_profile_file_path == None):
+            logger.error("player_profile_file_path must be specified")
+        
+        self.player_profile_file_path = athlete_profile_file_path
+        self.knowledge_data = utils.get_knowledge_type(athlete_profile_file_path)
+        self.athlete_age = athlete_age
 
     def run(self):
-        # Initialize agents with the player profile
-        biomechanics_coach_agent = BiomechanicsCoachAgent()
-        conditioning_coach_agent = ConditioningCoachAgent()
-        exercise_database_agent = ExerciseDatabaseAgent()
-        fitbit_agent = FitbitAgent()
-        motivator_agent = MotivatorAgent()
-        nutrition_agent = NutritionAgent()
-        physiology_agent = PhysiologyAgent()
-        position_coach_agent = PositionCoachAgent()
-        psychology_agent = PsychologyAgent()
-        comprehensive_report_agent = ComprehensiveReportAgent()
+        motivator_agent = MotivatorAgent(athlete_age=self.athlete_age)
+        psychology_agent = PsychologyAgent(athlete_age=self.athlete_age)
 
         agents = [
-            motivator_agent
+             psychology_agent, motivator_agent,
         ]
 
         tasks = [
@@ -77,30 +71,33 @@ class AssessmentCrew:
             agent.register_crew(crew)
 
         result = crew.kickoff()
+        display_crew_output(result)
+
         return result
 
 
+
 if __name__ == "__main__":
-    print("## Assessment Analysis")
+    print("## Motivation Update")
     print('-------------------------------')
 
-    assessment_crew = AssessmentCrew()
-    logger.info("Assessment crew initialized successfully")
+    print("\n\n##########################################################")
+    print(f"## Starting 10 year old profile")
+    print("############################################################\n")
+    pitcher_10yr_old_file_path = "data/pitcher_10yrs_old_profile.txt"
+    pitcher_10yr_crew = MotivationCrew(athlete_profile_file_path= pitcher_10yr_old_file_path, 
+                                       athlete_age='10')
+    logger.info(f"Motivation crew initialized successfully for {pitcher_10yr_old_file_path}")
+    pitcher_10yr_crew.run()
 
-    try:
-        crew_output = assessment_crew.run()
-        #crew_output = assessment_crew.run(inputs={"job": "Create a comprehensive overview of the athlete"})
-        logger.info("Assessment crew execution run() successfully")
-    except Exception as e:
-        logger.error(f"Error during crew execution: {e}")
-        sys.exit(1)
+    print("\n\n##########################################################")
+    print(f"## Starting 16 year old profile")
+    print("############################################################\n")
+    pitcher_16yr_old_file_path = "data/pitcher_16yrs_old_profile.txt"
+    pitcher_16yr_crew = MotivationCrew(athlete_profile_file_path=pitcher_16yr_old_file_path, 
+                                       athlete_age='16')
+    logger.info(f"Motivation crew initialized successfully for {pitcher_16yr_old_file_path}")
+    pitcher_16yr_crew.run()
 
-    # Display the output
-    print("\n\n########################")
-    print("## Here is the Report")
-    print("########################\n")
-
-    display_crew_output(crew_output)
-
-    print("Collaboration complete")
+    print("All Tasks are complete")
     sys.exit(0)

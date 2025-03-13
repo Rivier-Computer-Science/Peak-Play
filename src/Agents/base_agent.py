@@ -11,19 +11,19 @@ import logging
 class BaseAgent(crewai.Agent):
     model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
 
-    def __init__(self, primary_sport: str, secondary_sport: str, unique_aspect: str, athlete_age: str ='21', **kwargs):
-        # require role, goal, and backstory to be initialized
+    def __init__(self, primary_sport: str = None, secondary_sport: str = None, unique_aspect: str = None, athlete_age: str ='21', **kwargs):
+        print("DEBUG: Received arguments:", kwargs)  
+
+        # Extract required parameters
         role = kwargs.pop('role', None)
         goal = kwargs.pop('goal', None)
         backstory = kwargs.pop('backstory', None)
 
-        if role is None:
-            raise ValueError("The 'role' parameter must be provided.")
-        if goal is None:
-            raise ValueError("The 'goal' parameter must be provided.")
-        if backstory is None:
-            raise ValueError("The 'backstory' parameter must be provided.")       
+        # Ensure required arguments are provided
+        if role is None or goal is None or backstory is None:
+            raise ValueError(f"Error: Missing one of ['role', 'goal', 'backstory']. Received: role={role}, goal={goal}, backstory={backstory}")
 
+             
         super().__init__(
             name=kwargs.pop('name', None),
             role=role,
@@ -69,5 +69,18 @@ class BaseAgent(crewai.Agent):
         
     def register_crew(self, crew):
         self.crew = crew
+
+agent = BaseAgent(
+    primary_sport="Tennis",     # Required argument (not set to default)
+    secondary_sport="Soccer",   # Required argument (not set to default)
+    unique_aspect="Agility",    # Required argument (not set to default)
+    athlete_age="25",   # Optional argument (defaults to '21' if not provided)
+    role="Player",      # Required
+    goal="Compete professionally",  # Required
+    backstory="An athlete with potential in multiple sports."   # Required
+)
+
+print("Agent created successfully!")
+
  
 

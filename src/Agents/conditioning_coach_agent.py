@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class ConditioningCoachAgent(BaseAgent):
-    def __init__(self, athlete_age: str ='21', **kwargs):
+    def __init__(self, **kwargs):
         name = "Coach Mike Reynolds - Strength & Conditioning"
         role = """
             You are the Conditioning Coach Agent, responsible for designing and managing athletic training programs.
@@ -32,7 +32,6 @@ class ConditioningCoachAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_age = athlete_age
 
     def create_conditioning_program(self):
         return crewai.Task(

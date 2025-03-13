@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class MotivatorAgent(BaseAgent):
-    def __init__(self, athlete_age: str ='21', **kwargs):
+    def __init__(self, **kwargs):
         name = "Sarah Johnson - Motivator Coach"
         role = """
             You are a dedicated Motivator Agent, specializing in inspiring athletes to stay focused, 
@@ -33,7 +33,6 @@ class MotivatorAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_age = athlete_age
 
     def motivate_athlete(self):
         return crewai.Task(

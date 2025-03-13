@@ -8,7 +8,7 @@ class FitbitAgent(BaseAgent):
     goal: str
     backstory: str
 
-    def __init__(self, athlete_age: str ='21', **kwargs):
+    def __init__(self, **kwargs):
         role = """
             You are the Analyst Agent.
             """
@@ -30,7 +30,6 @@ class FitbitAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_age = athlete_age
 
     def analyze_data(self): 
         # Preprocessing goes here

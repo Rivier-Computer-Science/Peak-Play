@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class NutritionAgent(BaseAgent):
-    def __init__(self, athlete_age: str ='21', **kwargs):
+    def __init__(self, **kwargs):
         name = "Dr. Emily Carter - Sports Nutritionist"
         role = """
             You are a Sports Nutrition Agent specializing in optimizing athlete performance through diet.
@@ -32,7 +32,6 @@ class NutritionAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_age = athlete_age
 
     def generate_meal_plan(self):
         return crewai.Task(

@@ -11,7 +11,7 @@ import logging
 class BaseAgent(crewai.Agent):
     model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
 
-    def __init__(self, **kwargs):
+    def __init__(self, primary_sport: str, secondary_sport: str, unique_aspect: str, athlete_age: str ='21', **kwargs):
         # require role, goal, and backstory to be initialized
         role = kwargs.pop('role', None)
         goal = kwargs.pop('goal', None)
@@ -51,6 +51,11 @@ class BaseAgent(crewai.Agent):
             max_retry_limit=kwargs.pop('max_retry_limit', 2),  # Optional
             **kwargs
         )
+
+        self.primary_sport = primary_sport
+        self.secondary_sport = secondary_sport
+        self.unique_aspect = unique_aspect
+        self.athlete_age = athlete_age
 
       # Initialize the logger
         self.logger = logging.getLogger(self.__class__.__name__)

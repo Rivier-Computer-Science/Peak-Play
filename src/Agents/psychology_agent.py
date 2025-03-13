@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PsychologyAgent(BaseAgent):
-    def __init__(self, athlete_age: str ='21', **kwargs):
+    def __init__(self, **kwargs):
         name = "Dr. Anna Rivera - Sports Psychologist"
         role = """
             You are a **Sports Psychologist**, specializing in **mental well-being, resilience,  
@@ -34,7 +34,6 @@ class PsychologyAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_age = athlete_age
 
     def generate_psychology_report(self):
         return crewai.Task(

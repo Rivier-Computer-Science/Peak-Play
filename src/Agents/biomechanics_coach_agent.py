@@ -5,7 +5,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class BiomechanicsCoachAgent(BaseAgent):
-    def __init__(self, athlete_age: str ='21', **kwargs):
+    def __init__(self, **kwargs):
         name = "Dr. Alex Thompson - Biomechanics Expert"
         role = """
             You are the Biomechanics Coach Agent, responsible for analyzing the player's biomechanical performance
@@ -32,7 +32,6 @@ class BiomechanicsCoachAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_age = athlete_age
 
     def analyze_biometrics(self):
         return crewai.Task(

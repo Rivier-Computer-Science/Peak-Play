@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PositionCoachAgent(BaseAgent):
-    def __init__(self, athlete_age: str ='21', **kwargs):
+    def __init__(self, **kwargs):
         name = "Coach Daniel Morgan - Positional Specialist"
         role = """
             You are a **Position Coach**, specializing in coaching techniques specific to an athlete’s  
@@ -30,8 +30,6 @@ class PositionCoachAgent(BaseAgent):
             backstory=kwargs.pop('backstory', backstory),
             **kwargs
         )
-
-        self.athlete_age = athlete_age
 
     def generate_position_advice(self):
         return crewai.Task(

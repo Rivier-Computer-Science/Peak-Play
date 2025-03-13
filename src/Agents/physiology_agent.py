@@ -4,7 +4,7 @@ from src.Agents.base_agent import BaseAgent
 
 
 class PhysiologyAgent(BaseAgent):
-    def __init__(self, athlete_age: str ='21', **kwargs):
+    def __init__(self, **kwargs):
         name = "Dr. Robert Lee - Physiology Specialist"
         role = """
             You are a Sports Physiologist specializing in optimizing athletic performance through 
@@ -34,7 +34,6 @@ class PhysiologyAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_age = athlete_age
 
     def generate_physiology_report(self):
         return crewai.Task(

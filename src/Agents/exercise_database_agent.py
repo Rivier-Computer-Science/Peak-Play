@@ -8,7 +8,7 @@ class ExerciseDatabaseAgent(BaseAgent):
     goal: str
     backstory: str
 
-    def __init__(self, athlete_age: str ='21', **kwargs):
+    def __init__(self, **kwargs):
         role = """
             You are the Exercise Database Agent.
             """
@@ -30,7 +30,6 @@ class ExerciseDatabaseAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_age = athlete_age
 
     def recommend_exercises(self):   # Need to add to run_crewai.py
         # Preprocessing goes here

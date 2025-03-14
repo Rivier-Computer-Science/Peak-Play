@@ -11,8 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import logging
 import uuid
-import crewai
-from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 
 # Import Crews
 from src.WebFunctions.LogCrew import LogCrew
@@ -21,20 +19,6 @@ from src.WebFunctions.analyze_fitbit_data import AnalyzeFitbitDataCrew
 from src.WebFunctions.UpdateCrew import UpdateCrew
 
 import src.Utils.utils as utils
-
-# Import Agents
-from src.Agents.agent_helpers import concatente_task_outputs
-from src.Agents.base_agent import BaseAgent
-from src.Agents.biomechanics_coach_agent import BiomechanicsCoachAgent
-from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
-from src.Agents.conditioning_coach_agent import ConditioningCoachAgent
-from src.Agents.exercise_database_agent import ExerciseDatabaseAgent
-from src.Agents.fitbit_agent import FitbitAgent
-from src.Agents.motivator_agent import MotivatorAgent
-from src.Agents.nutrition_agent import NutritionAgent
-from src.Agents.physiology_agent import PhysiologyAgent
-from src.Agents.position_coach_agent import PositionCoachAgent
-from src.Agents.psychology_agent import PsychologyAgent
 
 PORT = int(os.environ.get("PORT", 8000))  # Default to 8000 for local testing
 

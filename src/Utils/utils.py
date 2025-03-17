@@ -1,8 +1,14 @@
 import logging
 
+from pydantic import BaseModel # JSON input from WordPress
+
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 from crewai.knowledge.source.crew_docling_source import CrewDoclingSource
 from crewai.knowledge.source.json_knowledge_source import JSONKnowledgeSource
+
+class WordPressInput(BaseModel):
+    input_text = str
+
 
 def get_knowledge_type(input_file_path:str):        
     if not input_file_path:

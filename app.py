@@ -60,7 +60,7 @@ def preflight_check():
 
 @app.post("/run_full_assessment")
 async def run_full_assessment(
-    input_text: str = Body(..., media_type="text/plain"),
+    input_text: str = Body(..., media_type="application/json"),
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):    
     """Starts the assessment as a background task and returns a task_id."""
@@ -133,7 +133,7 @@ def preflight_check():
     return {"message": "Preflight OK"}
 
 @app.post("/log_training")
-async def analyze_fitbit_data(
+async def log_training_data(
     input_text: str = Body(..., media_type="text/plain"),
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):

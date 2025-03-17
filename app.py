@@ -60,7 +60,7 @@ def preflight_check():
 
 @app.post("/run_full_assessment")
 async def run_full_assessment(
-    input_text: str = Body(..., media_type="application/json"),
+    input_text: str = utils.WordPressInput,
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):    
     """Starts the assessment as a background task and returns a task_id."""

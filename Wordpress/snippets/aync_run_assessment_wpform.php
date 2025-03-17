@@ -1,4 +1,4 @@
-function async_run_full_assessment_markdown_shortcode() {
+function async_run_assessment_wpforms_markdown_shortcode() {
     ob_start();
 
     $form_id = 241;
@@ -16,12 +16,12 @@ function async_run_full_assessment_markdown_shortcode() {
             'primary sport' => $latest_entry['fields'][8]['value'] ?? '',
             'secondary sport' => $latest_entry['fields'][11]['value'] ?? '',
             'handedness' => $latest_entry['fields'][9]['value'] ?? '',
-            'position' => $latest_entry['fields'][12]['value'] ?? '',
-            'position' => $latest_entry['fields'][14]['value'] ?? '',
-            'position' => $latest_entry['fields'][15]['value'] ?? '',
-            'position' => $latest_entry['fields'][16]['value'] ?? '',
+            'position 1' => $latest_entry['fields'][12]['value'] ?? '',
+            'position 2' => $latest_entry['fields'][14]['value'] ?? '',
+            'position 3' => $latest_entry['fields'][15]['value'] ?? '',
+            'position 4' => $latest_entry['fields'][16]['value'] ?? '',
             'stroke' => $latest_entry['fields'][23]['value'] ?? '',
-            'position' => $latest_entry['fields'][17]['value'] ?? '',
+            'position 5 ' => $latest_entry['fields'][17]['value'] ?? '',
             'level of play' => $latest_entry['fields'][19]['value'] ?? '',
             'performance goals' => $latest_entry['fields'][20]['value'] ?? '',
             'sprains' => $latest_entry['fields'][26]['value'] ?? '',
@@ -30,7 +30,7 @@ function async_run_full_assessment_markdown_shortcode() {
             'dislocations' => $latest_entry['fields'][29]['value'] ?? '',
             'overuse & chronic injuries' => $latest_entry['fields'][30]['value'] ?? '',
             'head & neck injuries' => $latest_entry['fields'][31]['value'] ?? '',
-            'spinal injuries' => $latest_entry['fields'][32]['value'] ?? '',
+            'spinal injuries' => $latest_entry['fields'][32]['value'] ?? ''
             ];
     } else {
         $form_data = ['error' => 'No entries found'];
@@ -142,4 +142,4 @@ function async_run_full_assessment_markdown_shortcode() {
     <?php
     return ob_get_clean();
 }
-add_shortcode('async_run_full_assessment_markdown', 'async_run_full_assessment_markdown_shortcode');
+add_shortcode('async_run_full_assessment_markdown', 'async_run_assessment_wpforms_markdown_shortcode');

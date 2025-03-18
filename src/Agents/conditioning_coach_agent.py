@@ -32,12 +32,13 @@ class ConditioningCoachAgent(BaseAgent):
             **kwargs
         )
 
-    def create_conditioning_program(self, age: str = '21'):
+
+    def create_conditioning_program(self):
         return crewai.Task(
             description=dedent(f"""
                 Using the provided player data, design a personalized conditioning program 
                 that enhances performance while preventing injuries.
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
 
                 Use knowledge in the Crew's context               
 

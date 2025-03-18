@@ -32,11 +32,12 @@ class NutritionAgent(BaseAgent):
             **kwargs
         )
 
-    def generate_meal_plan(self, age: str = '21'):
+
+    def generate_meal_plan(self):
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and create a **customized 1-month meal plan**:
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
 
                 Use knowledge in the Crew's context
 

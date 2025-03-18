@@ -34,12 +34,13 @@ class PhysiologyAgent(BaseAgent):
             **kwargs
         )
 
-    def generate_physiology_report(self, age: str = '21'):
+
+    def generate_physiology_report(self):
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and provide **a physiology report**  
                 with **specific recommendations** for **injury prevention, recovery, and physical optimization**.
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
 
                 Use knowledge in the Crew's context
 

@@ -34,7 +34,6 @@ class PsychologyAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_age = athlete_age
 
     def generate_psychology_report(self):
         return crewai.Task(

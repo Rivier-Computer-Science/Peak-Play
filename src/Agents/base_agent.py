@@ -11,19 +11,21 @@ import logging
 class BaseAgent(crewai.Agent):
     model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
 
-    def __init__(self, **kwargs):
-        # require role, goal, and backstory to be initialized
+    def __init__(self, primary_sport: str = 'Baseball', secondary_sport: str = 'Soccer', 
+                 unique_aspect: str = "Left handed", athlete_age: str ='21', 
+                 sex: str="Male", athlete_name: str="John Doe", **kwargs):
+        print("DEBUG: Received arguments:", kwargs)  
+
+        # Extract required parameters
         role = kwargs.pop('role', None)
         goal = kwargs.pop('goal', None)
         backstory = kwargs.pop('backstory', None)
 
-        if role is None:
-            raise ValueError("The 'role' parameter must be provided.")
-        if goal is None:
-            raise ValueError("The 'goal' parameter must be provided.")
-        if backstory is None:
-            raise ValueError("The 'backstory' parameter must be provided.")       
+        # Ensure required arguments are provided
+        if role is None or goal is None or backstory is None:
+            raise ValueError(f"Error: Missing one of ['role', 'goal', 'backstory']. Received: role={role}, goal={goal}, backstory={backstory}")
 
+             
         super().__init__(
             name=kwargs.pop('name', None),
             role=role,
@@ -52,6 +54,13 @@ class BaseAgent(crewai.Agent):
             **kwargs
         )
 
+        self.primary_sport = primary_sport
+        self.secondary_sport = secondary_sport
+        self.unique_aspect = unique_aspect
+        self.athlete_age = athlete_age
+        self.sex = sex
+        self.athlete_name = athlete_name
+
       # Initialize the logger
         self.logger = logging.getLogger(self.__class__.__name__)
         if not self.logger.handlers:
@@ -64,5 +73,7 @@ class BaseAgent(crewai.Agent):
         
     def register_crew(self, crew):
         self.crew = crew
+
+
  
 

@@ -11,7 +11,9 @@ import logging
 class BaseAgent(crewai.Agent):
     model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
 
-    def __init__(self, primary_sport: str = None, secondary_sport: str = None, unique_aspect: str = None, athlete_age: str ='21', **kwargs):
+    def __init__(self, primary_sport: str = 'Baseball', secondary_sport: str = 'Soccer', 
+                 unique_aspect: str = "Left handed", athlete_age: str ='21', 
+                 sex: str="Male", athlete_name: str="John Doe", **kwargs):
         print("DEBUG: Received arguments:", kwargs)  
 
         # Extract required parameters
@@ -56,6 +58,8 @@ class BaseAgent(crewai.Agent):
         self.secondary_sport = secondary_sport
         self.unique_aspect = unique_aspect
         self.athlete_age = athlete_age
+        self.sex = sex
+        self.athlete_name = athlete_name
 
       # Initialize the logger
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -70,17 +74,6 @@ class BaseAgent(crewai.Agent):
     def register_crew(self, crew):
         self.crew = crew
 
-agent = BaseAgent(
-    primary_sport="Tennis",     # Required argument (not set to default)
-    secondary_sport="Soccer",   # Required argument (not set to default)
-    unique_aspect="Agility",    # Required argument (not set to default)
-    athlete_age="25",   # Optional argument (defaults to '21' if not provided)
-    role="Player",      # Required
-    goal="Compete professionally",  # Required
-    backstory="An athlete with potential in multiple sports."   # Required
-)
-
-print("Agent created successfully!")
 
  
 

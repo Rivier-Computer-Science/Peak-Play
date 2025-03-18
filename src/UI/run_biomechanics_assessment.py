@@ -34,15 +34,26 @@ import src.Utils.utils as utils
 # Initialize logger
 logger = utils.configure_logger(logging.INFO)
 
-
+player_profile = '''
+    {
+        "athlete_name": "John Doe",
+        "athlete_age": 25,
+        "sex": "male",
+        "primary_sport": "soccer",
+        "primary_sport_level": "recreational player",
+        "secondary_sport": "basketball",
+        "secondary_sport_level": "recreational player",
+        "unique_aspect": "exceptional agility"
+    }
+    '''
 
 class AssessmentCrew:
-    def __init__(self, input_file_path="data/pitcher_10yrs_old_profile.txt"):        
-        self.knowledge_data = utils.get_knowledge_type(input_file_path)
-
+    def __init__(self, player_profile=player_profile):
+        self.player_profile = player_profile
+ 
     def run(self):
         # Initialize agents with the player profile
-        biomechanics_coach_agent = BiomechanicsCoachAgent()
+        biomechanics_coach_agent = BiomechanicsCoachAgent(player_profile=self.player_profile)
         conditioning_coach_agent = ConditioningCoachAgent()
         exercise_database_agent = ExerciseDatabaseAgent()
         fitbit_agent = FitbitAgent()
@@ -66,7 +77,7 @@ class AssessmentCrew:
         crew = crewai.Crew(
             agents=agents,
             tasks=tasks,
-            knowledge_sources=[self.knowledge_data],
+            #knowledge_sources=[self.knowledge_data],
             process=crewai.Process.sequential,
             verbose=True
         )

@@ -9,28 +9,39 @@ import logging
 
 
 class BaseAgent(crewai.Agent):
-    model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
+    #model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
 
-    def __init__(self, primary_sport: str = 'Baseball', secondary_sport: str = 'Soccer', 
-                 unique_aspect: str = "Left handed", athlete_age: str ='21', 
-                 sex: str="Male", athlete_name: str="John Doe", **kwargs):
-        print("DEBUG: Received arguments:", kwargs)  
-
-        # Extract required parameters
-        role = kwargs.pop('role', None)
-        goal = kwargs.pop('goal', None)
-        backstory = kwargs.pop('backstory', None)
-
-        # Ensure required arguments are provided
-        if role is None or goal is None or backstory is None:
-            raise ValueError(f"Error: Missing one of ['role', 'goal', 'backstory']. Received: role={role}, goal={goal}, backstory={backstory}")
-
-             
+    def __init__(self, **kwargs):        
+        
+        # Player Profile can be json str or dict
+        if 'player_profile' in kwargs:
+            player_profile = kwargs.pop('player_profile')
+            # Allow both a JSON string or a dict.
+            if isinstance(player_profile, str):
+                self.player_profile = json.loads(player_profile)
+            elif isinstance(player_profile, dict):
+                self.player_profile = player_profile
+            else:
+                raise ValueError("player_profile must be a dict or a valid JSON string.")
+        else: # default profile
+           self.player_profile = '''
+                {
+                    "athlete_name": "John Doe",
+                    "athlete_age": 25,
+                    "sex": "male",
+                    "primary_sport": "soccer",
+                    "primary_sport_level": "recreational player",
+                    "secondary_sport": "basketball",
+                    "secondary_sport_level": "recreational player",
+                    "unique_aspect": "exceptional agility"
+            }
+            '''                
+                        
         super().__init__(
-            name=kwargs.pop('name', None),
-            role=role,
-            goal=goal,
-            backstory=backstory,
+            name=kwargs.pop('name', 'Helpful Agent'),
+            #role=role,
+            #goal=goal,
+            #backstory=backstory,
             #tools=kwargs.get('tools', []),   #[my_tool1, my_tool2],  # Optional, defaults to an empty list
             llm=kwargs.pop('llm', llm_config.gpt_4o_llm),
             allow_delegation=kwargs.pop('allow_delegation', False),
@@ -54,13 +65,6 @@ class BaseAgent(crewai.Agent):
             **kwargs
         )
 
-        self.primary_sport = primary_sport
-        self.secondary_sport = secondary_sport
-        self.unique_aspect = unique_aspect
-        self.athlete_age = athlete_age
-        self.sex = sex
-        self.athlete_name = athlete_name
-
       # Initialize the logger
         self.logger = logging.getLogger(self.__class__.__name__)
         if not self.logger.handlers:
@@ -70,7 +74,9 @@ class BaseAgent(crewai.Agent):
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
             self.logger.setLevel(logging.INFO)
-        
+
+
+
     def register_crew(self, crew):
         self.crew = crew
 

@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict
 import logging
 
 
-class BaseAgent(crewai.Agent):
+class BaseAgent(crewai.Agent, BaseModel):
     model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
 
     def __init__(self, **kwargs):                                        

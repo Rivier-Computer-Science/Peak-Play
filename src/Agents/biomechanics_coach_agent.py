@@ -2,11 +2,11 @@ import crewai as crewai
 import json
 from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
-from src.Helpers.player_profile import PlayerProfile
+from src.Helpers.athlete_profile import AthleteProfile
 
 
 class BiomechanicsCoachAgent(BaseAgent):
-    def __init__(self, player_profile: PlayerProfile, **kwargs):
+    def __init__(self, player_profile: AthleteProfile, **kwargs):
         name = "Dr. Alex Thompson - Biomechanics Expert"
         pp = player_profile.get_player_profile()  # Abbreviate dictionary access
         role = f"""

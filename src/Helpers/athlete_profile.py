@@ -1,6 +1,6 @@
 import json
 
-class PlayerProfile:
+class AthleteProfile:
     def __init__(self, player_profile, **kwargs):
         self.player_profile = self.convert_player_profile(player_profile)
 

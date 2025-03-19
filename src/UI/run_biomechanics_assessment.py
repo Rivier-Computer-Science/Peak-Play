@@ -28,7 +28,7 @@ from src.Agents.exercise_database_agent import ExerciseDatabaseAgent
 from src.Agents.fitbit_agent import FitbitAgent
 
 import src.Utils.utils as utils
-from src.Helpers.player_profile import PlayerProfile
+from src.Helpers.athlete_example_profiles import jane_smith_tennis, john_doe_soccer
 
 
 
@@ -38,20 +38,9 @@ logger = utils.configure_logger(logging.INFO)
 
 
 class AssessmentCrew:
-    revised_profile = PlayerProfile({
-        "athlete_name": "Jane Smith",
-        "athlete_age": 28,
-        "sex": "female",
-        "primary_sport": "tennis",
-        "primary_sport_level": "competitive",
-        "secondary_sport": "swimming",
-        "secondary_sport_level": "club level",
-        "unique_aspect": "exceptional endurance"
-    })
-
     def run(self):
         # Initialize agents with the player profile
-        biomechanics_coach_agent = BiomechanicsCoachAgent(player_profile=self.revised_profile)
+        biomechanics_coach_agent = BiomechanicsCoachAgent(player_profile=jane_smith_tennis)
         conditioning_coach_agent = ConditioningCoachAgent()
         exercise_database_agent = ExerciseDatabaseAgent()
         fitbit_agent = FitbitAgent()

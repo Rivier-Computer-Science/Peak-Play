@@ -6,7 +6,7 @@ class AthleteProfile:
 
     
     def get_player_profile(self) -> dict:
-        return self.player_profile
+        return self.player_profile    
     
     @staticmethod
     def convert_player_profile(player_profile) -> dict:

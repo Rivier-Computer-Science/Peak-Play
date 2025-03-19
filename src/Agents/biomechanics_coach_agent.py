@@ -38,21 +38,13 @@ class BiomechanicsCoachAgent(BaseAgent):
             **kwargs
         )
 
-        self.player_profile = pp
+        self.player_profile = player_profile
 
     def analyze_biometrics(self):
-        pp = self.player_profile
         return crewai.Task(            
             description=dedent(f"""
                 Analyze the following athlete profile data and generate a biomechanics assessment:
-                    Name: {pp['athlete_name']}
-                    Age:  {pp['athlete_age']}
-                    Sex:  {pp['sex']}
-                    Primary sport: {pp['primary_sport']}
-                    Primary sport level: {pp['primary_sport_level']}                    
-                    Secondary sport: {pp['secondary_sport']}
-                    Secondary sport level: {pp['secondary_sport_level']}
-                    Unique characteristic of the athlete: {pp['unique_aspect']}
+                               {self.player_profile.get_player_profile()}                    
 
                 The biomechanics assessment should include:
                 - Movement Efficiency: Evaluate mobility, balance, and joint alignment.

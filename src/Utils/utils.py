@@ -26,23 +26,27 @@ def get_knowledge_type(input_file_path:str):
     else:
         return "Error: Unsupported file format. Please provide a .txt or .json file."
 
-import logging
 
 def configure_logger(
     logLevel: int = logging.DEBUG, 
     logger: logging.Logger = None
 ) -> logging.Logger:
-    """Configures and returns a logger with the specified log level."""
+    """Configures and returns a logger with the specified log level."""    
+    try:
+        if logger is None:
+            logger = logging.getLogger(__name__)  
+
+        logger.setLevel(logLevel)
+
+        if not logger.handlers:
+            handler = logging.StreamHandler()
+            formatter = logging.Formatter('%(levelname)s - %(module)s - %(filename)s - %(funcName)s - line %(lineno)d - %(asctime)s - %(name)s - %(message)s')
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
+
+        logger.info("Successfully configured logger")
     
-    if logger is None:
-        logger = logging.getLogger(__name__)  
-
-    logger.setLevel(logLevel)
-
-    if not logger.handlers:
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter('%(levelname)s - %(module)s - %(filename)s - %(funcName)s - line %(lineno)d - %(asctime)s - %(name)s - %(message)s')
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+    except Exception as e:
+        logger.error(f"Error during configuration of logger: {e}")
 
     return logger

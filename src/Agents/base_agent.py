@@ -4,41 +4,16 @@ import json
 import pandas as pd
 import src.Models.llm_config as llm_config
 import crewai as crewai
-from pydantic import ConfigDict
+from pydantic import BaseModel, ConfigDict
 import logging
 
 
 class BaseAgent(crewai.Agent):
-    #model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
+    model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
 
-    def __init__(self, **kwargs):        
-        
-        # Player Profile can be json str or dict
-        if 'player_profile' in kwargs:
-            player_profile = kwargs.pop('player_profile')
-            # Allow both a JSON string or a dict.
-            if isinstance(player_profile, str):
-                self.player_profile = json.loads(player_profile)
-            elif isinstance(player_profile, dict):
-                self.player_profile = player_profile
-            else:
-                raise ValueError("player_profile must be a dict or a valid JSON string.")
-        else: # default profile
-           self.player_profile = '''
-                {
-                    "athlete_name": "John Doe",
-                    "athlete_age": 25,
-                    "sex": "male",
-                    "primary_sport": "soccer",
-                    "primary_sport_level": "recreational player",
-                    "secondary_sport": "basketball",
-                    "secondary_sport_level": "recreational player",
-                    "unique_aspect": "exceptional agility"
-            }
-            '''                
-                        
+    def __init__(self, **kwargs):                                        
         super().__init__(
-            name=kwargs.pop('name', 'Helpful Agent'),
+            #name=kwargs.pop('name', 'Helpful Agent'),
             #role=role,
             #goal=goal,
             #backstory=backstory,
@@ -63,9 +38,9 @@ class BaseAgent(crewai.Agent):
             allow_code_execution=kwargs.pop('allow_code_execution', False),  # Optiona
             max_retry_limit=kwargs.pop('max_retry_limit', 2),  # Optional
             **kwargs
-        )
+        )        
 
-      # Initialize the logger
+        # Initialize the logger
         self.logger = logging.getLogger(self.__class__.__name__)
         if not self.logger.handlers:
             # Set up logging format and level if not already configured

@@ -1,4 +1,5 @@
 import logging
+from typing import Dict, Any
 
 from pydantic import BaseModel # JSON input from WordPress
 
@@ -7,7 +8,7 @@ from crewai.knowledge.source.crew_docling_source import CrewDoclingSource
 from crewai.knowledge.source.json_knowledge_source import JSONKnowledgeSource
 
 class WordPressInput(BaseModel):
-    input_text = str
+    form_data: Dict[str, Any]
 
 
 def get_knowledge_type(input_file_path:str):        

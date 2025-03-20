@@ -14,7 +14,7 @@ import src.Agents.agent_helpers as agent_helpers
 
 
 class RunFullAssessmentCrew:
-    def __init__(self, player_data: str):
+    def __init__(self, player_data):
         self.player_data = StringKnowledgeSource(content=player_data)
 
     def run(self, task_id: str):

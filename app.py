@@ -60,15 +60,15 @@ def preflight_check():
 
 @app.post("/run_full_assessment")
 async def run_full_assessment(
-    input_text: str = Body(..., media_type="application/json"),
+    input_text: utils.WordPressInput,
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):    
     """Starts the assessment as a background task and returns a task_id."""
     task_id = str(uuid.uuid4())  # Generate a unique task ID
-    background_tasks.add_task(full_assessment_run_and_store_result, task_id, input_text)
+    background_tasks.add_task(full_assessment_run_and_store_result, task_id, input_text.model_dump_json())
     return {"success": True, "task_id": task_id}
 
-def full_assessment_run_and_store_result(task_id: str, input_text: str):
+def full_assessment_run_and_store_result(task_id: str, input_text):
     """Runs the assessment and stores the result for later retrieval."""
     full_assessment_crew = RunFullAssessmentCrew(input_text)
     full_assessment_result = full_assessment_crew.run(task_id)  # Runs synchronously in the background

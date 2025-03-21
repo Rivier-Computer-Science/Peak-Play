@@ -10,12 +10,15 @@ from src.Agents.position_coach_agent import PositionCoachAgent
 from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 import src.Agents.agent_helpers as agent_helpers
+import src.Utils.utils as utils
 
 
 
 class RunFullAssessmentCrew:
-    def __init__(self, player_data: str):
-        self.player_data = StringKnowledgeSource(content=player_data)
+    def __init__(self, player_data):
+        pd = utils.convert_player_profile(player_data)
+        self.player_data = StringKnowledgeSource(content=pd)
+        print("player_data in RunFullAssessment: ", pd)
 
     def run(self, task_id: str):
         # Initialize agents with file input

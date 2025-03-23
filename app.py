@@ -16,6 +16,7 @@ import uuid
 from src.WebFunctions.LogCrew import LogCrew
 from src.WebFunctions.run_full_assement import RunFullAssessmentCrew
 from src.WebFunctions.analyze_fitbit_data import AnalyzeFitbitDataCrew
+from src.WebFunctions.generate_blog_post import GenerateBlogPostCrew
 from src.WebFunctions.UpdateCrew import UpdateCrew
 
 import src.Utils.utils as utils
@@ -169,6 +170,6 @@ async def generate_blog_post(
 
 
 def run_generate_blog_post_and_return_result(task_id: str, input_text: str):
-    generate_blog_post_crew = AnalyzeFitbitDataCrew(input_text)
-    analyze_fitbit_data_result = analyze_fitbit_data_crew.run(task_id)  # Runs synchronously in the background
-    task_results[task_id] = analyze_fitbit_data_result  # Store result for polling
+    generate_blog_post_crew = GenerateBlogPostCrew()
+    generate_blog_post_result = generate_blog_post_crew.run(task_id)  # Runs synchronously in the background
+    task_results[task_id] = generate_blog_post_result  # Store result for polling

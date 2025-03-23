@@ -16,6 +16,7 @@ import uuid
 from src.WebFunctions.LogCrew import LogCrew
 from src.WebFunctions.run_full_assement import RunFullAssessmentCrew
 from src.WebFunctions.analyze_fitbit_data import AnalyzeFitbitDataCrew
+from src.WebFunctions.generate_blog_post import GenerateBlogPostCrew
 from src.WebFunctions.UpdateCrew import UpdateCrew
 
 import src.Utils.utils as utils
@@ -149,3 +150,26 @@ def run_and_store_log_result(task_id: str, input_text: str):
     log_crew_result = log_crew.run(task_id)  # Runs synchronously in the background
     task_results[task_id] = log_crew_result  # Store result for polling
 
+
+#####################
+# Generate Blog Post
+#####################
+@app.options("/generate_blog_post")  # Allow OPTIONS requests for CORS
+def preflight_check():
+    return {"message": "Preflight generate_blog_post OK"}
+
+@app.post("/generate_blog_post")
+async def generate_blog_post(
+    input_text: str = Body(..., media_type="text/plain"),
+    background_tasks: BackgroundTasks = BackgroundTasks()
+):
+    """Starts the Update as a background task and returns a task_id."""
+    task_id = str(uuid.uuid4())  # Generate a unique task ID
+    background_tasks.add_task(run_generate_blog_post_and_return_result, task_id, input_text)
+    return {"success": True, "task_id": task_id}
+
+
+def run_generate_blog_post_and_return_result(task_id: str, input_text: str):
+    generate_blog_post_crew = GenerateBlogPostCrew()
+    generate_blog_post_result = generate_blog_post_crew.run(task_id)  # Runs synchronously in the background
+    task_results[task_id] = generate_blog_post_result  # Store result for polling

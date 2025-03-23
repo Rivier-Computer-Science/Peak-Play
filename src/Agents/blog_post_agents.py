@@ -10,6 +10,10 @@ from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
 
 
+from src.AgentTools.search_wikipedia import search_wikipedia
+from src.AgentTools.search_unsplash_images import search_unsplash_images
+
+
 class BlogTopicAgent(BaseAgent):
     role: str
     goal: str
@@ -82,7 +86,7 @@ class BlogWriterAgent(BaseAgent):
             role = kwargs.pop('role', role),
             goal = kwargs.pop('goal', goal),
             backstory = kwargs.pop('backstory', backstory),
-            tools=[],
+            tools=[search_wikipedia, search_unsplash_images],
             **kwargs
         )
 
@@ -175,7 +179,7 @@ class BlogValidationAgent(BaseAgent):
             role = kwargs.pop('role', role),
             goal = kwargs.pop('goal', goal),
             backstory = kwargs.pop('backstory', backstory),
-            tools=[],
+            tools=[search_wikipedia, search_unsplash_images],
             **kwargs
         )
 

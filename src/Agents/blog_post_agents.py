@@ -253,10 +253,7 @@ class BlogPublisherAgent(BaseAgent):
 
             """),
             agent=self,
-            expected_output="""A revised blog post using JSON with the following fields: 
-                            post_title: a plaintext string and 
-                            post_content: markdown for the body
-                                   
-                            Make sure those fields only contain the text appearing as it should be published.
+            expected_output="""A revised blog post using stringified html.                                    
+                            Make sure the html only contain the text appearing as it should be published.
                            """
         )      

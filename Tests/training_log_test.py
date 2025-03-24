@@ -11,7 +11,7 @@ curl -X POST "http://localhost:8000/log_training" \
         3 sets of Barbbell Bench Press 185lbs for 5 reps.
         3 sets of Dumbbell Shoulder Press 55lbs for 8 reps.
         3 sets of cable tricep extensions at 60lbs for 10 reps.
-
+"
 
 
 """

@@ -1,55 +1,47 @@
-import crewai as crewai
+import crewai
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 
-from src.Agents.biomechanics_coach_agent import BiomechanicsCoachAgent
+# Import Agents
+from src.Agents.base_agent import BaseAgent
 from src.Agents.conditioning_coach_agent import ConditioningCoachAgent
 from src.Agents.motivator_agent import MotivatorAgent
 from src.Agents.nutrition_agent import NutritionAgent
 from src.Agents.physiology_agent import PhysiologyAgent
-from src.Agents.position_coach_agent import PositionCoachAgent
-from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
-import src.Agents.agent_helpers as agent_helpers
-import src.Utils.utils as utils
 
 
 
-class RunFullAssessmentCrew:
-    def __init__(self, player_data):
-        pd = utils.convert_player_profile(player_data)
-        self.player_data = StringKnowledgeSource(content=pd)
-        print("player_data in RunFullAssessment: ", pd)
+class UpdateInput(BaseAgent):
+    file_path: str  # WordPress passes file URL or local path
+
+class UpdateCrew:
+    def __init__(self, player_data: str):
+        self.player_data = StringKnowledgeSource(content=player_data)
 
     def run(self, task_id: str):
         # Initialize agents with file input
-        biomechanics_coach_agent = BiomechanicsCoachAgent()
+       # analyst_agent = AnalystAgent()
         conditioning_coach_agent = ConditioningCoachAgent()
         motivator_agent = MotivatorAgent()
         nutrition_agent = NutritionAgent()
         physiology_agent = PhysiologyAgent()
-        position_coach_agent = PositionCoachAgent()
-        psychology_agent = PsychologyAgent()
         comprehensive_report_agent = ComprehensiveReportAgent()
 
         agents = [
-            biomechanics_coach_agent, 
+         #   analyst_agent,
             conditioning_coach_agent,
             motivator_agent,
             nutrition_agent,
             physiology_agent,
-            position_coach_agent,
-            psychology_agent,
             comprehensive_report_agent,
         ]
 
         tasks = [
-            biomechanics_coach_agent.analyze_biometrics(),
-            conditioning_coach_agent.create_conditioning_program(),
+         #   analyst_agent.analyze_data(),
+            conditioning_coach_agent.modify_training_program(),
             motivator_agent.motivate_athlete(),
             nutrition_agent.generate_meal_plan(),
             physiology_agent.generate_physiology_report(),
-            position_coach_agent.generate_position_advice(),
-            psychology_agent.generate_psychology_report(),
             comprehensive_report_agent.compile_report()
         ]
     
@@ -57,12 +49,10 @@ class RunFullAssessmentCrew:
         crew = crewai.Crew(
             agents=agents,
             tasks=tasks,
-            #task_callback=agent_callback.crewai_callback_task_completion,
             knowledge_sources=[self.player_data],
             process=crewai.Process.sequential,
-            verbose=True
+            verbose=False
         )
 
-        result = crew.kickoff()
-
-        return agent_helpers.concatente_task_outputs(result)
+        result = crew.kickoff()       
+        return result

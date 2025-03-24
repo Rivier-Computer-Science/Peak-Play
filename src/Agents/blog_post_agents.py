@@ -10,6 +10,10 @@ from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
 
 
+from src.AgentTools.search_wikipedia import search_wikipedia
+from src.AgentTools.search_unsplash_images import search_unsplash_images
+
+
 class BlogTopicAgent(BaseAgent):
     role: str
     goal: str
@@ -82,27 +86,31 @@ class BlogWriterAgent(BaseAgent):
             role = kwargs.pop('role', role),
             goal = kwargs.pop('goal', goal),
             backstory = kwargs.pop('backstory', backstory),
-            tools=[],
+            tools=[search_wikipedia, search_unsplash_images],
             **kwargs
         )
 
-    def write_blog_post(self, age: str = '21'): 
+    def write_blog_post(self): 
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
                 Write a blog post about the chosen sport and topic.
                             
                 It should be consice, witty, and memorable.
+                               
+                If you use unsplash, be sure to credit the website and photographer.
             """),
             agent=self,
             expected_output="A blog post written using markdown"
         )        
 
-    def revise_blog_post(self, age: str = '21'): 
+    def revise_blog_post(self): 
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
                 Revise and improve the blog post based on critiques of the working version.
+                               
+                If you use unsplash, be sure to credit the website and photographer.
             """),
             agent=self,
             expected_output="An improved blog post written using markdown"
@@ -137,7 +145,7 @@ class BlogCriticAgent(BaseAgent):
             **kwargs
         )
 
-    def critique_blog_post(self, age: str = '21'): 
+    def critique_blog_post(self): 
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
@@ -146,4 +154,109 @@ class BlogCriticAgent(BaseAgent):
             """),
             agent=self,
             expected_output="Actionable advice to improve the blog post."
+        )      
+    
+
+class BlogValidationAgent(BaseAgent):
+    role: str
+    goal: str
+    backstory: str
+
+    def __init__(self, **kwargs):
+        role = """
+            You are the Blog Validation Agent. You make sure that all content in the blog post exists and is accurate"
+            """
+    
+        goal = """
+            Check all information in the blog post written by the Blog Writer Agent for correctness and existance.
+            """
+
+        backstory = """
+            You are an expert in finding hallucinated data and incorrect information in blog posts.
+            You also check all external references in the blog post and identify incorrect links.
+                        
+            You have been reading athlete blogs for decades and can easily spot incorrect information in blog posts.
+            You provide corrected information and revise the blog post if needed.
+            """
+    
+        super().__init__(
+            role = kwargs.pop('role', role),
+            goal = kwargs.pop('goal', goal),
+            backstory = kwargs.pop('backstory', backstory),
+            tools=[search_wikipedia, search_unsplash_images],
+            **kwargs
+        )
+
+    def validate_blog_post(self): 
+        # Preprocessing goes here
+        return crewai.Task(
+            description=dedent(f"""
+                Look for incorrect links and/or incorrect data.
+                Find hallucinated information and revise it.
+                               
+                If example.com has been used, replace it with an equivalent real link or delete it.
+                               
+                Update the blog post with only correct information.
+                               
+                If you use unsplash, be sure to credit the website and photographer.
+
+            """),
+            agent=self,
+            expected_output="A revised blog post with corrected links and information."
+        )       
+    
+
+class BlogPublisherAgent(BaseAgent):
+    role: str
+    goal: str
+    backstory: str
+
+    def __init__(self, **kwargs):
+        role = """
+            You are the Blog Post Publisher Agent. 
+            You make a final check of the blog post and revise it if needed for publications.        
+            """
+    
+        goal = """
+            Check all information in the blog post and revise it if needed so that it can be published.
+            """
+
+        backstory = """
+            You are an expert in the publishing of blog posts.
+
+            You have been the final editor and publisher of blog posts for decades.
+
+            You have great grammar and spelling capabilities in addition to coordinating edits form multiple agents.
+
+            You aggregate all input and changes and make the final decision on what gets published.
+
+            You NEVER publish content that says "insert here". You either find the appropriate reference or delete
+                the "insert here" text.
+
+            """
+    
+        super().__init__(
+            role = kwargs.pop('role', role),
+            goal = kwargs.pop('goal', goal),
+            backstory = kwargs.pop('backstory', backstory),
+            tools=[],
+            **kwargs
+        )
+
+    def publish_blog_post(self): 
+        # Preprocessing goes here
+        return crewai.Task(
+            description=dedent(f"""
+                You consider all the information the agents have provided.
+                You make final edits based on your years of experience.
+                You revise the blog post for publication.
+
+            """),
+            agent=self,
+             expected_output="""A revised blog post using JSON with the following fields: 
+                            post_title: a plaintext string and 
+                            post_content: markdown for the body
+                                   
+                            Make sure those fields only contain the text appearing as it should be published.
+                           """
         )      

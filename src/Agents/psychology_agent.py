@@ -1,6 +1,8 @@
 import crewai as crewai
+import json
 from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
+from src.Helpers.athlete_profile import AthleteProfile
 
 
 class PsychologyAgent(BaseAgent):

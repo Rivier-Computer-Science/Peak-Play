@@ -51,7 +51,7 @@ class ConditioningCoachAgent(BaseAgent):
 
                 Using the provided player data, design a personalized conditioning program 
                 that enhances performance while preventing injuries.
-                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
+               
 
                 Use knowledge in the Crew's context               
 
@@ -69,11 +69,12 @@ class ConditioningCoachAgent(BaseAgent):
             expected_output="An age-appropriate structured 1-month conditioning plan with weekly adjustments."
         )
     
-    def modify_training_program(self, age: str = '21'):
+    def modify_training_program(self):
         return crewai.Task(
             description=dedent(f"""
                 Analyze updated player performance data and adjust the training plan accordingly.
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                Here is the player profile:
+                               {self.player_profile.get_player_profile()} 
 
                 Adaptations should include:
                 - Increasing intensity if performance is improving.

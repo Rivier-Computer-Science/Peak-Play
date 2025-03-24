@@ -11,9 +11,7 @@ import logging
 class BaseAgent(crewai.Agent):
     model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
 
-    def __init__(self, primary_sport: str = 'Baseball', secondary_sport: str = 'Soccer', 
-                 unique_aspect: str = "Left handed", athlete_age: str ='21', 
-                 sex: str="Male", athlete_name: str="John Doe", **kwargs):
+    def __init__(self, **kwargs):
         print("DEBUG: Received arguments:", kwargs)  
 
         # Extract required parameters
@@ -54,12 +52,6 @@ class BaseAgent(crewai.Agent):
             **kwargs
         )
 
-        self.primary_sport = primary_sport
-        self.secondary_sport = secondary_sport
-        self.unique_aspect = unique_aspect
-        self.athlete_age = athlete_age
-        self.sex = sex
-        self.athlete_name = athlete_name
 
       # Initialize the logger
         self.logger = logging.getLogger(self.__class__.__name__)

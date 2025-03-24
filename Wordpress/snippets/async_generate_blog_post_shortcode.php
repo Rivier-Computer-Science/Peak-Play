@@ -5,30 +5,15 @@ add_action('wp_ajax_nopriv_create_pending_blog_post', 'create_pending_blog_post_
 function create_pending_blog_post_callback() {
     $data = json_decode(file_get_contents('php://input'), true);
 
-    if (empty($data['content'])) {
-        wp_send_json_error('No content provided.');
-    }
-
-    // First decode the outer JSON
-    $outer_json = json_decode($data['content'], true);
-    if (!$outer_json || empty($outer_json['result'])) {
+    if (empty($data['title']) || empty($data['content'])) {
         wp_send_json_error([
-            'message' => 'Invalid JSON format (outer level).',
-            'received_data' => $data['content']
+            'message' => 'Title or content missing.',
+            'received_data' => $data
         ]);
     }
 
-    // Then decode the inner wrapped JSON string
-    $inner_json = json_decode($outer_json['result'], true);
-    if (!$inner_json || empty($inner_json['result']['post_title']) || empty($inner_json['result']['post_content'])) {
-        wp_send_json_error([
-            'message' => 'Invalid JSON format (inner level).',
-            'received_inner_json' => $outer_json['result']
-        ]);
-    }
-
-    $post_title = sanitize_text_field($inner_json['result']['post_title']);
-    $post_content = wp_kses_post($inner_json['result']['post_content']);
+    $post_title = sanitize_text_field($data['title']);
+    $post_content = wp_kses_post($data['content']); // Already HTML-rendered by marked.js
 
     $user = get_user_by('login', 'PeakPlaySports');
     if (!$user) {
@@ -48,9 +33,13 @@ function create_pending_blog_post_callback() {
     if ($post_id && !is_wp_error($post_id)) {
         wp_send_json_success(['post_id' => $post_id]);
     } else {
-        wp_send_json_error('Failed to create post.');
+        wp_send_json_error([
+            'message' => 'Failed to create post.',
+            'error_details' => $post_id->get_error_message()
+        ]);
     }
 }
+
 
 
 // Shortcode for generating blog post via external API
@@ -154,20 +143,15 @@ function async_generate_blog_post_shortcode() {
         }
 
 		function createPendingPost({post_title, post_content}) {
+			// Convert markdown to HTML directly with Marked.js
+			const htmlContent = marked.parse(post_content);
+
 			fetch("<?php echo admin_url('admin-ajax.php'); ?>?action=create_pending_blog_post", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ 
-					content: JSON.stringify({
-						success: true,
-						result: JSON.stringify({
-							success: true,
-							result: {
-								post_title,
-								post_content
-							}
-						})
-					})
+					title: post_title,
+					content: htmlContent
 				})
 			})
 			.then(response => response.json())
@@ -176,20 +160,18 @@ function async_generate_blog_post_shortcode() {
 					console.log("Blog post created (pending) with ID:", data.data.post_id);
 				} else {
 					console.error("Error creating post:", data.data);
-					// Display detailed error message directly on your webpage for easy debugging:
-					document.getElementById("result").innerHTML += `<div style="color:red; margin-top:10px;">
+					document.getElementById("result").innerHTML += `<div style="color:red;">
 						Error creating post: ${JSON.stringify(data.data)}
 					</div>`;
 				}
 			})
 			.catch(error => {
 				console.error("AJAX fetch error:", error);
-				document.getElementById("result").innerHTML += `<div style="color:red; margin-top:10px;">
+				document.getElementById("result").innerHTML += `<div style="color:red;">
 					AJAX fetch error: ${error.message}
 				</div>`;
 			});
 		}
-
 
         document.getElementById("generateBlogPostBtn").addEventListener("click", generateBlogPost);
     });

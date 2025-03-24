@@ -3,6 +3,16 @@
 # Get results: https://peakplay.onrender.com/get_result/taskid
 
 """
+curl -X POST "http://localhost:8000/generate_blog_post" \
+     -H "Content-Type: text/plain" \
+     -d " "
+"""
+
+"""
+curl -X GET "http://localhost:8000/get_result/c15b7f3c-8b82-4644-9380-8a22d964dce5" 
+"""
+
+"""
 curl -X POST "https://peakplay.onrender.com/generate_blog_post" \
      -H "Content-Type: text/plain" \
      -d " "

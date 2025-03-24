@@ -26,6 +26,7 @@ from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 from src.Agents.exercise_database_agent import ExerciseDatabaseAgent
 from src.Agents.fitbit_agent import FitbitAgent
+from src.Helpers.athlete_example_profiles import jane_smith_tennis, john_doe_soccer
 
 import src.Utils.utils as utils
 
@@ -35,17 +36,10 @@ import src.Utils.utils as utils
 logger = utils.configure_logger(logging.INFO)
 
 class MotivationCrew:
-    def __init__(self, athlete_profile_file_path: str =None, athlete_age: str = '21'):      
-        if(athlete_profile_file_path == None):
-            logger.error("player_profile_file_path must be specified")
-        
-        self.player_profile_file_path = athlete_profile_file_path
-        self.knowledge_data = utils.get_knowledge_type(athlete_profile_file_path)
-        self.athlete_age = athlete_age
 
     def run(self):
-        motivator_agent = MotivatorAgent(athlete_age=self.athlete_age)
-        psychology_agent = PsychologyAgent(athlete_age=self.athlete_age)
+        motivator_agent = MotivatorAgent(player_profile=jane_smith_tennis)
+        psychology_agent = PsychologyAgent(player_profile=jane_smith_tennis)
 
         agents = [
              psychology_agent, motivator_agent,
@@ -60,7 +54,6 @@ class MotivationCrew:
         crew = crewai.Crew(
             agents=agents,
             tasks=tasks,
-            knowledge_sources=[self.knowledge_data],
             process=crewai.Process.sequential,
             verbose=True
         )
@@ -82,22 +75,12 @@ if __name__ == "__main__":
     print('-------------------------------')
 
     print("\n\n##########################################################")
-    print(f"## Starting 10 year old profile")
+    print(f"## Starting motivator assessment")
     print("############################################################\n")
-    pitcher_10yr_old_file_path = "data/pitcher_10yrs_old_profile.txt"
-    pitcher_10yr_crew = MotivationCrew(athlete_profile_file_path= pitcher_10yr_old_file_path, 
-                                       athlete_age='10')
-    logger.info(f"Motivation crew initialized successfully for {pitcher_10yr_old_file_path}")
-    pitcher_10yr_crew.run()
+    motivator_crew = MotivationCrew()
+    logger.info(f"Motivation crew initialized successfully")
+    motivator_crew.run()
 
-    print("\n\n##########################################################")
-    print(f"## Starting 16 year old profile")
-    print("############################################################\n")
-    pitcher_16yr_old_file_path = "data/pitcher_16yrs_old_profile.txt"
-    pitcher_16yr_crew = MotivationCrew(athlete_profile_file_path=pitcher_16yr_old_file_path, 
-                                       athlete_age='16')
-    logger.info(f"Motivation crew initialized successfully for {pitcher_16yr_old_file_path}")
-    pitcher_16yr_crew.run()
 
     print("All Tasks are complete")
     sys.exit(0)

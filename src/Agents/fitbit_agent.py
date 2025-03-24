@@ -1,6 +1,8 @@
 import crewai as crewai
 from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
+from src.Helpers.athlete_profile import AthleteProfile
+from src.Helpers.fitbit_data import FitBitData
 
 
 class FitbitAgent(BaseAgent):
@@ -8,9 +10,9 @@ class FitbitAgent(BaseAgent):
     goal: str
     backstory: str
 
-    def __init__(self, **kwargs):
+    def __init__(self, athlete_profile:AthleteProfile, fitbit_data: FitBitData, **kwargs):
         role = """
-            You are the Analyst Agent.
+            You are the Fitbit Analyst Agent.
             """
     
         goal = """
@@ -30,13 +32,20 @@ class FitbitAgent(BaseAgent):
             **kwargs
         )
 
-    def analyze_data(self, age: str = '21'): 
+        self.athlete_profile = athlete_profile
+        self.fitbit_data = fitbit_data
+
+
+    def analyze_data(self): 
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
                 Analyze the feedback from the user and summarize/distill important information for the other agents to provide
                 personalized recommendations to the user's training program.
-                If no age is provided in the profile, assume the athlete's age is {age}.
+                
+                    The player profile is as follows: {self.athlete_profile.get_player_profile()}
+                    The Fitbit data is as follows: {self.fitbit_data.get_fitbit_data()}
+                               
 
                 **The summary report should include:**
                 - **Performance Trends**: Identify strengths, weaknesses, and improvements over time.  

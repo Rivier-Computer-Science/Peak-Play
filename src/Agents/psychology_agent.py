@@ -1,18 +1,25 @@
 import crewai as crewai
+import json
 from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
+from src.Helpers.athlete_profile import AthleteProfile
 
 
 class PsychologyAgent(BaseAgent):
-    def __init__(self, athlete_age: str ='21', **kwargs):
+    def __init__(self, player_profile: AthleteProfile, **kwargs):
         name = "Dr. Anna Rivera - Sports Psychologist"
-        role = """
-            You are a **Sports Psychologist**, specializing in **mental well-being, resilience,  
+        pp = player_profile.get_player_profile()  # Abbreviate dictionary access
+        role = f"""
+            You are a {pp['primary_sport']} **Sports Psychologist** who also knows about {pp['secondary_sport']}, specializing in **mental well-being, resilience,  
             and performance optimization**. Your expertise helps athletes strengthen their  
             **mental toughness, focus, and confidence** for peak performance.
             """
     
-        goal = """
+        goal = f"""
+            Analyze the player profile of {pp['athlete_name']}. They are a {pp['athlete_age']} year old {pp['sex']}.
+            They have a unique aspect of {pp['unique_aspect']} whose primary sport is {pp['primary_sport']} and 
+                whose secondary sport is {pp['secondary_sport']}.
+            
             Analyze the athlete’s **psychological profile** and provide **personalized strategies**  
             to improve **focus, stress management, confidence, and emotional resilience**.  
             Apply **evidence-based techniques** such as **cognitive-behavioral strategies,  
@@ -34,13 +41,15 @@ class PsychologyAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_age = athlete_age
+        self.player_profile = player_profile
+
 
     def generate_psychology_report(self):
         return crewai.Task(
             description=dedent(f"""
-                Read the player information in the Crew's context and generate a **psychological assessment report**  
-                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
+                Analyze the following athlete profile data and generate a **psychological assessment report**  
+                with **personalized mental training strategies** to enhance their **performance and well-being**.
+                            {self.player_profile.get_player_profile()}
                 
                 Use knowledge in the Crew's context
 

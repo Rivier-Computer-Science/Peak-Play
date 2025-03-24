@@ -97,6 +97,8 @@ class BlogWriterAgent(BaseAgent):
                 Write a blog post about the chosen sport and topic.
                             
                 It should be consice, witty, and memorable.
+                               
+                If you use unsplash, be sure to credit the website and photographer.
             """),
             agent=self,
             expected_output="A blog post written using markdown"
@@ -107,6 +109,8 @@ class BlogWriterAgent(BaseAgent):
         return crewai.Task(
             description=dedent(f"""
                 Revise and improve the blog post based on critiques of the working version.
+                               
+                If you use unsplash, be sure to credit the website and photographer.
             """),
             agent=self,
             expected_output="An improved blog post written using markdown"
@@ -193,6 +197,8 @@ class BlogValidationAgent(BaseAgent):
                 If example.com has been used, replace it with an equivalent real link or delete it.
                                
                 Update the blog post with only correct information.
+                               
+                If you use unsplash, be sure to credit the website and photographer.
 
             """),
             agent=self,
@@ -247,5 +253,10 @@ class BlogPublisherAgent(BaseAgent):
 
             """),
             agent=self,
-            expected_output="A revised blog post with only the text appearing as it should be published."
+            expected_output="""A revised blog post using JSON with the following fields: 
+                            post_title: a plaintext string and 
+                            post_content: markdown for the body
+                                   
+                            Make sure those fields only contain the text appearing as it should be published.
+                           """
         )      

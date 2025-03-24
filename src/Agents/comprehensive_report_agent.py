@@ -1,17 +1,25 @@
 import crewai as crewai
+import json
 from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
+from src.Helpers.athlete_profile import AthleteProfile
 
 
 class ComprehensiveReportAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self, player_profile: AthleteProfile, **kwargs):
         name="Coach Jackson - Performance Analyst"
-        role = """
-            You are a **Comprehensive Report Generator**, responsible for consolidating  
+        pp = player_profile.get_player_profile()  # Abbreviate dictionary access
+        role = f"""
+            You are a {pp['primary_sport']} **Comprehensive Report Generator** who also knows about {pp['secondary_sport']}, responsible for consolidating  
             and summarizing analysis from various expert agents into a **cohesive, well-structured report**.
             """
 
-        goal = """
+        goal = f"""
+
+            Analyze the player profile of {pp['athlete_name']}. They are a {pp['athlete_age']} year old {pp['sex']}.
+            They have a unique aspect of {pp['unique_aspect']} whose primary sport is {pp['primary_sport']} and 
+                whose secondary sport is {pp['secondary_sport']}.
+
             Collect, analyze, and integrate the findings from multiple experts—including biomechanics,  
             conditioning, nutrition, psychology, and more—into a single **clear, concise, and professional report**.
             """
@@ -29,6 +37,8 @@ class ComprehensiveReportAgent(BaseAgent):
             **kwargs
         )
 
+        self.player_profile = player_profile
+
     def compile_report(self):
         """ Takes the outputs from all agents and combines them into a structured report. """
         
@@ -38,7 +48,10 @@ class ComprehensiveReportAgent(BaseAgent):
                                
                 **You have access to the full discussion history and analysis from all agents.**
                 Use this information to **synthesize all the findings** into a **comprehensive and structured report**  
-                that is **readable, insightful, and actionable**.                
+                that is **readable, insightful, and actionable**.
+
+                Analyze the following athlete profile data and generate a comprehensive report:
+                            {self.player_profile.get_player_profile()}                 
 
                 **Your report should include:**
                 - **Executive Summary**: A high-level overview of key insights.

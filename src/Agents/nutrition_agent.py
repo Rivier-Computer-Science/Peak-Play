@@ -1,18 +1,25 @@
 import crewai as crewai
+import json
 from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
+from src.Helpers.athlete_profile import AthleteProfile
 
 
 class NutritionAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self, player_profile: AthleteProfile, **kwargs):
         name = "Dr. Emily Carter - Sports Nutritionist"
-        role = """
-            You are a Sports Nutrition Agent specializing in optimizing athlete performance through diet.
+        pp = player_profile.get_player_profile()  # Abbreviate dictionary access
+        role = f"""
+            You are a {pp['primary_sport']} Sports Nutrition Agent who also knows about {pp['secondary_sport']} specializing in optimizing athlete performance through diet.
             Your role is to **analyze player-specific data** and design **customized meal plans** 
             that enhance energy, endurance, recovery, and overall health.
             """
     
-        goal = """
+        goal = f"""
+            Analyze the player profile of {pp['athlete_name']}. They are a {pp['athlete_age']} year old {pp['sex']}.
+            They have a unique aspect of {pp['unique_aspect']} whose primary sport is {pp['primary_sport']} and 
+                whose secondary sport is {pp['secondary_sport']}.
+
             Develop a **personalized nutrition strategy** based on the athlete’s profile.  
             Ensure the meal plan aligns with their **training intensity, recovery needs, and performance goals**.  
             Recommend **specific macronutrient and micronutrient intake** to maximize their athletic output.
@@ -32,12 +39,14 @@ class NutritionAgent(BaseAgent):
             **kwargs
         )
 
+        self.player_profile = player_profile
+
 
     def generate_meal_plan(self):
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and create a **customized 1-month meal plan**:
-                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
+                            {self.player_profile.get_player_profile()}
 
                 Use knowledge in the Crew's context
 

@@ -1,19 +1,25 @@
 import crewai as crewai
 from textwrap import dedent
+import json
 from src.Agents.base_agent import BaseAgent
-
+from src.Helpers.athlete_profile import AthleteProfile
 
 class PhysiologyAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self, player_profile: AthleteProfile, **kwargs):
         name = "Dr. Robert Lee - Physiology Specialist"
-        role = """
-            You are a Sports Physiologist specializing in optimizing athletic performance through 
+        pp = player_profile.get_player_profile()  # Abbreviate dictionary access
+        role = f"""
+            You are a {pp['primary_sport']} Sports Physiologist who also knows about {pp['secondary_sport']} specializing in optimizing athletic performance through 
             **exercise science, injury prevention, and recovery techniques**. Your role is to analyze 
             **player-specific data** and develop **tailored strategies** to improve endurance, strength, 
             and long-term physical health.
             """
     
-        goal = """
+        goal = f"""
+            Analyze the player profile of {pp['athlete_name']}. They are a {pp['athlete_age']} year old {pp['sex']}.
+            They have a unique aspect of {pp['unique_aspect']} whose primary sport is {pp['primary_sport']} and 
+                whose secondary sport is {pp['secondary_sport']}.
+        
             Use the athlete's **biometric and training data** to provide **personalized physiology advice**.  
             Ensure that all recommendations are **age-appropriate, sport-specific, and designed for  
             long-term development**.  
@@ -34,13 +40,14 @@ class PhysiologyAgent(BaseAgent):
             **kwargs
         )
 
+        self.player_profile = player_profile
 
     def generate_physiology_report(self):
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and provide **a physiology report**  
                 with **specific recommendations** for **injury prevention, recovery, and physical optimization**.
-                If no age is provided in the profile, assume the athlete's age is {self.athlete_age}.
+                            {self.player_profile.get_player_profile()}
 
                 Use knowledge in the Crew's context
 

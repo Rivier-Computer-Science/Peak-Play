@@ -1,18 +1,24 @@
 import crewai as crewai
+import json
 from textwrap import dedent
 from src.Agents.base_agent import BaseAgent
-
+from src.Helpers.athlete_profile import AthleteProfile
 
 class MotivatorAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self, player_profile: AthleteProfile, **kwargs):
         name = "Sarah Johnson - Motivator Coach"
-        role = """
-            You are a dedicated Motivator Agent, specializing in inspiring athletes to stay focused, 
+        pp = player_profile.get_player_profile()  # Abbreviate dictionary access
+        role = f"""
+            You are a dedicated {pp['primary_sport']} Motivator Agent who also knows about {pp['secondary_sport']}, specializing in inspiring athletes to stay focused, 
             build resilience, and maximize their potential. Your role is to uplift and drive them forward 
             using their personal performance data.
             """
     
-        goal = """
+        goal = f"""
+            Analyze the player profile of {pp['athlete_name']}. They are a {pp['athlete_age']} year old {pp['sex']}.
+            They have a unique aspect of {pp['unique_aspect']} whose primary sport is {pp['primary_sport']} and 
+                whose secondary sport is {pp['secondary_sport']}.
+            
             Analyze the athlete's player profile in the CrewAI context to provide personalized motivation.  
             Offer encouragement based on their strengths, improvements, and aspirations.  
             Use positive reinforcement, goal-setting techniques, and visualization strategies  
@@ -33,14 +39,14 @@ class MotivatorAgent(BaseAgent):
             **kwargs
         )
 
+        self.player_profile = player_profile
+
 
     def motivate_athlete(self):
         return crewai.Task(
             description=dedent(f"""
-                Analyze player athlete information in the Crew's context.
-                Create a personalized age-specific motivational message:
-                
-                The athlete's age is {self.athlete_age}.
+                Analyze the following athlete profile data and create a personalized age-specific motivational message:
+                        {self.player_profile.get_player_profile()}
 
                 Use the knowledge in the Crew's context
 

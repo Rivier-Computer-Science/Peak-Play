@@ -80,6 +80,9 @@ class BlogWriterAgent(BaseAgent):
                 and topics to improve athlete performance. You primarily write for amateur Athletes.
 
             You construct blog posts that are concise, witty, and memorable.
+
+            If you use unsplash, be sure to credit the website and photographer. Do not make up the
+                               the attribution. It always comes back in the response.
             """
     
         super().__init__(
@@ -98,7 +101,8 @@ class BlogWriterAgent(BaseAgent):
                             
                 It should be consice, witty, and memorable.
                                
-                If you use unsplash, be sure to credit the website and photographer.
+                If you use unsplash, be sure to credit the website and photographer. Do not make up the
+                               the attribution. It always comes back in the response.
             """),
             agent=self,
             expected_output="A blog post written using markdown"
@@ -110,7 +114,8 @@ class BlogWriterAgent(BaseAgent):
             description=dedent(f"""
                 Revise and improve the blog post based on critiques of the working version.
                                
-                If you use unsplash, be sure to credit the website and photographer.
+                If you use unsplash, be sure to credit the website and photographer. Do not make up the
+                               the attribution. It always comes back in the response.
             """),
             agent=self,
             expected_output="An improved blog post written using markdown"
@@ -198,7 +203,8 @@ class BlogValidationAgent(BaseAgent):
                                
                 Update the blog post with only correct information.
                                
-                If you use unsplash, be sure to credit the website and photographer.
+                If you use unsplash, be sure to credit the website and photographer. Do not make up the
+                               the attribution. It always comes back in the response.
 
             """),
             agent=self,
@@ -246,17 +252,38 @@ class BlogPublisherAgent(BaseAgent):
     def publish_blog_post(self): 
         # Preprocessing goes here
         return crewai.Task(
-            description=dedent(f"""
+            description=dedent("""
                 You consider all the information the agents have provided.
                 You make final edits based on your years of experience.
                 You revise the blog post for publication.
 
+                The output must strictly follow this exact JSON format (do not include markdown fences or other text):
+
+                {
+                    "success": true,
+                    "result": {
+                        "post_title": "A short and descriptive blog title",
+                        "post_content": "Detailed markdown content without the title..."
+                    }
+                }
+
+                Important rules:
+                - Do NOT wrap your JSON in markdown code blocks or backticks.
+                - Do NOT include any explanatory text or additional formatting.
+                - ONLY output valid JSON exactly as shown above.
+
+                Ensure the markdown content is detailed, engaging, and properly formatted.
             """),
             agent=self,
-             expected_output="""A revised blog post using JSON with the following fields: 
-                            post_title: a plaintext string and 
-                            post_content: markdown for the body
-                                   
-                            Make sure those fields only contain the text appearing as it should be published.
-                           """
-        )      
+            expected_output=dedent("""
+                {
+                    "success": true,
+                    "result": {
+                        "post_title": "A short and descriptive blog title",
+                        "post_content": "Detailed markdown content without the title..."
+                    }
+                }
+            """)
+
+        )
+      

@@ -172,4 +172,5 @@ async def generate_blog_post(
 def run_generate_blog_post_and_return_result(task_id: str, input_text: str):
     generate_blog_post_crew = GenerateBlogPostCrew()
     generate_blog_post_result = generate_blog_post_crew.run(task_id)  # Runs synchronously in the background
+    print('CrewAI results \n', generate_blog_post_result)
     task_results[task_id] = generate_blog_post_result  # Store result for polling

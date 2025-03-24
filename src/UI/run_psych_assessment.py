@@ -26,6 +26,7 @@ from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 from src.Agents.exercise_database_agent import ExerciseDatabaseAgent
 from src.Agents.fitbit_agent import FitbitAgent
+from src.Helpers.athlete_example_profiles import jane_smith_tennis, john_doe_soccer
 
 import src.Utils.utils as utils
 
@@ -37,21 +38,19 @@ logger = utils.configure_logger(logging.INFO)
 
 
 class AssessmentCrew:
-    def __init__(self, input_file_path="data/pitcher_10yrs_old_profile.txt"):        
-        self.knowledge_data = utils.get_knowledge_type(input_file_path)
 
     def run(self):
         # Initialize agents with the player profile
-        biomechanics_coach_agent = BiomechanicsCoachAgent()
-        conditioning_coach_agent = ConditioningCoachAgent()
-        exercise_database_agent = ExerciseDatabaseAgent()
-        fitbit_agent = FitbitAgent()
-        motivator_agent = MotivatorAgent()
-        nutrition_agent = NutritionAgent()
-        physiology_agent = PhysiologyAgent()
-        position_coach_agent = PositionCoachAgent()
-        psychology_agent = PsychologyAgent()
-        comprehensive_report_agent = ComprehensiveReportAgent()
+        # biomechanics_coach_agent = BiomechanicsCoachAgent()
+        # conditioning_coach_agent = ConditioningCoachAgent()
+        # exercise_database_agent = ExerciseDatabaseAgent()
+        # fitbit_agent = FitbitAgent()
+        # motivator_agent = MotivatorAgent()
+        # nutrition_agent = NutritionAgent()
+        # physiology_agent = PhysiologyAgent()
+        # position_coach_agent = PositionCoachAgent()
+        psychology_agent = PsychologyAgent(player_profile=jane_smith_tennis)
+        # comprehensive_report_agent = ComprehensiveReportAgent()
 
         agents = [
             psychology_agent,
@@ -66,7 +65,6 @@ class AssessmentCrew:
         crew = crewai.Crew(
             agents=agents,
             tasks=tasks,
-            knowledge_sources=[self.knowledge_data],
             process=crewai.Process.sequential,
             verbose=True
         )

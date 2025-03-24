@@ -4,32 +4,38 @@ add_action('wp_ajax_nopriv_create_pending_blog_post', 'create_pending_blog_post_
 
 function create_pending_blog_post_callback() {
     $data = json_decode(file_get_contents('php://input'), true);
-    if (empty($data['content'])) {
-        wp_send_json_error('No content provided.');
+
+    if (empty($data['title']) || empty($data['content'])) {
+        wp_send_json_error('Title or content missing.');
     }
+
+    $post_title = sanitize_text_field($data['title']);
     $post_content = wp_kses_post($data['content']);
-    
-    // Look up the user by username "PeakPlaySports".
+
+    // Lookup user PeakPlaySports
     $user = get_user_by('login', 'PeakPlaySports');
     if (!$user) {
         wp_send_json_error('User PeakPlaySports not found.');
     }
-    
-    // Create a new pending post.
+
+    // Create the pending post
     $new_post = array(
-        'post_title'   => 'Auto-generated Post - ' . date("Y-m-d H:i:s"),
+        'post_title'   => $post_title,
         'post_content' => $post_content,
         'post_status'  => 'pending',
         'post_author'  => $user->ID,
         'post_type'    => 'post'
     );
+
     $post_id = wp_insert_post($new_post);
+
     if ($post_id && !is_wp_error($post_id)) {
         wp_send_json_success(array('post_id' => $post_id));
     } else {
         wp_send_json_error('Failed to create post.');
     }
 }
+
 
 // Shortcode to generate a blog post.
 function async_generate_blog_post_shortcode() {
@@ -70,19 +76,16 @@ function async_generate_blog_post_shortcode() {
                             clearInterval(pollingInterval);
                             loadingElem.style.display = "none";
                             
-                            // Extract markdown from the response.
-                            let markdown = "";
-                            if (typeof data.result === "object" && data.result.result && typeof data.result.result === "string") {
-                                markdown = data.result.result;
-                            } else if (typeof data.result === "string") {
-                                markdown = data.result;
-                            }
-                            
-                            // Render the markdown using Marked.js.
-                            resultElem.innerHTML = marked.parse(markdown);
-                            
-                            // Send the markdown to create a pending blog post.
-                            createPendingPost(markdown);
+                            // Extract title and markdown from the JSON response
+                            let post_title = data.result.post_title || "Auto-generated Title";
+                            let post_content = data.result.post_content || "";
+
+                            // Render markdown content
+                            resultElem.innerHTML = marked.parse(post_content);
+
+                            // Call createPendingPost with JSON data
+                            createPendingPost({ post_title, post_content });
+                        }
                         } else if (attempts >= maxAttempts) {
                             clearInterval(pollingInterval);
                             loadingElem.style.display = "none";
@@ -136,12 +139,23 @@ function async_generate_blog_post_shortcode() {
 
         // Function to create a pending blog post via AJAX.
         function createPendingPost(content) {
+               // Ensure we have both title and content
+            const { post_title, post_content } = postData;
+
+            if (!post_title || !post_content) {
+                console.error("Missing title or content.");
+                return;
+            }
+
             fetch("<?php echo admin_url('admin-ajax.php'); ?>?action=create_pending_blog_post", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ content: content })
+                body: JSON.stringify({ 
+                    title: post_title, 
+                    content: post_content 
+                })
             })
             .then(response => response.json())
             .then(data => {

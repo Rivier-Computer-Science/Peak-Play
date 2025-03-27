@@ -8,34 +8,32 @@ function async_run_assessment_wpforms_markdown_shortcode() {
         'user_id' => $user_id,
         'number' => 1
         ]);
+    error_log('Form entries: ' . print_r($entries, true));
 
-    if (!empty($entries['entries'])) {
-        $latest_entry = $entries['entries'][0];
+    if (!empty($entries[0])) {
+        $fields = json_decode($entries[0]->fields, true);
         $form_data = [
-            'name' => $latest_entry['fields'][1]['value'] ?? '',
-            'nickname' => $latest_entry['fields'][2]['value'] ?? '',
-            'gender' => $latest_entry['fields'][4]['value'] ?? '',
-            'age' => $latest_entry['fields'][3]['value'] ?? '',
-            'height' => $latest_entry['fields'][7]['value'] ?? '',
-            'weight' => $latest_entry['fields'][6]['value'] ?? '',
-            'primary sport' => $latest_entry['fields'][8]['value'] ?? '',
-            'secondary sport' => $latest_entry['fields'][11]['value'] ?? '',
-            'handedness' => $latest_entry['fields'][9]['value'] ?? '',
-            'position 1' => $latest_entry['fields'][12]['value'] ?? '',
-            'position 2' => $latest_entry['fields'][14]['value'] ?? '',
-            'position 3' => $latest_entry['fields'][15]['value'] ?? '',
-            'position 4' => $latest_entry['fields'][16]['value'] ?? '',
-            'stroke' => $latest_entry['fields'][23]['value'] ?? '',
-            'position 5 ' => $latest_entry['fields'][17]['value'] ?? '',
-            'level of play' => $latest_entry['fields'][19]['value'] ?? '',
-            'performance goals' => $latest_entry['fields'][20]['value'] ?? '',
-            'sprains' => $latest_entry['fields'][26]['value'] ?? '',
-            'strains' => $latest_entry['fields'][27]['value'] ?? '',
-            'fractures' => $latest_entry['fields'][28]['value'] ?? '',
-            'dislocations' => $latest_entry['fields'][29]['value'] ?? '',
-            'overuse & chronic injuries' => $latest_entry['fields'][30]['value'] ?? '',
-            'head & neck injuries' => $latest_entry['fields'][31]['value'] ?? '',
-            'spinal injuries' => $latest_entry['fields'][32]['value'] ?? ''
+            'name' => $fields["1"]['value'] ?? '',
+            'sex' => $fields["4"]['value'] ?? '',
+            'age' => $fields["3"]['value'] ?? '',
+            'height' => $fields["7"]['value'] ?? '',
+            'weight' => $fields["6"]['value'] ?? '',
+            'primary_sport' => $fields["8"]['value'] ?? '',
+		    'primary_sport_level' => $fields["37"]['value'] ?? '',
+			'primary_sport_position' => $fields["40"]['value'] ?? '',
+            'secondary_sport' => $fields["36"]['value'] ?? '',
+			'secondary_sport_level' => $fields["39"]['value'] ?? '',
+			'secondary_sport_position' => $fields["41"]['value'] ?? '',
+            'handedness' => $fields["9"]['value'] ?? '',
+			'footedness' => $fields["43"]['value'] ?? '',
+            'unique_aspect' => $fields["20"]['value'] ?? '',        
+            'sprains' => $fields["26"]['value'] ?? '',
+            'strains' => $fields["27"]['value'] ?? '',
+            'fractures' => $fields["28"]['value'] ?? '',
+            'dislocations' => $fields["29"]['value'] ?? '',
+            'overuse_chronic_injuries' => $fields["30"]['value'] ?? '',
+            'head_neck_injuries' => $fields["31"]['value'] ?? '',
+            'spinal_injuries' => $fields["32"]['value'] ?? ''
             ];
     } else {
         $form_data = ['error' => 'No entries found'];
@@ -48,7 +46,7 @@ function async_run_assessment_wpforms_markdown_shortcode() {
         const formData = <?php echo json_encode($form_data); ?>
 
         // Global function to poll for the result.
-        function pollForResult(taskId) {
+        function pollForResult(task_id) {
             let attempts = 0;
             const maxAttempts = 30;  // Approximately 5 minutes if polling every 10 seconds.
             const loadingElem = document.getElementById("loading");
@@ -65,7 +63,7 @@ function async_run_assessment_wpforms_markdown_shortcode() {
                 loadingElem.innerHTML = `Processing... (Attempt ${attempts} of ${maxAttempts}, ${remaining} remaining)`;
                 console.log(`Polling: Attempt ${attempts} of ${maxAttempts}, ${remaining} remaining`);
 
-                fetch(`https://peakplay.onrender.com/get_result/${taskId}`)
+                fetch(`https://peakplay.onrender.com/get_result/${task_id}`)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
@@ -123,10 +121,10 @@ function async_run_assessment_wpforms_markdown_shortcode() {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(formData)  
+                body: JSON.stringify({ form_data: formData } )  
                 })
                 .then(response => response.json())
-                .then(data => pollForResult(data.taskId))
+                .then(data => pollForResult(data.task_id))
                 .catch(error => {
                     loadingElem.style.display = "none";
                     resultElem.innerHTML = "Error occurred.";
@@ -136,6 +134,14 @@ function async_run_assessment_wpforms_markdown_shortcode() {
             // Attach the runFullAssessment function to the button.
         const btn = document.getElementById("runAssessmentBtn");
         if (btn) {
+			btn.style.color = "white";
+  		    btn.style.padding = "12px 20px";
+			btn.style.fontSize = "16px";
+			btn.style.fontWeight = "bold";
+			btn.style.border = "none";
+			btn.style.borderRadius = "8px";
+			btn.style.cursor = "pointer";
+			btn.style.width = "250px";
             btn.addEventListener("click", runFullAssessment);
         }
     });
@@ -147,4 +153,4 @@ function async_run_assessment_wpforms_markdown_shortcode() {
     <?php
     return ob_get_clean();
 }
-add_shortcode('async_run_full_assessment_markdown', 'async_run_assessment_wpforms_markdown_shortcode');
+add_shortcode('async_run_assessment_wpforms_shortcode', 'async_run_assessment_wpforms_markdown_shortcode');

@@ -8,31 +8,32 @@ function async_run_assessment_wpforms_markdown_shortcode() {
         'user_id' => $user_id,
         'number' => 1
         ]);
+    error_log('Form entries: ' . print_r($entries, true));
 
-    if (!empty($entries['entries'])) {
-        $latest_entry = $entries['entries'][0];
+    if (!empty($entries[0])) {
+        $fields = json_decode($entries[0]->fields, true);
         $form_data = [
-            'name' => $latest_entry['fields'][1]['value'] ?? '',
-            'sex' => $latest_entry['fields'][4]['value'] ?? '',
-            'age' => $latest_entry['fields'][3]['value'] ?? '',
-            'height' => $latest_entry['fields'][7]['value'] ?? '',
-            'weight' => $latest_entry['fields'][6]['value'] ?? '',
-            'primary_sport' => $latest_entry['fields'][8]['value'] ?? '',
-		    'primary_sport_level' => $latest_entry['fields'][37]['value'] ?? '',
-			'primary_sport_position' => $latest_entry['fields'][40]['value'] ?? '',
-            'secondary_sport' => $latest_entry['fields'][36]['value'] ?? '',
-			'secondary_sport_level' => $latest_entry['fields'][39]['value'] ?? '',
-			'secondary_sport_position' => $latest_entry['fields'][41]['value'] ?? '',
-            'handedness' => $latest_entry['fields'][9]['value'] ?? '',
-			'footedness' => $latest_entry['fields'][43]['value'] ?? '',
-            'unique_aspect' => $latest_entry['fields'][20]['value'] ?? '',        
-            'sprains' => $latest_entry['fields'][26]['value'] ?? '',
-            'strains' => $latest_entry['fields'][27]['value'] ?? '',
-            'fractures' => $latest_entry['fields'][28]['value'] ?? '',
-            'dislocations' => $latest_entry['fields'][29]['value'] ?? '',
-            'overuse_&_chronic_injuries' => $latest_entry['fields'][30]['value'] ?? '',
-            'head_&_neck_injuries' => $latest_entry['fields'][31]['value'] ?? '',
-            'spinal_injuries' => $latest_entry['fields'][32]['value'] ?? ''
+            'name' => $fields["1"]['value'] ?? '',
+            'sex' => $fields["4"]['value'] ?? '',
+            'age' => $fields["3"]['value'] ?? '',
+            'height' => $fields["7"]['value'] ?? '',
+            'weight' => $fields["6"]['value'] ?? '',
+            'primary_sport' => $fields["8"]['value'] ?? '',
+		    'primary_sport_level' => $fields["37"]['value'] ?? '',
+			'primary_sport_position' => $fields["40"]['value'] ?? '',
+            'secondary_sport' => $fields["36"]['value'] ?? '',
+			'secondary_sport_level' => $fields["39"]['value'] ?? '',
+			'secondary_sport_position' => $fields["41"]['value'] ?? '',
+            'handedness' => $fields["9"]['value'] ?? '',
+			'footedness' => $fields["43"]['value'] ?? '',
+            'unique_aspect' => $fields["20"]['value'] ?? '',        
+            'sprains' => $fields["26"]['value'] ?? '',
+            'strains' => $fields["27"]['value'] ?? '',
+            'fractures' => $fields["28"]['value'] ?? '',
+            'dislocations' => $fields["29"]['value'] ?? '',
+            'overuse_chronic_injuries' => $fields["30"]['value'] ?? '',
+            'head_neck_injuries' => $fields["31"]['value'] ?? '',
+            'spinal_injuries' => $fields["32"]['value'] ?? ''
             ];
     } else {
         $form_data = ['error' => 'No entries found'];

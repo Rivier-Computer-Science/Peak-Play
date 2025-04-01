@@ -16,26 +16,26 @@ import json
 
 
 class RunFullAssessmentCrew:
-    def __init__(self, player_data):
-       # pd = utils.convert_player_profile(player_data)
-       # self.player_data = StringKnowledgeSource(content=pd)
-       # print("player_data in RunFullAssessment: ", pd)
+    def __init__(self, athlete_data):
+       # pd = utils.convert_player_profile(athlete_data)
+       # self.athlete_data = StringKnowledgeSource(content=pd)
+       # print("athlete_data in RunFullAssessment: ", pd)
         
-        self.player_data = AthleteProfile(player_data)
-        print("player_data in RunFullAssessment: ", self.player_data)
-        self.player_profile_dict = self.player_data.get_player_profile()
+        self.athlete_data = AthleteProfile(athlete_data)
+        print("athlete_data in RunFullAssessment: ", self.athlete_data)
+        self.player_profile_dict = self.athlete_data.get_athlete_profile()
        #  self.knowledge_source = StringKnowledgeSource(content=json.dumps(self.player_profile_dict))
 
     def run(self, task_id: str):
         # Initialize agents with file input
-        biomechanics_coach_agent = BiomechanicsCoachAgent(player_profile=self.player_data)
-        conditioning_coach_agent = ConditioningCoachAgent(player_profile=self.player_data)
-        motivator_agent = MotivatorAgent(player_profile=self.player_data)
-        nutrition_agent = NutritionAgent(player_profile=self.player_data)
-        physiology_agent = PhysiologyAgent(player_profile=self.player_data)
-        position_coach_agent = PositionCoachAgent(player_profile=self.player_data)
-        psychology_agent = PsychologyAgent(player_profile=self.player_data)
-        comprehensive_report_agent = ComprehensiveReportAgent(player_profile=self.player_data)
+        biomechanics_coach_agent = BiomechanicsCoachAgent(athlete_profile=self.athlete_data)
+        conditioning_coach_agent = ConditioningCoachAgent(athlete_profile=self.athlete_data)
+        motivator_agent = MotivatorAgent(athlete_profile=self.athlete_data)
+        nutrition_agent = NutritionAgent(athlete_profile=self.athlete_data)
+        physiology_agent = PhysiologyAgent(athlete_profile=self.athlete_data)
+        position_coach_agent = PositionCoachAgent(athlete_profile=self.athlete_data)
+        psychology_agent = PsychologyAgent(athlete_profile=self.athlete_data)
+        comprehensive_report_agent = ComprehensiveReportAgent(athlete_profile=self.athlete_data)
 
         agents = [
             biomechanics_coach_agent, 
@@ -69,7 +69,7 @@ class RunFullAssessmentCrew:
             verbose=True
         )
 
-        print("Knowledge source: ", crew.knowledge_sources)
+
 
         result = crew.kickoff()
 

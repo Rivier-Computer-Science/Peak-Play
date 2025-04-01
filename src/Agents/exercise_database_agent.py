@@ -10,15 +10,15 @@ class ExerciseDatabaseAgent(BaseAgent):
     backstory: str
 
     def __init__(self, player_profile: AthleteProfile, **kwargs):
-        pp = player_profile.get_player_profile()  # Abbreviate dictionary access
+        ap = player_profile.get_athlete_profile()  # Abbreviate dictionary access
         role = f"""
-            You are the {pp['primary_sport']} Exercise Database Agent who also knows about {pp['secondary_sport']}.
+            You are the {ap['primary_sport']} Exercise Database Agent who also knows about {ap['secondary_sport']}.
             """
     
         goal = f"""
-            Analyze the player profile of {pp['athlete_name']}. They are a {pp['athlete_age']} year old {pp['sex']}.
-            They have a unique aspect of {pp['unique_aspect']} whose primary sport is {pp['primary_sport']} and 
-                whose secondary sport is {pp['secondary_sport']}.
+            Analyze the player profile of {ap['athlete_name']}. They are a {ap['athlete_age']} year old {ap['sex']}.
+            They have a unique aspect of {ap['unique_aspect']} whose primary sport is {ap['primary_sport']} and 
+                whose secondary sport is {ap['secondary_sport']}.
             
             Recommend exercises from your database for the conditioning coach to design a workout routine. 
             """
@@ -44,7 +44,7 @@ class ExerciseDatabaseAgent(BaseAgent):
             description=dedent(f"""
                 Recommend exercises for the condition coach agent based on sport, fitness level, and goals.
                 Analyze the following athlete profile data and recommend exercises:
-                               {self.player_profile.get_player_profile()}
+                               {self.player_profile.get_athlete_profile()}
 
                 The program should include:  
                 - **Warm-Up & Mobility**: Dynamic stretching, activation drills, and movement prep for sport-specific readiness.  

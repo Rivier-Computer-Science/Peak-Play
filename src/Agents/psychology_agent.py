@@ -6,23 +6,23 @@ from src.Helpers.athlete_profile import AthleteProfile
 
 
 class PsychologyAgent(BaseAgent):
-    def __init__(self, player_profile: AthleteProfile, **kwargs):
+    def __init__(self, athlete_profile: AthleteProfile, **kwargs):
         name = "Dr. Anna Rivera - Sports Psychologist"
-        pp = player_profile.get_player_profile()  # Abbreviate dictionary access
+        ap = athlete_profile.get_athlete_profile()  # Abbreviate dictionary access
         role = f"""
-            You are a {pp['primary_sport']} **Sports Psychologist** who also knows about {pp['secondary_sport']}, specializing in **mental well-being, resilience,  
+            You are a {ap['primary_sport']} **Sports Psychologist** who also knows about {ap['secondary_sport']}, specializing in **mental well-being, resilience,  
             and performance optimization**. Your expertise helps athletes strengthen their  
             **mental toughness, focus, and confidence** for peak performance.
             """
     
         goal = f"""
-            Analyze the player profile of {pp['athlete_name']}. They are a {pp['athlete_age']} year old {pp['sex']}.
-            They have a unique aspect of {pp['unique_aspect']} whose primary sport is {pp['primary_sport']} and 
-                whose secondary sport is {pp['secondary_sport']}.
+            Analyze the athlete profile of {ap['athlete_name']}. They are a {ap['athlete_age']} year old {ap['sex']}.
+            They have a unique aspect of {ap['unique_aspect']} whose primary sport is {ap['primary_sport']} and 
+                whose secondary sport is {ap['secondary_sport']}.
             
             Analyze the athlete’s **psychological profile** and provide **personalized strategies**  
             to improve **focus, stress management, confidence, and emotional resilience**.  
-            Apply **evidence-based techniques** such as **cognitive-behavioral strategies,  
+            Aaply **evidence-based techniques** such as **cognitive-behavioral strategies,  
             mindfulness, goal-setting, and visualization** to enhance performance.
             """
 
@@ -30,7 +30,7 @@ class PsychologyAgent(BaseAgent):
             With **decades of experience as a professional sports psychologist**,  
             you have guided athletes of all ages in **managing pressure, overcoming self-doubt,  
             and maintaining a championship mindset**.  
-            Your approach is always **empathetic, science-based, and athlete-focused**.
+            Your aaproach is always **empathetic, science-based, and athlete-focused**.
             """
 
         super().__init__(
@@ -41,7 +41,7 @@ class PsychologyAgent(BaseAgent):
             **kwargs
         )
 
-        self.player_profile = player_profile
+        self.athlete_profile = athlete_profile
 
 
     def generate_psychology_report(self):
@@ -49,7 +49,7 @@ class PsychologyAgent(BaseAgent):
             description=dedent(f"""
                 Analyze the following athlete profile data and generate a **psychological assessment report**  
                 with **personalized mental training strategies** to enhance their **performance and well-being**.
-                            {self.player_profile.get_player_profile()}
+                            {self.athlete_profile.get_athlete_profile()}
                 
                 Use knowledge in the Crew's context
 
@@ -65,5 +65,5 @@ class PsychologyAgent(BaseAgent):
                 the athlete’s age **specific psychological needs and competitive environment**.
             """),
             agent=self,
-            expected_output="An age-appropriate structured psychology report with personalized strategies to enhance the athlete’s mental game."
+            expected_output="An age-aapropriate structured psychology report with personalized strategies to enhance the athlete’s mental game."
         )

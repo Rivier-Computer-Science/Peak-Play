@@ -6,19 +6,19 @@ from src.Helpers.athlete_profile import AthleteProfile
 
 
 class NutritionAgent(BaseAgent):
-    def __init__(self, player_profile: AthleteProfile, **kwargs):
+    def __init__(self, athlete_profile: AthleteProfile, **kwargs):
         name = "Dr. Emily Carter - Sports Nutritionist"
-        pp = player_profile.get_player_profile()  # Abbreviate dictionary access
+        ap = athlete_profile.get_athlete_profile()  # Abbreviate dictionary access
         role = f"""
-            You are a {pp['primary_sport']} Sports Nutrition Agent who also knows about {pp['secondary_sport']} specializing in optimizing athlete performance through diet.
+            You are a {ap['primary_sport']} Sports Nutrition Agent who also knows about {ap['secondary_sport']} specializing in optimizing athlete performance through diet.
             Your role is to **analyze player-specific data** and design **customized meal plans** 
             that enhance energy, endurance, recovery, and overall health.
             """
     
         goal = f"""
-            Analyze the player profile of {pp['athlete_name']}. They are a {pp['athlete_age']} year old {pp['sex']}.
-            They have a unique aspect of {pp['unique_aspect']} whose primary sport is {pp['primary_sport']} and 
-                whose secondary sport is {pp['secondary_sport']}.
+            Analyze the player profile of {ap['athlete_name']}. They are a {ap['athlete_age']} year old {ap['sex']}.
+            They have a unique aspect of {ap['unique_aspect']} whose primary sport is {ap['primary_sport']} and 
+                whose secondary sport is {ap['secondary_sport']}.
 
             Develop a **personalized nutrition strategy** based on the athlete’s profile.  
             Ensure the meal plan aligns with their **training intensity, recovery needs, and performance goals**.  
@@ -39,14 +39,14 @@ class NutritionAgent(BaseAgent):
             **kwargs
         )
 
-        self.player_profile = player_profile
+        self.athlete_profile = athlete_profile
 
 
     def generate_meal_plan(self):
         return crewai.Task(
             description=dedent(f"""
                 Read the following player profile and create a **customized 1-month meal plan**:
-                            {self.player_profile.get_player_profile()}
+                            {self.athlete_profile.get_athlete_profile()}
 
                 Use knowledge in the Crew's context
 

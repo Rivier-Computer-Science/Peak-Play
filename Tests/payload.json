@@ -1,0 +1,10 @@
+{
+    "form_data":{
+        "athlete_name": "John Doe",
+        "athlete_age": 25,
+        "sex": "Male",
+        "primary_sport": "Basketball",
+        "secondary_sport": "Soccer",
+        "unique_aspect": "Increase vertical jump"
+    }
+}

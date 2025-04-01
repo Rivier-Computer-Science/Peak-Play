@@ -24,7 +24,7 @@ class RunFullAssessmentCrew:
         self.player_data = AthleteProfile(player_data)
         print("player_data in RunFullAssessment: ", self.player_data)
         self.player_profile_dict = self.player_data.get_player_profile()
-        self.knowledge_source = StringKnowledgeSource(content=json.dumps(self.player_profile_dict))
+       #  self.knowledge_source = StringKnowledgeSource(content=json.dumps(self.player_profile_dict))
 
     def run(self, task_id: str):
         # Initialize agents with file input
@@ -64,12 +64,13 @@ class RunFullAssessmentCrew:
             agents=agents,
             tasks=tasks,
             #task_callback=agent_callback.crewai_callback_task_completion,
-            knowledge_sources=[self.knowledge_source],    
+            # knowledge_sources=[self.knowledge_source],    
             process=crewai.Process.sequential,
             verbose=True
         )
-        
+
+        print("Knowledge source: ", crew.knowledge_sources)
+
         result = crew.kickoff()
-        crew.reset_memories(command_type="knowledge")
 
         return agent_helpers.concatente_task_outputs(result)

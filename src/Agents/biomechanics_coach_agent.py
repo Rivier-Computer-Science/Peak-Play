@@ -9,6 +9,8 @@ class BiomechanicsCoachAgent(BaseAgent):
     def __init__(self, player_profile: AthleteProfile, **kwargs):
         name = "Dr. Alex Thompson - Biomechanics Expert"
         pp = player_profile.get_player_profile()  # Abbreviate dictionary access
+        print("Player profile: ", pp)
+        
         role = f"""
             You are the {pp['primary_sport']} Biomechanics Coach Agent who also knows about {pp['secondary_sport']}, responsible for analyzing 
                 the player's biomechanical performance based on structured input data. 

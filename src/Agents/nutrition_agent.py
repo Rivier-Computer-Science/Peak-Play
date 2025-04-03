@@ -52,6 +52,7 @@ class NutritionAgent(BaseAgent):
 
                 The meal plan should:
                 - Be **tailored to the athlete’s specific training** and performance needs.
+                - Meal plan should be **organized by day and include Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, and Sunday**.
                 - Include **high-protein meals** for muscle recovery.
                 - Optimize **carbohydrate intake** for energy levels.
                 - Balance **fats, vitamins, and hydration** for overall health.

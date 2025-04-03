@@ -46,8 +46,7 @@ class BiomechanicsCoachAgent(BaseAgent):
     def analyze_biometrics(self):
         return crewai.Task(
             description=dedent(f"""
-                Analyze the following athlete profile data and generate a biomechanics assessment:
-                               {self.athlete_profile.get_athlete_profile()}   
+                Analyze the following athlete profile data and generate a biomechanics assessment:  
 
                 The biomechanics assessment should include:
                 - **Movement Efficiency**: Evaluate mobility, balance, and joint alignment.

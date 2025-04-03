@@ -85,7 +85,7 @@ class ConditioningCoachAgent(BaseAgent):
                 Ensure the program is aligned with the athlete's age, with the goal of **continuous improvement** while preventing injuries.
             """),
             agent=self,
-            expected_output="An age-appropriate updated training plan reflecting new performance insights."
+            expected_output="An age-appropriate updated training plan reflecting new performance insights. Do not include the athlete profile data in the output."
         )
 
     def generate_report(self):
@@ -97,5 +97,5 @@ class ConditioningCoachAgent(BaseAgent):
                 The goal is to provide a brief yet informative recap of the session without tracking long-term progress.
             """),
             agent=self,
-            expected_output="A report summarizing key infomration about a user's training session."
+            expected_output="A report summarizing key information about a user's training session. Do not include the athlete profile data in the output."
         )

@@ -38,8 +38,8 @@ logger = utils.configure_logger(logging.INFO)
 class MotivationCrew:
 
     def run(self):
-        motivator_agent = MotivatorAgent(player_profile=jane_smith_tennis)
-        psychology_agent = PsychologyAgent(player_profile=jane_smith_tennis)
+        motivator_agent = MotivatorAgent(athlete_profile=jane_smith_tennis)
+        psychology_agent = PsychologyAgent(athlete_profile=jane_smith_tennis)
 
         agents = [
              psychology_agent, motivator_agent,

@@ -45,7 +45,7 @@ class AssessmentCrew:
         # exercise_database_agent = ExerciseDatabaseAgent()
         # fitbit_agent = FitbitAgent()
         # motivator_agent = MotivatorAgent()
-        nutrition_agent = NutritionAgent(player_profile=jane_smith_tennis)  
+        nutrition_agent = NutritionAgent(athlete_profile=jane_smith_tennis)  
         # physiology_agent = PhysiologyAgent()
         # position_coach_agent = PositionCoachAgent()
         # psychology_agent = PsychologyAgent()

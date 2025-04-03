@@ -49,7 +49,7 @@ class AssessmentCrew:
         # nutrition_agent = NutritionAgent()
         # physiology_agent = PhysiologyAgent()
         # position_coach_agent = PositionCoachAgent()
-        psychology_agent = PsychologyAgent(player_profile=jane_smith_tennis)
+        psychology_agent = PsychologyAgent(athlete_profile=jane_smith_tennis)
         # comprehensive_report_agent = ComprehensiveReportAgent()
 
         agents = [

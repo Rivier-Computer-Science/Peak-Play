@@ -39,7 +39,7 @@ logger = utils.configure_logger(logging.INFO)
 class AssessmentCrew:
     def run(self):
         # Initialize agents with the player profile
-        biomechanics_coach_agent = BiomechanicsCoachAgent(player_profile=jane_smith_tennis)
+        biomechanics_coach_agent = BiomechanicsCoachAgent(athlete_profile=jane_smith_tennis)
         # conditioning_coach_agent = ConditioningCoachAgent()
         # exercise_database_agent = ExerciseDatabaseAgent()
         # fitbit_agent = FitbitAgent()

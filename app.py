@@ -13,11 +13,11 @@ import logging
 import uuid
 
 # Import Crews
-from src.WebFunctions.LogCrew import LogCrew
-from src.WebFunctions.run_full_assement import RunFullAssessmentCrew
-from src.WebFunctions.analyze_fitbit_data import AnalyzeFitbitDataCrew
+from src.Crews.LogCrew import LogCrew
+from src.Crews.run_full_assement_crew import RunFullAssessmentCrew
+from src.Crews.analyze_fitbit_data_crew import AnalyzeFitbitDataCrew
 from src.WebFunctions.generate_blog_post import GenerateBlogPostCrew
-from src.WebFunctions.UpdateCrew import UpdateCrew
+from src.Crews.UpdateCrew import UpdateCrew
 
 import src.Utils.utils as utils
 

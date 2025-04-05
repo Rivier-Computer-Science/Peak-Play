@@ -9,10 +9,13 @@ class NutritionAgent(BaseAgent):
     def __init__(self, athlete_profile: AthleteProfile, **kwargs):
         name = "Dr. Emily Carter - Sports Nutritionist"
         ap = athlete_profile.get_athlete_profile()  # Abbreviate dictionary access
+
         role = f"""
             You are a {ap['primary_sport']} Sports Nutrition Agent who also knows about {ap['secondary_sport']} specializing in optimizing athlete performance through diet.
             Your role is to **analyze player-specific data** and design **customized meal plans** 
             that enhance energy, endurance, recovery, and overall health.
+
+            You provide expert nutritional guidance to ensure athletes meet their dietary needs.
             """
     
         goal = f"""
@@ -31,7 +34,7 @@ class NutritionAgent(BaseAgent):
             timing to ensure peak performance.
             """
 
-        super().__init__(
+        super().__init__(athlete_profile=athlete_profile,
             name=kwargs.pop('name', name),
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
@@ -39,14 +42,11 @@ class NutritionAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_profile = athlete_profile
-
-
     def generate_meal_plan(self):
+        ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data
         return crewai.Task(
             description=dedent(f"""
-                Read the following player profile and create a **customized 1-month meal plan**:
-                            {self.athlete_profile.get_athlete_profile()}
+                Read the player profile and create a **customized 1-month meal plan**:
 
                 Use knowledge in the Crew's context
 
@@ -62,5 +62,5 @@ class NutritionAgent(BaseAgent):
                 Ensure the plan is aligned with the athlete's age and **enhances endurance, strength, and recovery**, while preventing fatigue and injury.
             """),
             agent=self,
-            expected_output="An age-appropriate structured 1-month meal plan designed to optimize the athlete’s performance."
+            expected_output="An age-appropriate structured 1-month meal plan designed to optimize the athlete’s performance. Do not include the athlete profile data in the output."
         )

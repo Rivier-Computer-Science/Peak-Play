@@ -26,10 +26,10 @@ from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 from src.Agents.exercise_database_agent import ExerciseDatabaseAgent
 from src.Agents.fitbit_agent import FitbitAgent
-from src.Helpers.athlete_example_profiles import jane_smith_tennis, john_doe_soccer
+from src.Agents.athlete_profile_agent import AthleteProfileAgent
 
 import src.Utils.utils as utils
-
+from src.Helpers.athlete_example_profiles import jane_smith_tennis, john_doe_soccer
 
 
 # Initialize logger
@@ -50,12 +50,15 @@ class AssessmentCrew:
         # position_coach_agent = PositionCoachAgent()
         # psychology_agent = PsychologyAgent()
         # comprehensive_report_agent = ComprehensiveReportAgent()
+        athlete_profile_agent = AthleteProfileAgent(athlete_profile=jane_smith_tennis)
 
         agents = [
+            athlete_profile_agent,
             nutrition_agent
         ]
 
         tasks = [
+            athlete_profile_agent.provide_athlete_profile(),
             nutrition_agent.generate_meal_plan(),
         ]
         

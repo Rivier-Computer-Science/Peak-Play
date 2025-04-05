@@ -14,7 +14,7 @@ class ExerciseDatabaseAgent(BaseAgent):
         role = f"""
             You are the {ap['primary_sport']} Exercise Database Agent who also knows about {ap['secondary_sport']}.
 
-            You will provide a comprehensive database of exercises tailored to the athlete's profile.
+            You provide a comprehensive database of exercises tailored to the athlete's profile.
             """
     
         goal = f"""

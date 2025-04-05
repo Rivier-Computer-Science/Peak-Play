@@ -14,7 +14,7 @@ class ConditioningCoachAgent(BaseAgent):
             You are the {ap['primary_sport']} Conditioning Coach Agent who also knows about {ap['secondary_sport']}, responsible for designing and managing athletic training programs.
             
             Your expertise ensures athletes develop strength, endurance, and injury resilience.
-            You will analyze player-specific data from an input file to create personalized workout plans.
+            You analyze player-specific data from an input file to create personalized workout plans.
             """
     
         goal = f"""

@@ -43,7 +43,7 @@ class PositionCoachAgent(BaseAgent):
         ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data
         return crewai.Task(
             description=dedent(f"""
-                Read the following player profile and generate **customized position coaching advice**  
+                Read the player profile and generate **customized position coaching advice**  
                 to enhance their **on-field performance, skill execution, and game awareness**.
 
                 Use knowledge in the Crew's context

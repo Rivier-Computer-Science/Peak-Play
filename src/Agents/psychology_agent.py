@@ -9,10 +9,13 @@ class PsychologyAgent(BaseAgent):
     def __init__(self, athlete_profile: AthleteProfile, **kwargs):
         name = "Dr. Anna Rivera - Sports Psychologist"
         ap = athlete_profile.get_athlete_profile()  # Abbreviate dictionary access
+
         role = f"""
             You are a {ap['primary_sport']} **Sports Psychologist** who also knows about {ap['secondary_sport']}, specializing in **mental well-being, resilience,  
-            and performance optimization**. Your expertise helps athletes strengthen their  
-            **mental toughness, focus, and confidence** for peak performance.
+            and performance optimization**. 
+            
+            Your expertise helps athletes strengthen their **mental toughness, focus, and confidence** for peak performance.
+            You analyze **player-specific data** and develop **personalized mental training strategies**.
             """
     
         goal = f"""
@@ -30,10 +33,10 @@ class PsychologyAgent(BaseAgent):
             With **decades of experience as a professional sports psychologist**,  
             you have guided athletes of all ages in **managing pressure, overcoming self-doubt,  
             and maintaining a championship mindset**.  
-            Your aaproach is always **empathetic, science-based, and athlete-focused**.
+            Your approach is always **empathetic, science-based, and athlete-focused**.
             """
 
-        super().__init__(
+        super().__init__(athlete_profile=athlete_profile,
             name=kwargs.pop('name', name),
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
@@ -41,15 +44,11 @@ class PsychologyAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_profile = athlete_profile
-
-
     def generate_psychology_report(self):
         return crewai.Task(
             description=dedent(f"""
-                Analyze the following athlete profile data and generate a **psychological assessment report**  
+                Analyze the athlete profile data and generate a **psychological assessment report**  
                 with **personalized mental training strategies** to enhance their **performance and well-being**.
-                            {self.athlete_profile.get_athlete_profile()}
                 
                 Use knowledge in the Crew's context
 
@@ -65,5 +64,5 @@ class PsychologyAgent(BaseAgent):
                 the athlete’s age **specific psychological needs and competitive environment**.
             """),
             agent=self,
-            expected_output="An age-aapropriate structured psychology report with personalized strategies to enhance the athlete’s mental game."
+            expected_output="An age-appropriate structured psychology report with personalized strategies to enhance the athlete’s mental game. Do not include the athlete profile data in the output."
         )

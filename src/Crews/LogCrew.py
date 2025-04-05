@@ -11,17 +11,20 @@ class LogCrew:
 
     def run(self, task_id: str):
         # Initialize agents with file input
+        athlete_profile_agent = ConditioningCoachAgent(athlete_profile=self.player_data)
         conditioning_coach_agent = ConditioningCoachAgent()
         motivator_agent = MotivatorAgent()
 
         agents = [
+            athlete_profile_agent,
             conditioning_coach_agent,
             motivator_agent
         ]
 
         tasks = [
+            athlete_profile_agent.provide_athlete_profile(),
             conditioning_coach_agent.generate_report(),
-            motivator_agent.motivate_athlete(),
+            motivator_agent.motivate_athlete()
         ]
 
         # Run tasks

@@ -45,10 +45,10 @@ class AthleteProfileAgent(BaseAgent):
         self.athlete_profile = athlete_profile
 
 
-    def analyze_biometrics(self):
+    def provide_athlete_profile(self):
         return crewai.Task(
             description=dedent(f"""
-                Analyze and structure the athlete's profile data:
+                Provide and structure the athlete's profile data:
                                {self.athlete_profile.get_athlete_profile()}   
 
                 **Athlete Information**

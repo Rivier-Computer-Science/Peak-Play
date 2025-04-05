@@ -37,8 +37,6 @@ class ComprehensiveReportAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_profile = athlete_profile
-
     def compile_report(self):
         """ Takes the outputs from all agents and combines them into a structured report. """
         

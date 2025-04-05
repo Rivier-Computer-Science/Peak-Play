@@ -59,7 +59,7 @@ class AssessmentCrew:
 
         tasks = [
             athlete_profile_agent.provide_athlete_profile(),
-            biomechanics_coach_agent.analyze_biometrics(),
+            biomechanics_coach_agent.analyze_biometrics()
         ]
         
 

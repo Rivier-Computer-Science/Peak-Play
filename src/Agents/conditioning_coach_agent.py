@@ -34,7 +34,7 @@ class ConditioningCoachAgent(BaseAgent):
             athletes across multiple sports, focusing on injury prevention and peak conditioning.
             """
 
-        super().__init__(
+        super().__init__(athlete_profile=athlete_profile,
             name=kwargs.pop('name', name),            
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),

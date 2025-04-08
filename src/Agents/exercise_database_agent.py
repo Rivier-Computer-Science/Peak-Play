@@ -30,13 +30,15 @@ class ExerciseDatabaseAgent(BaseAgent):
             recommendations tailored to the individual's goals. 
             """
     
-        super().__init__(athlete_profile=athlete_profile,
+        super().__init__(
             role = kwargs.pop('role', role),
             goal = kwargs.pop('goal', goal),
             backstory = kwargs.pop('backstory', backstory),
             tools=[],
             **kwargs
         )
+
+        self.athlete_profile = athlete_profile
 
     def recommend_exercises(self):   # Need to add to run_crewai.py
         ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data

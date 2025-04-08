@@ -32,13 +32,15 @@ class ComprehensiveReportAgent(BaseAgent):
             Your expertise ensures that all key insights are presented logically, with actionable takeaways.
             """
 
-        super().__init__(athlete_profile=athlete_profile,
+        super().__init__(
             name=kwargs.pop('name', name),
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
             backstory=kwargs.pop('backstory', backstory),
             **kwargs
         )
+
+        self.athlete_profile = athlete_profile
 
     def compile_report(self):
         """ Takes the outputs from all agents and combines them into a structured report. """

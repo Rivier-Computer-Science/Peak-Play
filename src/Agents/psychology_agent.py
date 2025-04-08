@@ -36,13 +36,15 @@ class PsychologyAgent(BaseAgent):
             Your approach is always **empathetic, science-based, and athlete-focused**.
             """
 
-        super().__init__(athlete_profile=athlete_profile,
+        super().__init__(
             name=kwargs.pop('name', name),
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
             backstory=kwargs.pop('backstory', backstory),
             **kwargs
         )
+
+        self.athlete_profile = athlete_profile
 
     def generate_psychology_report(self):
         return crewai.Task(

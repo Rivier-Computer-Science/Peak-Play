@@ -31,13 +31,15 @@ class PositionCoachAgent(BaseAgent):
             Your training methods are backed by **sports science and real-game scenarios**.
             """
 
-        super().__init__(athlete_profile=athlete_profile,
+        super().__init__(
             name=kwargs.pop('name', name),
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
             backstory=kwargs.pop('backstory', backstory),
             **kwargs
         )
+
+        self.athlete_profile = athlete_profile
 
     def generate_position_advice(self):
         ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data

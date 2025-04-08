@@ -8,10 +8,13 @@ class MotivatorAgent(BaseAgent):
     def __init__(self, athlete_profile: AthleteProfile, **kwargs):
         name = "Sarah Johnson - Motivator Coach"
         ap = athlete_profile.get_athlete_profile()  # Abbreviate dictionary access
+        
         role = f"""
             You are a dedicated {ap['primary_sport']} Motivator Agent who also knows about {ap['secondary_sport']}, specializing in inspiring athletes to stay focused, 
-            build resilience, and maximize their potential. Your role is to uplift and drive them forward 
-            using their personal performance data.
+            build resilience, and maximize their potential. 
+            
+            Your role is to uplift and drive them forward using their personal performance data.
+            You analyze player-specific data from an input file to create personalized motivational messages.
             """
     
         goal = f"""
@@ -41,12 +44,11 @@ class MotivatorAgent(BaseAgent):
 
         self.athlete_profile = athlete_profile
 
-
     def motivate_athlete(self):
+        ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data
         return crewai.Task(
             description=dedent(f"""
-                Analyze the following athlete profile data and create a personalized age-specific motivational message:
-                        {self.athlete_profile.get_athlete_profile()}
+                Analyze the athlete profile data and create a personalized age-specific motivational message.
 
                 Use the knowledge in the Crew's context
 
@@ -58,5 +60,5 @@ class MotivatorAgent(BaseAgent):
                 Make sure the motivational message is appropriate to the athlete's age.
             """),
             agent=self,
-            expected_output="An age-appropriate inspiring, personalized message tailored to the athlete’s information."
+            expected_output="An age-appropriate inspiring, personalized message tailored to the athlete’s information. Do not include the athlete profile data in the output."
         )

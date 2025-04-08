@@ -23,7 +23,7 @@ from src.Agents.psychology_agent import PsychologyAgent
 from src.Agents.comprehensive_report_agent import ComprehensiveReportAgent
 from src.Agents.exercise_database_agent import ExerciseDatabaseAgent
 from src.Agents.fitbit_agent import FitbitAgent
-from src.Helpers.athlete_example_profiles import jane_smith_tennis, john_doe_soccer
+from src.Agents.athlete_profile_agent import AthleteProfileAgent
 
 import src.Utils.utils as utils
 
@@ -32,50 +32,54 @@ load_dotenv("/etc/secrets")
 
 # Initialize logger
 logger = utils.configure_logger(logging.INFO)
+from src.Helpers.athlete_example_profiles import jane_smith_tennis, john_doe_soccer
 
 
 
 class AssessmentCrew:
-    def __init__(self, input_file_path="data/player_profile.txt"):        
+    def __init__(self, input_file_path="data/athlete_profile.txt"):        
         self.knowledge_data = utils.get_knowledge_type(input_file_path)
 
     def run(self):
         # Initialize agents with the player profile
-        biomechanics_coach_agent = BiomechanicsCoachAgent()
-        conditioning_coach_agent = ConditioningCoachAgent()
-        exercise_database_agent = ExerciseDatabaseAgent()
-        fitbit_agent = FitbitAgent()
-        motivator_agent = MotivatorAgent()
-        nutrition_agent = NutritionAgent()
-        physiology_agent = PhysiologyAgent()
-        position_coach_agent = PositionCoachAgent()
-        psychology_agent = PsychologyAgent()
-        comprehensive_report_agent = ComprehensiveReportAgent()
+        biomechanics_coach_agent = BiomechanicsCoachAgent(athlete_profile=jane_smith_tennis)
+        conditioning_coach_agent = ConditioningCoachAgent(athlete_profile=jane_smith_tennis)
+        exercise_database_agent = ExerciseDatabaseAgent(athlete_profile=jane_smith_tennis)
+        #fitbit_agent = FitbitAgent(athlete_profile=jane_smith_tennis)
+        motivator_agent = MotivatorAgent(athlete_profile=jane_smith_tennis)
+        nutrition_agent = NutritionAgent(athlete_profile=jane_smith_tennis)
+        physiology_agent = PhysiologyAgent(athlete_profile=jane_smith_tennis)
+        position_coach_agent = PositionCoachAgent(athlete_profile=jane_smith_tennis)
+        psychology_agent = PsychologyAgent(athlete_profile=jane_smith_tennis)
+        comprehensive_report_agent = ComprehensiveReportAgent(athlete_profile=jane_smith_tennis)
+        athlete_profile_agent = AthleteProfileAgent(athlete_profile=jane_smith_tennis)
 
         agents = [
             biomechanics_coach_agent, 
             conditioning_coach_agent,
             exercise_database_agent,
-            fitbit_agent,
+            #fitbit_agent,
             motivator_agent,
             nutrition_agent,
             physiology_agent,
             position_coach_agent,
             psychology_agent,
             comprehensive_report_agent,
+            athlete_profile_agent
         ]
 
         tasks = [
             biomechanics_coach_agent.analyze_biometrics(),
             conditioning_coach_agent.create_conditioning_program(),
             exercise_database_agent.recommend_exercises(),
-            fitbit_agent.analyze_data(),
+            #fitbit_agent.analyze_data(),
             motivator_agent.motivate_athlete(),
             nutrition_agent.generate_meal_plan(),
             physiology_agent.generate_physiology_report(),
             position_coach_agent.generate_position_advice(),
             psychology_agent.generate_psychology_report(),
-            comprehensive_report_agent.compile_report()
+            comprehensive_report_agent.compile_report(),
+            athlete_profile_agent.provide_athlete_profile()
         ]
         
 

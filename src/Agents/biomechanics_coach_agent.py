@@ -9,7 +9,6 @@ class BiomechanicsCoachAgent(BaseAgent):
     def __init__(self, athlete_profile: AthleteProfile, **kwargs):
         name = "Dr. Alex Thompson - Biomechanics Expert"
         ap = athlete_profile.get_athlete_profile()  # Abbreviate dictionary access
-        print("Player profile: ", ap)
         
         role = f"""
             You are the {ap['primary_sport']} Biomechanics Coach Agent who also knows about {ap['secondary_sport']}, responsible for analyzing 
@@ -30,6 +29,8 @@ class BiomechanicsCoachAgent(BaseAgent):
         backstory = """
             With decades of experience in sports biomechanics, you specialize in assessing athlete movements,
             identifying inefficiencies, and optimizing technique to maximize athletic potential.
+            This knowledge base ensures that the 
+            biomechanics assessments and recommendations are tailored to each athlete’s individual needs.
             """
         
         super().__init__(
@@ -42,12 +43,11 @@ class BiomechanicsCoachAgent(BaseAgent):
 
         self.athlete_profile = athlete_profile
 
-
     def analyze_biometrics(self):
+        ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data
         return crewai.Task(
             description=dedent(f"""
-                Analyze the following athlete profile data and generate a biomechanics assessment:
-                               {self.athlete_profile.get_athlete_profile()}   
+                Analyze the athlete profile data and generate a biomechanics assessment.  
 
                 The biomechanics assessment should include:
                 - **Movement Efficiency**: Evaluate mobility, balance, and joint alignment.
@@ -63,6 +63,7 @@ class BiomechanicsCoachAgent(BaseAgent):
 
             """),
             agent=self,
-            expected_output="An age-appropriate biomechanics assessment report highlighting strengths, weaknesses, and recommendations."
+            expected_output="An age-appropriate biomechanics assessment report highlighting strengths, weaknesses, and recommendations. Do not include the athlete profile data in the output."
+            
         )
 

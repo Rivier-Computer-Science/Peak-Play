@@ -9,10 +9,12 @@ class ExerciseDatabaseAgent(BaseAgent):
     goal: str
     backstory: str
 
-    def __init__(self, player_profile: AthleteProfile, **kwargs):
-        ap = player_profile.get_athlete_profile()  # Abbreviate dictionary access
+    def __init__(self, athlete_profile: AthleteProfile, **kwargs):
+        ap = athlete_profile.get_athlete_profile()  # Abbreviate dictionary access
         role = f"""
             You are the {ap['primary_sport']} Exercise Database Agent who also knows about {ap['secondary_sport']}.
+
+            You provide a comprehensive database of exercises tailored to the athlete's profile.
             """
     
         goal = f"""
@@ -36,15 +38,15 @@ class ExerciseDatabaseAgent(BaseAgent):
             **kwargs
         )
 
-        self.player_profile = player_profile
+        self.athlete_profile = athlete_profile
 
     def recommend_exercises(self):   # Need to add to run_crewai.py
+        ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
                 Recommend exercises for the condition coach agent based on sport, fitness level, and goals.
-                Analyze the following athlete profile data and recommend exercises:
-                               {self.player_profile.get_athlete_profile()}
+                Analyze the athlete profile data and recommend exercises.
 
                 The program should include:  
                 - **Warm-Up & Mobility**: Dynamic stretching, activation drills, and movement prep for sport-specific readiness.  
@@ -58,5 +60,5 @@ class ExerciseDatabaseAgent(BaseAgent):
                 
             """),
             agent=self,
-            expected_output="An age-appropriate bulleted list of exercises."
+            expected_output="An age-appropriate bulleted list of exercises. Do not include the athlete profile data in the output. Do not include the athlete profile data in the output."
         )        

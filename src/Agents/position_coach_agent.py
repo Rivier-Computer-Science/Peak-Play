@@ -8,10 +8,12 @@ class PositionCoachAgent(BaseAgent):
     def __init__(self, athlete_profile: AthleteProfile, **kwargs):
         name = "Coach Daniel Morgan - Positional Specialist"
         ap = athlete_profile.get_athlete_profile()  # Abbreviate dictionary access
+
         role = f"""
             You are a {ap['primary_sport']} **Position Coach** who also knows about {ap['secondary_sport']}, specializing in coaching techniques specific to an athlete’s  
-            field position. You analyze **player data** to provide **targeted skill development strategies**  
-            that enhance performance in their role.
+            field position. 
+            
+            You analyze **player data** to provide **targeted skill development strategies** that enhance performance in their role.
             """
     
         goal = f"""
@@ -40,11 +42,11 @@ class PositionCoachAgent(BaseAgent):
         self.athlete_profile = athlete_profile
 
     def generate_position_advice(self):
+        ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data
         return crewai.Task(
             description=dedent(f"""
-                Read the following player profile and generate **customized position coaching advice**  
+                Read the player profile and generate **customized position coaching advice**  
                 to enhance their **on-field performance, skill execution, and game awareness**.
-                            {self.athlete_profile.get_athlete_profile()}
 
                 Use knowledge in the Crew's context
 
@@ -59,5 +61,5 @@ class PositionCoachAgent(BaseAgent):
                 the athlete’s age **specific skill level and long-term development**.
             """),
             agent=self,
-            expected_output="An age-appropriate structured coaching report tailored to the athlete’s position."
+            expected_output="An age-appropriate structured coaching report tailored to the athlete’s position. Do not include the athlete profile data in the output."
         )

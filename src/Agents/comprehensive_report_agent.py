@@ -9,9 +9,12 @@ class ComprehensiveReportAgent(BaseAgent):
     def __init__(self, athlete_profile: AthleteProfile, **kwargs):
         name="Coach Jackson - Performance Analyst"
         ap = athlete_profile.get_athlete_profile()  # Abbreviate dictionary access
+
         role = f"""
             You are a {ap['primary_sport']} **Comprehensive Report Generator** who also knows about {ap['secondary_sport']}, responsible for consolidating  
             and summarizing analysis from various expert agents into a **cohesive, well-structured report**.
+
+            You analyze player-specific data from an input file to create a **professional report**
             """
 
         goal = f"""
@@ -29,7 +32,7 @@ class ComprehensiveReportAgent(BaseAgent):
             Your expertise ensures that all key insights are presented logically, with actionable takeaways.
             """
 
-        super().__init__(
+        super().__init__(athlete_profile=athlete_profile,
             name=kwargs.pop('name', name),
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
@@ -48,8 +51,7 @@ class ComprehensiveReportAgent(BaseAgent):
                 Use this information to **synthesize all the findings** into a **comprehensive and structured report**  
                 that is **readable, insightful, and actionable**.
 
-                Analyze the following athlete profile data and generate a comprehensive report:
-                            {self.athlete_profile.get_athlete_profile()}                 
+                Analyze the following athlete profile data and generate a comprehensive report:                
 
                 **Your report should include:**
                 - **Executive Summary**: A high-level overview of key insights.
@@ -63,5 +65,5 @@ class ComprehensiveReportAgent(BaseAgent):
                 **professional, structured, and formatted for easy reading**.
             """),
             agent=self,
-            expected_output="A professionally formatted comprehensive report summarizing all agent insights."
+            expected_output="A professionally formatted comprehensive report summarizing all agent insights. Do not include the athlete profile data in the output."
         )

@@ -8,11 +8,14 @@ class PhysiologyAgent(BaseAgent):
     def __init__(self, athlete_profile: AthleteProfile, **kwargs):
         name = "Dr. Robert Lee - Physiology Specialist"
         ap = athlete_profile.get_athlete_profile()  # Abbreviate dictionary access
+
         role = f"""
             You are a {ap['primary_sport']} Sports Physiologist who also knows about {ap['secondary_sport']} specializing in optimizing athletic performance through 
-            **exercise science, injury prevention, and recovery techniques**. Your role is to analyze 
-            **player-specific data** and develop **tailored strategies** to improve endurance, strength, 
+            **exercise science, injury prevention, and recovery techniques**. 
+            
+            Your role is to analyze **player-specific data** and develop **tailored strategies** to improve endurance, strength, 
             and long-term physical health.
+            You provide expert physiological guidance to ensure athletes maximize their potential.
             """
     
         goal = f"""
@@ -32,7 +35,7 @@ class PhysiologyAgent(BaseAgent):
             research in **sports science, biomechanics, and rehabilitation**.
             """
 
-        super().__init__(
+        super().__init__(athlete_profile=athlete_profile,
             name=kwargs.pop('name', name),
             role=kwargs.pop('role', role),
             goal=kwargs.pop('goal', goal),
@@ -40,14 +43,12 @@ class PhysiologyAgent(BaseAgent):
             **kwargs
         )
 
-        self.athlete_profile = athlete_profile
-
     def generate_physiology_report(self):
+        ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data
         return crewai.Task(
             description=dedent(f"""
-                Read the following player profile and provide **a physiology report**  
+                Read the player profile and provide **a physiology report**  
                 with **specific recommendations** for **injury prevention, recovery, and physical optimization**.
-                            {self.athlete_profile.get_athlete_profile()}
 
                 Use knowledge in the Crew's context
 
@@ -62,5 +63,5 @@ class PhysiologyAgent(BaseAgent):
                 the athlete’s age **tailored to the athlete's physical condition**.
             """),
             agent=self,
-            expected_output="An age-appropriate structured physiology report detailing injury prevention and performance enhancement strategies."
+            expected_output="An age-appropriate structured physiology report detailing injury prevention and performance enhancement strategies. Do not include the athlete profile data in the output."
         )

@@ -20,6 +20,7 @@ from src.WebFunctions.generate_blog_post import GenerateBlogPostCrew
 from src.Crews.UpdateCrew import UpdateCrew
 
 import src.Utils.utils as utils
+import src.Helpers.web_data as web_data
 
 PORT = int(os.environ.get("PORT", 8000))  # Default to 8000 for local testing
 
@@ -85,17 +86,17 @@ def preflight_check():
 
 @app.post("/update_program")
 async def run_update_program(
-    input_text: utils.WordPressInput,
+    input_text: web_data.UpdateProgramData,
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):    
     """Starts the update as a background task and returns a task_id."""
     task_id = str(uuid.uuid4())  # Generate a unique task ID
-    background_tasks.add_task(update_program_and_store_result, task_id, input_text.model_dump_json())
+    background_tasks.add_task(update_program_and_store_result, task_id, input_text)
     return {"success": True, "task_id": task_id}
 
 def update_program_and_store_result(task_id: str, input_text):
     """Runs the update and stores the result for later retrieval."""
-    update_crew = UpdateCrew(input_text)
+    update_crew = UpdateCrew(player_data=input_text.dict())
     update_crew_result = update_crew.run(task_id)  # Runs synchronously in the background
     task_results[task_id] = update_crew_result  # Store result for polling
 
@@ -140,7 +141,7 @@ async def log_training_data(
 ):
     """Starts the Update as a background task and returns a task_id."""
     task_id = str(uuid.uuid4())  # Generate a unique task ID
-    background_tasks.add_task(run_and_store_log_result, task_id, input_text.model_dump_json)
+    background_tasks.add_task(run_and_store_log_result, task_id, input_text.model_dump_json())
     return {"success": True, "task_id": task_id}
 
 

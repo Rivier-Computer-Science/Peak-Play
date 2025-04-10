@@ -56,8 +56,8 @@ function async_update_program_markdown_shortcode() {
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const athleteProfileData = <?php echo json_encode($athlete_profile_data); ?>
-        const performanceFeedbackData = <?php echo json_encode($performance_feedback_data); ?>
+        const athleteProfileData = <?php echo json_encode($athlete_profile_data); ?>;
+        const performanceFeedbackData = <?php echo json_encode($performance_feedback_data); ?>;
 
         // Global function to poll for the result.
         function pollForResult(task_id) {

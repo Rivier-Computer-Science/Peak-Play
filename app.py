@@ -140,7 +140,7 @@ async def log_training_data(
 ):
     """Starts the Update as a background task and returns a task_id."""
     task_id = str(uuid.uuid4())  # Generate a unique task ID
-    background_tasks.add_task(run_and_store_log_result, task_id, input_text)
+    background_tasks.add_task(run_and_store_log_result, task_id, input_text.model_dump_json)
     return {"success": True, "task_id": task_id}
 
 

@@ -21,7 +21,7 @@ function async_update_program_markdown_shortcode() {
 // Grab form fields 
     if (!empty($athlete_profile_entries[0])) {
         $fields = json_decode($athlete_profile_entries[0]->fields, true);
-        $athlete_profile_data = [
+        $update_program_data = [
             'athlete_name' => $fields["1"]['value'] ?? '',
             'sex' => $fields["4"]['value'] ?? '',
             'athlete_age' => $fields["3"]['value'] ?? '',
@@ -34,30 +34,29 @@ function async_update_program_markdown_shortcode() {
 
             ];
     } else {
-        $athlete_profile_data = ['error' => 'No athlete_profile_entries found'];
+        $update_program_data = ['error' => 'No athlete_profile_entries found'];
     }
 
     if (!empty($performance_feedback_form_entry[0])) {
-        $fields = json_decode($performance_feedback_form_entry[0]->fields, true);
-        $performance_feedback_data = [
-            'overall_performance' => $fields["3"]['value'] ?? '',
-            'difficulty' => $fields["6"]['value'] ?? '',
-            'fatigue' => $fields["4"]['value'] ?? '',
-            'injuries' => $fields["7"]['value'] ?? '',
-            'injury_details' => $fields["8"]['value'] ?? '',
-            'motivation_level' => $fields["9"]['value'] ?? '',
-            'additional_comments' => $fields["10"]['value'] ?? '',
+        $performance_fields = json_decode($performance_feedback_form_entry[0]->fields, true);
+        $update_program_data += [
+            'overall_performance' => $performance_fields["3"]['value'] ?? '',
+            'difficulty' => $performance_fields["6"]['value'] ?? '',
+            'fatigue' => $performance_fields["4"]['value'] ?? '',
+            'injuries' => $performance_fields["7"]['value'] ?? '',
+            'injury_details' => $performance_fields["8"]['value'] ?? '',
+            'motivation_level' => $performance_fields["9"]['value'] ?? '',
+            'additional_comments' => $performance_fields["10"]['value'] ?? '',
             ];
     } else {
-        $performance_feedback_data = ['error' => 'No performance feedback form entries found'];
+        $update_program_data += ['error' => 'No performance feedback form entries found'];
     }
     ?>
     <!-- Include Marked.js from a CDN -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const athleteProfileData = <?php echo json_encode($athlete_profile_data); ?>;
-        const performanceFeedbackData = <?php echo json_encode($performance_feedback_data); ?>;
+        const updateProgramData = <?php echo json_encode($update_program_data); ?>;
 
         // Global function to poll for the result.
         function pollForResult(task_id) {
@@ -136,8 +135,7 @@ function async_update_program_markdown_shortcode() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ 
-                    athlete_profile_data: athleteProfileData,
-                    performance_feedback_data: performanceFeedbackData
+                    update_program_data: updateProgramData
                  } )  
                 })
                 .then(response => response.json())

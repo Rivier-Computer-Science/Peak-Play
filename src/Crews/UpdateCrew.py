@@ -30,7 +30,7 @@ class UpdateCrew:
             conditioning_coach_agent.modify_training_program(),
             motivator_agent.motivate_athlete(),
             nutrition_agent.generate_meal_plan(),
-            physiology_agent.generate_physiology_report(),
+            physiology_agent.weekly_physiology_report(),
         ]
     
         # Run tasks

@@ -74,7 +74,14 @@ class ConditioningCoachAgent(BaseAgent):
         ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data
         return crewai.Task(
             description=dedent(f"""
-                Analyze updated player performance data and adjust the training plan accordingly.
+                Analyze updated weekly player performance data and adjust the training plan accordingly:
+                    Overall performance (0-10): {ap['overall_performance']}
+                    Program difficulty (0-10): {ap['difficulty']}
+                    Fatigue (0-10): {ap['fatigue']}
+                    Injuries: {ap['injuries']}
+                    Injury Details: {ap['injury_details']}
+                    Motivation Level (0-10): {ap['motivation_level']}
+                    Any Additonal Comments: {ap['additional_comments']}
 
                 Adaptations should include:
                 - Increasing intensity if performance is improving.

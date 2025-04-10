@@ -67,3 +67,30 @@ class PhysiologyAgent(BaseAgent):
             agent=self,
             expected_output="An age-appropriate structured physiology report detailing injury prevention and performance enhancement strategies. Do not include the athlete profile data in the output."
         )
+    
+    def weekly_physiology_report(self):
+        ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data
+        return crewai.Task(
+            description=dedent(f"""
+                Analyze the Athlete's weekly feedback and generate an updated physiology report.
+                    Overall performance (0-10): {ap['overall_performance']}
+                    Program difficulty (0-10): {ap['difficulty']}
+                    Fatigue (0-10): {ap['fatigue']}
+                    Injuries: {ap['injuries']}
+                    Injury Details: {ap['injury_details']}
+                    Motivation Level (0-10): {ap['motivation_level']}
+                    Any Additonal Comments: {ap['additional_comments']}
+
+                Your response should include:
+                - **Injury prevention techniques** (specific to the athlete's sport)
+                - **Recovery strategies** (nutrition, hydration, sleep, and muscle repair)
+                - **Mobility and flexibility exercises** to prevent strains
+                - **Cardiovascular endurance strategies** for long-lasting performance
+                - **Strength-building recommendations** (safe and effective)
+
+                Ensure that all recommendations are **scientifically backed** and aligned with
+                the athlete’s age **tailored to the athlete's physical condition**.
+            """),
+            agent=self,
+            expected_output="An age-appropriate structured physiology report detailing injury prevention and performance enhancement strategies. Do not include the athlete profile data in the output."
+        )

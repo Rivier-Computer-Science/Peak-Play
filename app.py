@@ -85,15 +85,15 @@ def preflight_check():
 
 @app.post("/update_program")
 async def run_update_program(
-    input_text: str = Body(..., media_type="text/plain"),
+    input_text: utils.WordPressInput,
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):    
     """Starts the update as a background task and returns a task_id."""
     task_id = str(uuid.uuid4())  # Generate a unique task ID
-    background_tasks.add_task(update_program_and_store_result, task_id, input_text)
+    background_tasks.add_task(update_program_and_store_result, task_id, input_text.model_dump_json())
     return {"success": True, "task_id": task_id}
 
-def update_program_and_store_result(task_id: str, input_text: str):
+def update_program_and_store_result(task_id: str, input_text):
     """Runs the update and stores the result for later retrieval."""
     update_crew = UpdateCrew(input_text)
     update_crew_result = update_crew.run(task_id)  # Runs synchronously in the background

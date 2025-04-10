@@ -1,19 +1,19 @@
 import crewai
 from src.Agents.conditioning_coach_agent import ConditioningCoachAgent
 from src.Agents.motivator_agent import MotivatorAgent
-from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 from src.Agents.agent_helpers import concatente_task_outputs
+from src.Helpers.athlete_profile import AthleteProfile
 
 
 class LogCrew:
-    def __init__(self, player_data: str):
-        self.player_data = StringKnowledgeSource(content=player_data)
+    def __init__(self, athlete_data):
+        self.athlete_data = AthleteProfile(athlete_data)
 
     def run(self, task_id: str):
         # Initialize agents with file input
-        athlete_profile_agent = ConditioningCoachAgent(athlete_profile=self.player_data)
-        conditioning_coach_agent = ConditioningCoachAgent()
-        motivator_agent = MotivatorAgent()
+        athlete_profile_agent = ConditioningCoachAgent(athlete_profile=self.athlete_data)
+        conditioning_coach_agent = ConditioningCoachAgent(athlete_profile=self.athlete_data)
+        motivator_agent = MotivatorAgent(athlete_profile=self.athlete_data)
 
         agents = [
             athlete_profile_agent,
@@ -31,7 +31,6 @@ class LogCrew:
         crew = crewai.Crew(
             agents=agents,
             tasks=tasks,
-            knowledge_sources=[self.player_data],
             process=crewai.Process.sequential,
             verbose=True
         )

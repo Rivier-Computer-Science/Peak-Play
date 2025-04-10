@@ -144,7 +144,7 @@ async def log_training_data(
     return {"success": True, "task_id": task_id}
 
 
-def run_and_store_log_result(task_id: str, input_text: str):
+def run_and_store_log_result(task_id: str, input_text):
     """Runs the Update and stores the result for later retrieval."""
     log_crew = LogCrew(input_text)
     log_crew_result = log_crew.run(task_id)  # Runs synchronously in the background

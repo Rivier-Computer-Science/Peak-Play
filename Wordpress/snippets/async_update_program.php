@@ -134,9 +134,7 @@ function async_update_program_markdown_shortcode() {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ 
-                    update_program_data: updateProgramData
-                 } )  
+                body: JSON.stringify(updateProgramData)  
                 })
                 .then(response => response.json())
                 .then(data => pollForResult(data.task_id))

@@ -135,7 +135,7 @@ def preflight_check():
 
 @app.post("/log_training")
 async def log_training_data(
-    input_text: str = Body(..., media_type="text/plain"),
+    input_text: utils.WordPressInput,
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):
     """Starts the Update as a background task and returns a task_id."""

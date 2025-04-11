@@ -10,7 +10,7 @@ from src.Agents.physiology_agent import PhysiologyAgent
 
 class UpdateCrew:
     def __init__(self, player_data):
-        self.athlete_data = AthleteProfile(player_data)
+        self.athlete_data = AthleteProfile(player_profile=player_data)
 
     def run(self, task_id: str):
         # Initialize agents with file input
@@ -28,9 +28,9 @@ class UpdateCrew:
 
         tasks = [
             conditioning_coach_agent.modify_training_program(),
-            motivator_agent.motivate_athlete(),
+            motivator_agent.weekly_motivation(),
             nutrition_agent.generate_meal_plan(),
-            physiology_agent.generate_physiology_report(),
+            physiology_agent.weekly_physiology_report(),
         ]
     
         # Run tasks

@@ -62,3 +62,30 @@ class MotivatorAgent(BaseAgent):
             agent=self,
             expected_output="An age-appropriate inspiring, personalized message tailored to the athlete’s information. Do not include the athlete profile data in the output."
         )
+
+    def weekly_motivation(self):
+        ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data
+        return crewai.Task(
+            description=dedent(f"""
+                Analyze the athlete's weekly feedback and provide a motivational message. Take into special consideration
+                the athlete's motivation level at the end of the week and any injuries they may have that could cause them
+                distress trying to reach their goals.
+                               
+                    Overall performance (0-10): {ap['overall_performance']}
+                    Program difficulty (0-10): {ap['difficulty']}
+                    Fatigue (0-10): {ap['fatigue']}
+                    Injuries: {ap['injuries']}
+                    Injury Details: {ap['injury_details']}
+                    Motivation Level (0-10): {ap['motivation_level']}
+                    Any Additonal Comments: {ap['additional_comments']}
+
+                Your response should:
+                - Highlight the athlete’s strengths and achievements.
+                - Encourage them in areas where they are improving.
+                - End with a powerful, uplifting message to encourage them.
+
+                Make sure the motivational message is appropriate to the athlete's age.
+            """),
+            agent=self,
+            expected_output="An age-appropriate inspiring, personalized message tailored to the athlete’s information. Do not include the athlete profile data in the output."
+        )

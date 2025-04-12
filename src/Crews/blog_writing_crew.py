@@ -1,5 +1,9 @@
+import os
+
 import crewai as crewai
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
+from crewai.memory import LongTermMemory
+from crewai.memory.storage.ltm_sqlite_storage import LTMSQLiteStorage
 
 import logging
 
@@ -36,11 +40,19 @@ class BlogWritingCrew:
             blog_publisher_agent.publish_blog_post()
         ]
         
+       
+        long_term_memory=LongTermMemory(
+            storage=LTMSQLiteStorage(
+                db_path="./blog_post_long_term_memory.db"
+            )
+        )
 
         # Run tasks
         crew = crewai.Crew(
             agents=agents,
             tasks=tasks,
+            memory=True,
+            long_term_memory=long_term_memory,
             process=crewai.Process.sequential,
             verbose=True
         )
@@ -51,4 +63,4 @@ class BlogWritingCrew:
             agent.register_crew(crew)
 
         result = crew.kickoff()
-        return result
+        return result.json

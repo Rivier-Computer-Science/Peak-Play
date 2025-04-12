@@ -7,12 +7,21 @@
 
 import crewai as crewai
 from textwrap import dedent
+
+from pydantic import BaseModel
+
 from src.Agents.base_agent import BaseAgent
-
-
 from src.AgentTools.search_wikipedia import search_wikipedia
 from src.AgentTools.search_unsplash_images import search_unsplash_images
 
+
+class BlogPostResult(BaseModel):
+    post_title: str
+    post_content: str
+
+class BlogPostOutput(BaseModel):
+    success: str
+    result: BlogPostResult
 
 class BlogTopicAgent(BaseAgent):
     role: str
@@ -51,9 +60,11 @@ class BlogTopicAgent(BaseAgent):
         # Preprocessing goes here
         return crewai.Task(
             description=dedent(f"""
-                Pick a sport. Then pick a topic within the sport. Occasionally, but not always,
-                    select a topic for physically challenged athletes (e.g., parathletes) or those with special
-                    capabilities (e.g., left handed).
+                Check your long term memory.
+                Then pick a sport using a uniform distribution so you don't always pick the same sport. 
+                    Then pick a topic within the sport. If the sport has been covered before, don't repeat the topic.
+                Occasionally, but not always, select a topic for physically challenged athletes (e.g., parathletes) or those with special
+                    capabilities (e.g., left handed).                               
             """),
             agent=self,
             expected_output="A sport and blog topic for that sport."
@@ -105,7 +116,8 @@ class BlogWriterAgent(BaseAgent):
                                the attribution. It always comes back in the response.
             """),
             agent=self,
-            expected_output="A blog post written using markdown"
+            output_json=BlogPostOutput,
+            expected_output="A JSON blog post with markdown as a string"
         )        
 
     def revise_blog_post(self): 
@@ -118,7 +130,8 @@ class BlogWriterAgent(BaseAgent):
                                the attribution. It always comes back in the response.
             """),
             agent=self,
-            expected_output="An improved blog post written using markdown"
+            output_json=BlogPostOutput,
+            expected_output="An improved JSON blog post with markdown as a string"
         )  
 
 
@@ -249,15 +262,15 @@ class BlogPublisherAgent(BaseAgent):
             **kwargs
         )
 
+
     def publish_blog_post(self): 
-        # Preprocessing goes here
         return crewai.Task(
             description=dedent("""
                 You consider all the information the agents have provided.
                 You make final edits based on your years of experience.
                 You revise the blog post for publication.
 
-                The output must strictly follow this exact JSON format (do not include markdown fences or other text):
+                The output must strictly follow this exact JSON format:
 
                 {
                     "success": true,
@@ -275,6 +288,7 @@ class BlogPublisherAgent(BaseAgent):
                 Ensure the markdown content is detailed, engaging, and properly formatted.
             """),
             agent=self,
+            output_json=BlogPostOutput,
             expected_output=dedent("""
                 {
                     "success": true,
@@ -284,6 +298,5 @@ class BlogPublisherAgent(BaseAgent):
                     }
                 }
             """)
-
         )
       

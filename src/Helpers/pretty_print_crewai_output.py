@@ -33,49 +33,51 @@ def display_crew_output(crew_output):
         console.print(crew_output.pydantic_output)
     
     # Tasks Output
-    tasks_output = crew_output.get('tasks_output', [])
-    if tasks_output:
-        console.print("\n[bold underline]Tasks Output:[/bold underline]")
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Description", style="cyan", overflow="fold")
-        table.add_column("Summary", style="green", overflow="fold")
-        table.add_column("Raw Output", style="white", overflow="fold")
-        table.add_column("Agent", style="yellow")
-        table.add_column("Output Format", style="red")
-        
-        for task in tasks_output:
-            table.add_row(
-                task.get('description', '').strip(),
-                task.get('summary', '').strip(),
-                task.get('raw', '').strip(),
-                task.get('agent', ''),
-                task.get('output_format', '')
-            )
-        console.print(table)
+    console.print("\n[bold underline]Tasks Output:[/bold underline]")
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column("Description", style="cyan", overflow="fold")
+    table.add_column("Summary", style="green", overflow="fold")
+    table.add_column("Raw Output", style="white", overflow="fold")
+    table.add_column("Agent", style="yellow")
+    table.add_column("Output Format", style="red")
+    
+    for task in crew_output.tasks_output:
+        table.add_row(
+            task.description.strip(),
+            task.summary.strip(),
+            task.raw.strip(),
+            task.agent,
+            task.output_format.value
+        )
+    
+    console.print(table)
 
     # Token Usage
-    token_usage = crew_output.get('token_usage', {})
-    if token_usage:
-        console.print("\n[bold underline]Token Usage:[/bold underline]")
-        usage_table = Table(show_header=True, header_style="bold blue")
-        usage_table.add_column("Metric", style="dim")
-        usage_table.add_column("Value", justify="right")
+    console.print("\n[bold underline]Token Usage:[/bold underline]")
+    usage_table = Table(show_header=True, header_style="bold blue")
+    usage_table.add_column("Metric", style="dim")
+    usage_table.add_column("Value", justify="right")
 
-        prompt_tokens = token_usage.get('prompt_tokens', 0)
-        completion_tokens = token_usage.get('completion_tokens', 0)
-        total_tokens = token_usage.get('total_tokens', 0)
+    # Convert UsageMetrics to dict before iterating
+    token_usage_dict = crew_output.token_usage.dict()
 
-        # Calculate costs
-        input_cost = prompt_tokens * INPUT_TOKEN_COST
-        output_cost = completion_tokens * OUTPUT_TOKEN_COST
-        total_cost = input_cost + output_cost
+    # Retrieve token counts
+    prompt_tokens = token_usage_dict.get('prompt_tokens', 0)
+    completion_tokens = token_usage_dict.get('completion_tokens', 0)
+    total_tokens = token_usage_dict.get('total_tokens', 0)
 
-        # Add token usage rows
-        for key, value in token_usage.items():
-            usage_table.add_row(key.replace("_", " ").capitalize(), str(value))
+    # Calculate individual costs
+    input_cost = prompt_tokens * INPUT_TOKEN_COST
+    output_cost = completion_tokens * OUTPUT_TOKEN_COST
+    total_cost = input_cost + output_cost
 
-        usage_table.add_row("Input token cost (USD)", f"${input_cost:.6f}")
-        usage_table.add_row("Output token cost (USD)", f"${output_cost:.6f}")
-        usage_table.add_row("Total estimated cost (USD)", f"${total_cost:.6f}")
+    # Add token usage rows
+    for key, value in token_usage_dict.items():
+        usage_table.add_row(key.replace("_", " ").capitalize(), str(value))
 
-        console.print(usage_table)
+    # Add the calculated costs
+    usage_table.add_row("Input token cost (USD)", f"${input_cost:.6f}")
+    usage_table.add_row("Output token cost (USD)", f"${output_cost:.6f}")
+    usage_table.add_row("Total estimated cost (USD)", f"${total_cost:.6f}")
+
+    console.print(usage_table)

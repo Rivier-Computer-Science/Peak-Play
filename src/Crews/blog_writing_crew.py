@@ -31,13 +31,14 @@ class BlogWritingCrew:
             blog_publisher_agent
         ]
 
+        publish_blog_post = blog_publisher_agent.publish_blog_post()
         tasks = [
             blog_topic_agent.select_blog_topic(),
             blog_writer_agent.write_blog_post(),
             blog_critic_agent.critique_blog_post(),
             blog_writer_agent.revise_blog_post(),
             blog_validation_agent.validate_blog_post(),
-            blog_publisher_agent.publish_blog_post()
+            publish_blog_post
         ]
         
        
@@ -63,4 +64,5 @@ class BlogWritingCrew:
             agent.register_crew(crew)
 
         result = crew.kickoff()
-        return result.json
+        blog_post_output = publish_blog_post.output
+        return    result, blog_post_output

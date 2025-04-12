@@ -18,6 +18,7 @@ from src.AgentTools.search_unsplash_images import search_unsplash_images
 class BlogPostResult(BaseModel):
     post_title: str
     post_content: str
+    post_tags: str
 
 class BlogPostOutput(BaseModel):
     success: str
@@ -269,6 +270,7 @@ class BlogPublisherAgent(BaseAgent):
                 You consider all the information the agents have provided.
                 You make final edits based on your years of experience.
                 You revise the blog post for publication.
+                Add appropriate WordPress tags in the post_tags field.
 
                 The output must strictly follow this exact JSON format:
 
@@ -276,7 +278,8 @@ class BlogPublisherAgent(BaseAgent):
                     "success": true,
                     "result": {
                         "post_title": "A short and descriptive blog title",
-                        "post_content": "Detailed markdown content without the title..."
+                        "post_content": "Detailed markdown content **WITHOUT** the title..."
+                        "post_tags": "Wordpress tags"
                     }
                 }
 
@@ -294,7 +297,8 @@ class BlogPublisherAgent(BaseAgent):
                     "success": true,
                     "result": {
                         "post_title": "A short and descriptive blog title",
-                        "post_content": "Detailed markdown content without the title..."
+                        "post_content": "Detailed markdown content **WITHOUT** the title..."
+                        "post_tags": "Wordpress tags"
                     }
                 }
             """)

@@ -270,7 +270,7 @@ class BlogPublisherAgent(BaseAgent):
                 You consider all the information the agents have provided.
                 You make final edits based on your years of experience.
                 You revise the blog post for publication.
-                Add appropriate WordPress tags in the post_tags field.
+                Add appropriate WordPress tags in the post_tags field as plain text. No markdown.
 
                 The output must strictly follow this exact JSON format:
 

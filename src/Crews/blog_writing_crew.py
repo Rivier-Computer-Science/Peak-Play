@@ -64,5 +64,5 @@ class BlogWritingCrew:
             agent.register_crew(crew)
 
         result = crew.kickoff()
-        blog_post_output = publish_blog_post.output
-        return    result, blog_post_output
+        #blog_post_output = publish_blog_post.output
+        return    result

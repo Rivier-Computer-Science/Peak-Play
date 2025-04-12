@@ -33,7 +33,7 @@ if __name__ == "__main__":
     logger.info("Blog Writing crew initialized successfully")
 
     try:       
-        crew_output, blog_post_output = blogging_crew.run()
+        crew_output = blogging_crew.run()
         logger.info("Bloggin crew execution run() successfully")
     except Exception as e:
         logger.error(f"Error during crew execution: {e}")
@@ -46,7 +46,6 @@ if __name__ == "__main__":
 
     display_crew_output(crew_output)
 
-    print('\n\nFinal Blog Post \n\n', blog_post_output)
 
     print("Collaboration complete")
     sys.exit(0)

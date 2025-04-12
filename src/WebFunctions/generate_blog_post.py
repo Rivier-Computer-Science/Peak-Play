@@ -10,6 +10,6 @@ class GenerateBlogPostCrew:
     def run(self, task_id: str):
         blog_writing_crew = BlogWritingCrew()
 
-        result, _ = blog_writing_crew.run()
+        result = blog_writing_crew.run()
 
         return agent_helpers.concatente_task_outputs(result)

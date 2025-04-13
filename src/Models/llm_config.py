@@ -19,7 +19,7 @@ gpt_4o_llm = lang_oai.ChatOpenAI(
     temperature=0.0,  
     
     # Maximum number of tokens in the response. Controls the length of the output.
-    max_tokens=1500,  
+    max_tokens=5000,  
     
     # Nucleus sampling. Only considers tokens with cumulative probability up to `top_p`.
     # value between 0.0 and 1.0 

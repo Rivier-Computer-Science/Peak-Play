@@ -84,17 +84,20 @@ class BlogWriterAgent(BaseAgent):
             """
     
         goal = """
-            Given a sport and a topic, write a blog post.
+            Given a sport and a topic, write a 1500 word blog post.
             """
 
         backstory = """
             You are an expert blog writer. You've been blogging for 20+ years about different sports
                 and topics to improve athlete performance. You primarily write for amateur Athletes.
 
-            You construct blog posts that are concise, witty, and memorable.
+            You construct blog posts that are indepth, witty, and memorable.
 
             If you use unsplash, be sure to credit the website and photographer. Do not make up the
                                the attribution. It always comes back in the response.
+                Distribute multiple images throughout the post. Otherwise, put it at the top.
+                If it is a para athlete article and the images are not para athletes, replace them or remove them.
+
             """
     
         super().__init__(
@@ -118,7 +121,7 @@ class BlogWriterAgent(BaseAgent):
             """),
             agent=self,
             output_json=BlogPostOutput,
-            expected_output="A JSON blog post with markdown as a string"
+            expected_output="A 1000 to 1500 word JSON blog post with markdown content as a string"
         )        
 
     def revise_blog_post(self): 
@@ -132,7 +135,7 @@ class BlogWriterAgent(BaseAgent):
             """),
             agent=self,
             output_json=BlogPostOutput,
-            expected_output="An improved JSON blog post with markdown as a string"
+            expected_output="An improved 1000 to 1500 word JSON blog post with markdown content as a string"
         )  
 
 
@@ -270,6 +273,9 @@ class BlogPublisherAgent(BaseAgent):
                 You consider all the information the agents have provided.
                 You make final edits based on your years of experience.
                 You revise the blog post for publication.
+                If multiple images are used, they should be distributed throughout the blog post.
+                    One image should be at the top.
+                If it is a para athlete article and the images are not para athletes, replace them or remove them.
                 Add appropriate WordPress tags in the post_tags field as plain text. No markdown.
 
                 The output must strictly follow this exact JSON format:

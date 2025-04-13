@@ -18,11 +18,24 @@ from src.AgentTools.search_unsplash_images import search_unsplash_images
 class BlogPostResult(BaseModel):
     post_title: str
     post_content: str
+    topic:str
     post_tags: str
 
 class BlogPostOutput(BaseModel):
     success: str
     result: BlogPostResult
+
+JSON_FORMAT="""
+{
+    "success": true,
+    "result": {
+        "post_title": "A short and descriptive blog title",
+        "post_content": "Detailed markdown content **WITHOUT** the title..."
+        "topic": "The sport (e.g., Fencing, Achery, etc.)"
+        "post_tags": "Wordpress tags but do not include the topic"
+    }
+}    
+"""
 
 class BlogTopicAgent(BaseAgent):
     role: str
@@ -269,7 +282,7 @@ class BlogPublisherAgent(BaseAgent):
 
     def publish_blog_post(self): 
         return crewai.Task(
-            description=dedent("""
+            description=dedent(f"""
                 You consider all the information the agents have provided.
                 You make final edits based on your years of experience.
                 You revise the blog post for publication.
@@ -279,15 +292,8 @@ class BlogPublisherAgent(BaseAgent):
                 Add appropriate WordPress tags in the post_tags field as plain text. No markdown.
 
                 The output must strictly follow this exact JSON format:
+                {JSON_FORMAT}
 
-                {
-                    "success": true,
-                    "result": {
-                        "post_title": "A short and descriptive blog title",
-                        "post_content": "Detailed markdown content **WITHOUT** the title..."
-                        "post_tags": "Wordpress tags"
-                    }
-                }
 
                 Important rules:
                 - Do NOT wrap your JSON in markdown code blocks or backticks.
@@ -298,15 +304,6 @@ class BlogPublisherAgent(BaseAgent):
             """),
             agent=self,
             output_json=BlogPostOutput,
-            expected_output=dedent("""
-                {
-                    "success": true,
-                    "result": {
-                        "post_title": "A short and descriptive blog title",
-                        "post_content": "Detailed markdown content **WITHOUT** the title..."
-                        "post_tags": "Wordpress tags"
-                    }
-                }
-            """)
+            expected_output=dedent(f""" {JSON_FORMAT}""")
         )
       

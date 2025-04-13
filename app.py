@@ -17,7 +17,7 @@ import json
 from src.Crews.LogCrew import LogCrew
 from src.Crews.run_full_assement_crew import RunFullAssessmentCrew
 from src.Crews.analyze_fitbit_data_crew import AnalyzeFitbitDataCrew
-from src.WebFunctions.generate_blog_post import GenerateBlogPostCrew
+from src.Crews.blog_writing_crew import BlogWritingCrew
 from src.Crews.UpdateCrew import UpdateCrew
 
 import src.Utils.utils as utils
@@ -172,9 +172,10 @@ async def generate_blog_post(
 
 
 def run_generate_blog_post_and_return_result(task_id: str, input_text: str):
-    generate_blog_post_crew = GenerateBlogPostCrew()
-    generate_blog_post_result = generate_blog_post_crew.run(task_id)  # Runs synchronously in the background
-    print('CrewAI results \n', generate_blog_post_result)
+    blog_writing_crew = BlogWritingCrew()
+    crew_result, blog_post = blog_writing_crew.run()
+    print('CrewAI results \n', crew_result)
+    print('\n\nBlog Post\n', blog_post)
     #task_results[task_id] = final_blog_post  # Store the final blog post
     #task_results[task_id] = json.dumps(generate_blog_post_result, indent=2)  # Store the final blog post as a string
-    task_results[task_id] = generate_blog_post_result  # Store the final blog post as a string
+    task_results[task_id] = blog_post  # Store the final blog post 

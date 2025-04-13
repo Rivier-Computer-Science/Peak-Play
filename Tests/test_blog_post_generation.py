@@ -1,3 +1,5 @@
+# uvicorn app:app
+#
 # URL Local:  http://localhost:8000/generate_blog_post
 # URL Remote: https://peakplay.onrender.com/generate_blog_post
 # Get results: https://peakplay.onrender.com/get_result/taskid
@@ -9,7 +11,7 @@ curl -X POST "http://localhost:8000/generate_blog_post" \
 """
 
 """
-curl -X GET "http://localhost:8000/get_result/c15b7f3c-8b82-4644-9380-8a22d964dce5" 
+curl -X GET "http://localhost:8000/get_result/2d5965eb-4ada-4ece-988a-be0458f72687" 
 """
 
 """

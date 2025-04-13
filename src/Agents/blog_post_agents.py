@@ -9,6 +9,7 @@ import crewai as crewai
 from textwrap import dedent
 
 from pydantic import BaseModel
+from typing import List
 
 from src.Agents.base_agent import BaseAgent
 from src.AgentTools.search_wikipedia import search_wikipedia
@@ -19,7 +20,7 @@ class BlogPostResult(BaseModel):
     post_title: str
     post_content: str
     sport:str
-    post_tags: str
+    post_tags: List[str]
 
 class BlogPostOutput(BaseModel):
     success: str
@@ -32,7 +33,7 @@ JSON_FORMAT="""
         "post_title": "A short and descriptive blog title",
         "post_content": "Detailed markdown content **WITHOUT** the title..."
         "sport": "The sport (e.g., Fencing, Achery, etc.)"
-        "post_tags": "Wordpress tags but do not include the sport"
+        "post_tags": "A list of Wordpress tags but do not include the sport"
     }
 }    
 """

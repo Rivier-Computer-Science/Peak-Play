@@ -13,7 +13,7 @@ function create_pending_blog_post_callback() {
     }
 
     $post_title = sanitize_text_field($data['title']);
-    $post_content = wp_kses_post($data['content']); // Already HTML-rendered by marked.js
+    $post_content = wp_kses_post($data['content']);
 
     $user = get_user_by('login', 'PeakPlaySports');
     if (!$user) {
@@ -31,6 +31,44 @@ function create_pending_blog_post_callback() {
     $post_id = wp_insert_post($new_post);
 
     if ($post_id && !is_wp_error($post_id)) {
+        $category_ids = [];
+
+        // Ensure "Blog" exists and assign
+        $blog_category = get_category_by_slug('blog');
+        if (!$blog_category) {
+            $blog_category = wp_insert_term('Blog', 'category');
+        }
+        $blog_cat_id = is_array($blog_category) ? $blog_category['term_id'] : $blog_category->term_id;
+        $category_ids[] = $blog_cat_id;
+
+        // Ensure "Sports" exists
+        $sports_category = get_category_by_slug('sports');
+        if (!$sports_category) {
+            $sports_category = wp_insert_term('Sports', 'category');
+        }
+        $sports_cat_id = is_array($sports_category) ? $sports_category['term_id'] : $sports_category->term_id;
+
+        // Assign topic under Sports
+        if (!empty($data['topic'])) {
+            $topic = sanitize_text_field($data['topic']);
+            $topic_slug = sanitize_title($topic);
+
+            $topic_category = get_category_by_slug($topic_slug);
+            if (!$topic_category) {
+                $topic_category = wp_insert_term($topic, 'category', ['parent' => $sports_cat_id]);
+            }
+            $topic_cat_id = is_array($topic_category) ? $topic_category['term_id'] : $topic_category->term_id;
+            $category_ids[] = $topic_cat_id;
+        }
+
+        wp_set_post_categories($post_id, $category_ids);
+
+        // Assign tags from post_tags
+        if (!empty($data['post_tags']) && is_array($data['post_tags'])) {
+            $tags = array_map('sanitize_text_field', $data['post_tags']);
+            wp_set_post_tags($post_id, $tags, true);
+        }
+
         wp_send_json_success(['post_id' => $post_id]);
     } else {
         wp_send_json_error([
@@ -39,6 +77,8 @@ function create_pending_blog_post_callback() {
         ]);
     }
 }
+
+
 
 
 
@@ -54,7 +94,7 @@ function async_generate_blog_post_shortcode() {
 
 		function pollForResult(taskId) {
 			let attempts = 0;
-			const maxAttempts = 10;
+			const maxAttempts = 30;
 			const loadingElem = document.getElementById("loading");
 			const resultElem = document.getElementById("result");
 
@@ -76,14 +116,21 @@ function async_generate_blog_post_shortcode() {
 							return;
 						}
 
+						// String or JSON response accepted
 						let parsedInnerJSON;
-
 						try {
-							// Fix potential trailing characters by extracting valid JSON only
-							const jsonMatch = data.result.match(/{[\s\S]*}/);
-							if (!jsonMatch) throw new Error("No valid JSON found in result.");
+							if (typeof data.result === 'string') {
+								// Extract JSON from string if needed
+								const jsonMatch = data.result.match(/{[\s\S]*}/);
+								if (!jsonMatch) throw new Error("No valid JSON found in string result.");
 
-							parsedInnerJSON = JSON.parse(jsonMatch[0]);
+								parsedInnerJSON = JSON.parse(jsonMatch[0]);
+							} else if (typeof data.result === 'object') {
+								// Already parsed JSON
+								parsedInnerJSON = data.result;
+							} else {
+								throw new Error("Unexpected data.result type: " + typeof data.result);
+							}
 						} catch (e) {
 							clearInterval(pollingInterval);
 							loadingElem.style.display = "none";
@@ -91,6 +138,7 @@ function async_generate_blog_post_shortcode() {
 							console.error("Parsing error:", e, data.result);
 							return;
 						}
+
 
 						if (parsedInnerJSON.result && parsedInnerJSON.result.post_title && parsedInnerJSON.result.post_content) {
 							clearInterval(pollingInterval);
@@ -142,16 +190,29 @@ function async_generate_blog_post_shortcode() {
             });
         }
 
-		function createPendingPost({post_title, post_content}) {
-			// Convert markdown to HTML directly with Marked.js
+		function createPendingPost({ post_title, post_content, topic, post_tags }) {
 			const htmlContent = marked.parse(post_content);
+
+			// Ensure tags are an array, properly formatted
+			let tagsArray = [];
+			if (typeof post_tags === 'string') {
+				tagsArray = post_tags.split(',')
+					.map(tag => tag.replace(/^#/, '').trim())
+					.filter(tag => tag.length > 0)
+					.map(tag => tag.split(' ')
+						.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+						.join(' ')
+					);
+			}
 
 			fetch("<?php echo admin_url('admin-ajax.php'); ?>?action=create_pending_blog_post", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ 
 					title: post_title,
-					content: htmlContent
+					content: htmlContent,
+					topic: topic,
+					post_tags: tagsArray
 				})
 			})
 			.then(response => response.json())
@@ -172,6 +233,8 @@ function async_generate_blog_post_shortcode() {
 				</div>`;
 			});
 		}
+
+
 
         document.getElementById("generateBlogPostBtn").addEventListener("click", generateBlogPost);
     });

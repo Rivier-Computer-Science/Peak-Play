@@ -18,7 +18,7 @@ from src.AgentTools.search_unsplash_images import search_unsplash_images
 class BlogPostResult(BaseModel):
     post_title: str
     post_content: str
-    topic:str
+    sport:str
     post_tags: str
 
 class BlogPostOutput(BaseModel):
@@ -31,8 +31,8 @@ JSON_FORMAT="""
     "result": {
         "post_title": "A short and descriptive blog title",
         "post_content": "Detailed markdown content **WITHOUT** the title..."
-        "topic": "The sport (e.g., Fencing, Achery, etc.)"
-        "post_tags": "Wordpress tags but do not include the topic"
+        "sport": "The sport (e.g., Fencing, Achery, etc.)"
+        "post_tags": "Wordpress tags but do not include the sport"
     }
 }    
 """
@@ -134,7 +134,7 @@ class BlogWriterAgent(BaseAgent):
             """),
             agent=self,
             output_json=BlogPostOutput,
-            expected_output="A 1000 to 1500 word JSON blog post with markdown content as a string"
+            expected_output="A 1500 to 2000 word JSON blog post with markdown content as a string"
         )        
 
     def revise_blog_post(self): 
@@ -148,7 +148,7 @@ class BlogWriterAgent(BaseAgent):
             """),
             agent=self,
             output_json=BlogPostOutput,
-            expected_output="An improved 1000 to 1500 word JSON blog post with markdown content as a string"
+            expected_output="An improved 1500 to 2000 word JSON blog post with markdown content as a string"
         )  
 
 
@@ -185,6 +185,7 @@ class BlogCriticAgent(BaseAgent):
         return crewai.Task(
             description=dedent(f"""
                 Critique the blog post and suggest improvements.
+                If it is too short, advise the Blog Write Agent to increase the content.
 
             """),
             agent=self,

@@ -33,37 +33,37 @@ function create_pending_blog_post_callback() {
     if ($post_id && !is_wp_error($post_id)) {
         $category_ids = [];
 
-        // Ensure "Blog" exists and assign
-        $blog_category = get_category_by_slug('blog');
-        if (!$blog_category) {
-            $blog_category = wp_insert_term('Blog', 'category');
-        }
-        $blog_cat_id = is_array($blog_category) ? $blog_category['term_id'] : $blog_category->term_id;
-        $category_ids[] = $blog_cat_id;
+		// Ensure top-level "Blog" category
+		$blog_category = get_category_by_slug('blog');
+		if (!$blog_category) {
+			$blog_category = wp_insert_term('Blog', 'category');
+		}
+		$blog_cat_id = is_array($blog_category) ? $blog_category['term_id'] : $blog_category->term_id;
+		$category_ids[] = $blog_cat_id;
 
-        // Ensure "Sports" exists
-        $sports_category = get_category_by_slug('sports');
-        if (!$sports_category) {
-            $sports_category = wp_insert_term('Sports', 'category');
-        }
-        $sports_cat_id = is_array($sports_category) ? $sports_category['term_id'] : $sports_category->term_id;
+		// Ensure "Sports" category exists
+		$sports_category = get_category_by_slug('sports');
+		if (!$sports_category) {
+			$sports_category = wp_insert_term('Sports', 'category');
+		}
+		$sports_cat_id = is_array($sports_category) ? $sports_category['term_id'] : $sports_category->term_id;
 
-        // Assign topic under Sports
-        if (!empty($data['topic'])) {
-            $topic = sanitize_text_field($data['topic']);
-            $topic_slug = sanitize_title($topic);
+		// Assign specific sport under Sports
+		if (!empty($data['sport'])) {
+			$sport_name = sanitize_text_field($data['sport']);
+			$sport_slug = sanitize_title($sport_name);
 
-            $topic_category = get_category_by_slug($topic_slug);
-            if (!$topic_category) {
-                $topic_category = wp_insert_term($topic, 'category', ['parent' => $sports_cat_id]);
-            }
-            $topic_cat_id = is_array($topic_category) ? $topic_category['term_id'] : $topic_category->term_id;
-            $category_ids[] = $topic_cat_id;
-        }
+			$sport_category = get_category_by_slug($sport_slug);
+			if (!$sport_category) {
+				$sport_category = wp_insert_term($sport_name, 'category', ['parent' => $sports_cat_id]);
+			}
+			$sport_cat_id = is_array($sport_category) ? $sport_category['term_id'] : $sport_category->term_id;
+			$category_ids[] = $sport_cat_id;
+		}
 
-        wp_set_post_categories($post_id, $category_ids);
+		wp_set_post_categories($post_id, $category_ids);
 
-        // Assign tags from post_tags
+        // Assign post tags
         if (!empty($data['post_tags']) && is_array($data['post_tags'])) {
             $tags = array_map('sanitize_text_field', $data['post_tags']);
             wp_set_post_tags($post_id, $tags, true);
@@ -77,6 +77,7 @@ function create_pending_blog_post_callback() {
         ]);
     }
 }
+
 
 
 
@@ -143,12 +144,10 @@ function async_generate_blog_post_shortcode() {
 						if (parsedInnerJSON.result && parsedInnerJSON.result.post_title && parsedInnerJSON.result.post_content) {
 							clearInterval(pollingInterval);
 							loadingElem.style.display = "none";
+							const { post_title, post_content, sport, post_tags } = parsedInnerJSON.result;
+							resultElem.innerHTML = marked.parse(post_content);							
+							createPendingPost({ post_title, post_content, sport, post_tags });
 
-							const { post_title, post_content } = parsedInnerJSON.result;
-
-							resultElem.innerHTML = marked.parse(post_content);
-
-							createPendingPost({ post_title, post_content });
 						} else {
 							clearInterval(pollingInterval);
 							loadingElem.style.display = "none";
@@ -190,20 +189,8 @@ function async_generate_blog_post_shortcode() {
             });
         }
 
-		function createPendingPost({ post_title, post_content, topic, post_tags }) {
+		function createPendingPost({ post_title, post_content, sport, post_tags }) {
 			const htmlContent = marked.parse(post_content);
-
-			// Ensure tags are an array, properly formatted
-			let tagsArray = [];
-			if (typeof post_tags === 'string') {
-				tagsArray = post_tags.split(',')
-					.map(tag => tag.replace(/^#/, '').trim())
-					.filter(tag => tag.length > 0)
-					.map(tag => tag.split(' ')
-						.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-						.join(' ')
-					);
-			}
 
 			fetch("<?php echo admin_url('admin-ajax.php'); ?>?action=create_pending_blog_post", {
 				method: "POST",
@@ -211,8 +198,8 @@ function async_generate_blog_post_shortcode() {
 				body: JSON.stringify({ 
 					title: post_title,
 					content: htmlContent,
-					topic: topic,
-					post_tags: tagsArray
+					sport: sport,
+					post_tags: post_tags  // No splitting needed, already an array
 				})
 			})
 			.then(response => response.json())
@@ -233,8 +220,6 @@ function async_generate_blog_post_shortcode() {
 				</div>`;
 			});
 		}
-
-
 
         document.getElementById("generateBlogPostBtn").addEventListener("click", generateBlogPost);
     });

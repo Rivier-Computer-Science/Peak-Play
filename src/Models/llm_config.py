@@ -1,10 +1,10 @@
 import langchain_openai as lang_oai
 
 # LLM Models
-gpt_4o_llm_random = lang_oai.ChatOpenAI(
+gpt_4o_llm_blog_post = lang_oai.ChatOpenAI(
     model_name="gpt-4o",  
     temperature=0.7,  
-    max_tokens=1500,      
+    max_tokens=5000,      
     presence_penalty=0.5,      
 )
 

@@ -8,7 +8,7 @@ from crewai.memory.storage.ltm_sqlite_storage import LTMSQLiteStorage
 import logging
 
 from src.Agents.blog_post_agents import BlogWriterAgent, BlogCriticAgent, BlogTopicAgent, BlogValidationAgent, BlogPublisherAgent
-from src.Models.llm_config import gpt_4o_llm_random
+from src.Models.llm_config import gpt_4o_llm_blog_post
 import src.Agents.agent_helpers as agent_helpers
 import src.Utils.utils as utils
 
@@ -17,11 +17,11 @@ class BlogWritingCrew:
     def run(self):
         logger = utils.configure_logger(logging.INFO)
 
-        blog_topic_agent  = BlogTopicAgent(llm=gpt_4o_llm_random)
-        blog_writer_agent = BlogWriterAgent(llm=gpt_4o_llm_random)
-        blog_critic_agent = BlogCriticAgent(llm=gpt_4o_llm_random)
-        blog_validation_agent = BlogValidationAgent(llm=gpt_4o_llm_random)
-        blog_publisher_agent = BlogPublisherAgent(llm=gpt_4o_llm_random)
+        blog_topic_agent  = BlogTopicAgent(llm=gpt_4o_llm_blog_post)
+        blog_writer_agent = BlogWriterAgent(llm=gpt_4o_llm_blog_post)
+        blog_critic_agent = BlogCriticAgent(llm=gpt_4o_llm_blog_post)
+        blog_validation_agent = BlogValidationAgent(llm=gpt_4o_llm_blog_post)
+        blog_publisher_agent = BlogPublisherAgent(llm=gpt_4o_llm_blog_post)
         
         agents = [
             blog_topic_agent,

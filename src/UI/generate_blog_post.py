@@ -11,7 +11,7 @@ import crewai_tools as crewai_tools
 from src.Helpers.pretty_print_crewai_output import display_crew_output
 
 from src.Crews.blog_writing_crew import BlogWritingCrew
-from src.Models.llm_config import gpt_4o_llm_random
+from src.Models.llm_config import gpt_4o_llm_blog_post
 
 import src.Utils.utils as utils
 

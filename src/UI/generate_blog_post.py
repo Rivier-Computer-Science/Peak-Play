@@ -33,7 +33,7 @@ if __name__ == "__main__":
     logger.info("Blog Writing crew initialized successfully")
 
     try:       
-        crew_output = blogging_crew.run()
+        crew_output, blog_post = blogging_crew.run()
         logger.info("Bloggin crew execution run() successfully")
     except Exception as e:
         logger.error(f"Error during crew execution: {e}")

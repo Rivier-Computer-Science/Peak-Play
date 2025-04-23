@@ -15,6 +15,8 @@ from src.Agents.base_agent import BaseAgent
 from src.AgentTools.search_wikipedia import search_wikipedia
 from src.AgentTools.search_unsplash_images import search_unsplash_images
 
+import src.Models.llm_config as llm_config
+
 
 class BlogPostResult(BaseModel):
     post_title: str
@@ -38,7 +40,31 @@ JSON_FORMAT="""
 }    
 """
 
-class BlogTopicAgent(BaseAgent):
+class BlogBaseAgent(BaseAgent):
+    role: str
+    goal: str
+    backstory: str
+    
+    def __init__(self, **kwargs):
+       
+        # Extract required parameters
+        role = kwargs.pop('role', None)
+        goal = kwargs.pop('goal', None)
+        backstory = kwargs.pop('backstory', None)
+
+        # Ensure required arguments are provided
+        if role is None or goal is None or backstory is None:
+            raise ValueError(f"Error: Missing one of ['role', 'goal', 'backstory']. Received: role={role}, goal={goal}, backstory={backstory}")
+                
+        super().__init__(
+            name=kwargs.pop('name', None),
+            role=role,
+            goal=goal,
+            backstory=backstory,
+            llm=kwargs.pop('llm', llm_config.gpt_41_llm_blog_post),
+        )
+
+class BlogTopicAgent(BlogBaseAgent):
     role: str
     goal: str
     backstory: str
@@ -87,7 +113,7 @@ class BlogTopicAgent(BaseAgent):
 
 
 
-class BlogWriterAgent(BaseAgent):
+class BlogWriterAgent(BlogBaseAgent):
     role: str
     goal: str
     backstory: str
@@ -153,7 +179,7 @@ class BlogWriterAgent(BaseAgent):
         )  
 
 
-class BlogCriticAgent(BaseAgent):
+class BlogCriticAgent(BlogBaseAgent):
     role: str
     goal: str
     backstory: str
@@ -194,7 +220,7 @@ class BlogCriticAgent(BaseAgent):
         )      
     
 
-class BlogValidationAgent(BaseAgent):
+class BlogValidationAgent(BlogBaseAgent):
     role: str
     goal: str
     backstory: str
@@ -244,7 +270,7 @@ class BlogValidationAgent(BaseAgent):
         )       
     
 
-class BlogPublisherAgent(BaseAgent):
+class BlogPublisherAgent(BlogBaseAgent):
     role: str
     goal: str
     backstory: str

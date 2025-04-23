@@ -63,6 +63,11 @@ class ComprehensiveReportAgent(BaseAgent):
                 - **Nutrition & Recovery**: Meal planning and dietary recommendations.
                 - **Injury Prevention & Physiology**: Advice on preventing injuries and improving endurance.
                 - **Position-Specific Coaching**: Tactical improvements based on the athlete’s role.
+                - **Psychological Insights**: Mental strategies to enhance performance.
+                - **Conclusion**: Final thoughts and recommendations for the athlete's development.
+
+                Ensure that the report is **cohesive, clear, and actionable**, with a focus on the athlete's unique needs.
+                Use **professional language** and ensure that the report is **well-structured**.
                 
                 **professional, structured, and formatted for easy reading**.
             """),

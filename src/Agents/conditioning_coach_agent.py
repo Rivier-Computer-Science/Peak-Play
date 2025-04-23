@@ -62,6 +62,8 @@ class ConditioningCoachAgent(BaseAgent):
                 - Flexibility and mobility exercises
                 - Recovery protocols (rest, nutrition, injury prevention)
                 - Weekly progression plans
+                - Organize the program by day and include Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, and Sunday.
+                - Include rest days and active recovery sessions.
 
                 Ensure the program is aligned with the athlete's age, **sport-specific**, and **goal-oriented**.
 

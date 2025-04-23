@@ -46,15 +46,15 @@ class AssessmentCrew:
         # position_coach_agent = PositionCoachAgent()
         psychology_agent = PsychologyAgent(athlete_profile=jane_smith_tennis)
         # comprehensive_report_agent = ComprehensiveReportAgent()
-        athlete_profile_agent = AthleteProfileAgent(athlete_profile=jane_smith_tennis)
+        # athlete_profile_agent = AthleteProfileAgent(athlete_profile=jane_smith_tennis)
 
         agents = [
-            athlete_profile_agent,
+            #athlete_profile_agent,
             psychology_agent,
         ]
 
         tasks = [
-            athlete_profile_agent.provide_athlete_profile(),
+            #athlete_profile_agent.provide_athlete_profile(),
             psychology_agent.generate_psychology_report(),
         ]
         

@@ -1,6 +1,13 @@
 import langchain_openai as lang_oai
 
 # LLM Models
+gpt_41_llm_blog_post = lang_oai.ChatOpenAI(
+    model_name="gpt-4.1",  
+    temperature=0.7,  
+    max_tokens=5000,      
+    presence_penalty=0.5,      
+)
+
 gpt_4o_llm_blog_post = lang_oai.ChatOpenAI(
     model_name="gpt-4o",  
     temperature=0.7,  

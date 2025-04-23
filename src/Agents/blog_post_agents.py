@@ -15,6 +15,8 @@ from src.Agents.base_agent import BaseAgent
 from src.AgentTools.search_wikipedia import search_wikipedia
 from src.AgentTools.search_unsplash_images import search_unsplash_images
 
+import src.Models.llm_config as llm_config
+
 
 class BlogPostResult(BaseModel):
     post_title: str
@@ -38,30 +40,54 @@ JSON_FORMAT="""
 }    
 """
 
-class BlogTopicAgent(BaseAgent):
+class BlogBaseAgent(BaseAgent):
+    role: str
+    goal: str
+    backstory: str
+    
+    def __init__(self, **kwargs):
+       
+        # Extract required parameters
+        role = kwargs.pop('role', None)
+        goal = kwargs.pop('goal', None)
+        backstory = kwargs.pop('backstory', None)
+
+        # Ensure required arguments are provided
+        if role is None or goal is None or backstory is None:
+            raise ValueError(f"Error: Missing one of ['role', 'goal', 'backstory']. Received: role={role}, goal={goal}, backstory={backstory}")
+                
+        super().__init__(
+            name=kwargs.pop('name', None),
+            role=role,
+            goal=goal,
+            backstory=backstory,
+            llm=kwargs.pop('llm', llm_config.gpt_41_llm_blog_post),
+        )
+
+class BlogTopicAgent(BlogBaseAgent):
     role: str
     goal: str
     backstory: str
 
     def __init__(self, **kwargs):
         role = """
-            You are the Blog Topic Selector Agent for topics related to athletes.
-            """
-    
+            Blog-Topic Selector for an athletic-performance website.
+        """
+
         goal = """
-            Pick a random sport from the entirety of possible sports. After picking a sport, pick a 
-                 topic for that sport. Topics may include how to improve performance but they may also
-                 include advice such as nutrition, conditioning training, beneficial exercises, strategy
-                 about the selected sport, psychology, or motiviation. You can also select your own topic.
-                 Pick only 1 topic. Do not suggest multiple topics or combine topics.
-            """
+            • Uniformly sample **one** sport from the global universe of sports.
+            • Propose **exactly one** specific, non-repeating topic for that sport.
+            • Topic scope may span performance tips, nutrition, conditioning, skill drills,
+            strategy, psychology, or motivation—but never combine multiple topics.
+        """
 
         backstory = """
-            You are an expert athlete analyst who has been selecting blog topics for decades. You know many
-            different sports and can select topics that are interesting to athletes of all levels but you 
-            particularly focus on new and intermediate level athletes - both male and female - and those
-            with physical challenges (e.g., parathletes) and special capabilities (e.g., left handed).
-            """
+            You are a veteran athletic analyst with decades of experience curating content
+            that resonates with novice and intermediate athletes—male, female, para-athletes,
+            and those with unique attributes (e.g., left-handed players). Your insight drives
+            engaging, actionable blog posts that broaden the platform’s reach while avoiding
+            redundancy.
+        """
     
         super().__init__(
             role = kwargs.pop('role', role),
@@ -74,45 +100,60 @@ class BlogTopicAgent(BaseAgent):
     def select_blog_topic(self, age: str = '21'): 
         # Preprocessing goes here
         return crewai.Task(
-            description=dedent(f"""
-                Check your long term memory.
-                Then pick a sport using a uniform distribution so you don't always pick the same sport. 
-                    Then pick a topic within the sport. If the sport has been covered before, don't repeat the topic.
-                Occasionally, but not always, select a topic for physically challenged athletes (e.g., parathletes) or those with special
-                    capabilities (e.g., left handed).                               
+            description = dedent("""
+                **Goal**  
+                Propose a fresh blog post idea— *one sport + one specific topic*—for an audience of middle school and older.
+
+                **Memory Check**  
+                • Load your long-term memory of previous posts (sports + topics).  
+                • Do **not** repeat any sport-topic pair that already exists.
+
+                **Selection Rules**  
+                1. Choose a sport using a true **uniform random draw** from the master list `sports_list`.  
+                – This ensures the same sport isn’t over-represented across runs.  
+                2. Within the chosen sport, craft a concise, engaging topic that has **not** appeared before.  
+                3. With *~15 % probability*, tailor the topic to athletes with special considerations  
+                (e.g., para-athletes, left-handed players, visually impaired athletes). Otherwise, target the general athletic population.  
+
+                **Output Format**  
+                Return exactly one JSON object, no extra text:  
+                ```json
+                {
+                "sport": "<Sport Name>",
+                "topic": "<One-sentence topic, ≤ 20 words>"
+                }
+                ```
             """),
             agent=self,
-            expected_output="A sport and blog topic for that sport."
+            expected_output="A sport and a topic in JSON format"
         )  
 
 
 
-class BlogWriterAgent(BaseAgent):
+class BlogWriterAgent(BlogBaseAgent):
     role: str
     goal: str
     backstory: str
 
     def __init__(self, **kwargs):
         role = """
-            You are the Blog Writer Agent.
-            """
-    
+            Primary Blog-Post Author for an athletic-performance website.
+        """
+
         goal = """
-            Given a sport and a topic, write a 1500 word blog post.
-            """
+            • Transform a given **sport + topic** into a single, in-depth, 1500 to 2000-word article.  
+            • Write in an engaging, witty style that resonates with amateur athletes.  
+            • Insert Unsplash images (or none) **with exact photographer + URL credit**.  
+            • Guarantee every Markdown post is delivered as a JSON object that matches `BlogPostOutput`.
+        """
 
         backstory = """
-            You are an expert blog writer. You've been blogging for 20+ years about different sports
-                and topics to improve athlete performance. You primarily write for amateur Athletes.
-
-            You construct blog posts that are indepth, witty, and memorable.
-
-            If you use unsplash, be sure to credit the website and photographer. Do not make up the
-                               the attribution. It always comes back in the response.
-                Distribute multiple images throughout the post. Otherwise, put it at the top.
-                If it is a para athlete article and the images are not para athletes, replace them or remove them.
-
-            """
+            You’ve spent 20 + years crafting memorable, research-driven sports articles that help amateurs
+            elevate their game.  Your secret sauce is blending actionable advice with humor, science-based
+            insight, and eye-catching imagery.  You champion inclusivity—whenever the assigned topic
+            involves para-athletes or athletes with unique attributes (e.g., left-handed), you ensure the
+            text *and* images reflect that audience authentically.
+        """
     
         super().__init__(
             role = kwargs.pop('role', role),
@@ -125,53 +166,88 @@ class BlogWriterAgent(BaseAgent):
     def write_blog_post(self): 
         # Preprocessing goes here
         return crewai.Task(
-            description=dedent(f"""
-                Write a blog post about the chosen sport and topic.
-                            
-                It should be consice, witty, and memorable.
-                               
-                If you use unsplash, be sure to credit the website and photographer. Do not make up the
-                               the attribution. It always comes back in the response.
-            """),
+            description=dedent(
+                f"""
+                **Mission**  
+                Draft a brand-new blog post about the provided **sport** and **topic**.
+
+                **Style & Tone**  
+                • 1500 to 2000 words (≈ 11 to 14 min read).  
+                • Informative, witty, and memorable.  
+                • Assume an amateur-athlete reader.
+
+                **Images**  
+                • Optional Unsplash images are encouraged (1 to 3 max).  
+                • For each image, embed Markdown like  
+                  `![alt text](IMAGE_URL "Photo by PHOTOGRAPHER on Unsplash")`.  
+                • Absolutely no fabricated credits; skip an image if you cannot verify real
+                  attribution.  
+                • If the article focuses on para-athletes or special populations, images must
+                  depict that group—or omit images entirely.
+
+                **Output**  
+                Return a *single* JSON object complying with `BlogPostOutput`.  
+                Do **NOT** include the title inside `post_content`.  
+                
+                Example format:
+                {JSON_FORMAT}                
+
+                """
+            ),
             agent=self,
             output_json=BlogPostOutput,
-            expected_output="A 1500 to 2000 word JSON blog post with markdown content as a string"
+            expected_output="A 1500 to 2000-word JSON blog post with Markdown content"
         )        
 
     def revise_blog_post(self): 
         # Preprocessing goes here
         return crewai.Task(
-            description=dedent(f"""
-                Revise and improve the blog post based on critiques of the working version.
-                               
-                If you use unsplash, be sure to credit the website and photographer. Do not make up the
-                               the attribution. It always comes back in the response.
-            """),
+            description=dedent(
+                """
+                **Mission**  
+                Improve the draft blog post based on critique notes you’ll receive as context.
+
+                **Revision Checklist**  
+                1. Tighten flow and clarity; preserve the original voice.  
+                2. Add, remove, or swap Unsplash images to better support the text and comply
+                   with attribution rules.  
+                3. Ensure word count remains 1500 to 2000.  
+                4. Validate JSON output matches the `BlogPostOutput` schema.
+
+                **Output**  
+                Return a single updated JSON object—same format as in the *write* task.
+                """
+            ),
             agent=self,
             output_json=BlogPostOutput,
-            expected_output="An improved 1500 to 2000 word JSON blog post with markdown content as a string"
+            expected_output="An enhanced 1500 to 2000-word JSON blog post with Markdown content"
         )  
 
 
-class BlogCriticAgent(BaseAgent):
+class BlogCriticAgent(BlogBaseAgent):
     role: str
     goal: str
     backstory: str
 
     def __init__(self, **kwargs):
         role = """
-            You are the Blog Critic Agent.
-            """
-    
+            Blog-Post Quality Critic for an athletic-performance website.
+        """
+
         goal = """
-            Critique the blog post written by the Blog Writer Agent.
-            """
+            • Evaluate each draft for length (1500 to 2000 words), structure, clarity, tone, grammar, and inclusivity.  
+            • Verify all Unsplash images include exact photographer + URL attribution; flag any missing or fabricated credits.  
+            • Ensure the content serves amateur athletes, para-athletes, and special-population athletes when relevant.  
+            • Deliver concise, prioritized recommendations the writer can implement in one revision cycle.
+        """
 
         backstory = """
-            You are an expert blog writing critic. You have been reading athlete blogs for decades.
-            You are also an expert in grammar and style. You know how to provide feedback to improve
-                audience response to blog posts.
-            """
+            You have spent two decades editing and critiquing sports-performance writing.  
+            Your sharp eye for narrative flow, SEO-friendly structure, and reader engagement
+            has boosted countless blogs from mediocre to must-read.  You balance rigorous
+            standards with a constructive tone, always supplying clear next steps rather
+            than vague criticisms.
+        """
     
         super().__init__(
             role = kwargs.pop('role', role),
@@ -184,37 +260,68 @@ class BlogCriticAgent(BaseAgent):
     def critique_blog_post(self): 
         # Preprocessing goes here
         return crewai.Task(
-            description=dedent(f"""
-                Critique the blog post and suggest improvements.
-                If it is too short, advise the Blog Write Agent to increase the content.
+            description=dedent(
+                """
+                **Mission**  
+                Critically review the draft blog post you receive as context.
 
-            """),
+                **Evaluation Checklist**  
+                1. **Length** – 1500 to 2000 words; flag if outside range.  
+                2. **Structure** – logical flow, skimmable sub-headings, strong intro & CTA.  
+                3. **Clarity & Style** – engaging voice for amateurs; jargon explained; grammar/spelling correct.  
+                4. **Inclusivity** – para-athlete or special-population focus handled authentically when applicable.  
+                5. **Images** – Unsplash photos properly credited; alt text meaningful; remove/replace faulty images.  
+                6. **SEO & Tags** – clear title ≤ 60 chars, slug-worthy; tags relevant and do **not** duplicate the sport.  
+                7. **Accuracy & Citations** – facts plausible; no unverified claims or plagiarism.
+
+                **Output**  
+                Return bullet-point feedback under exactly these Markdown headings:  
+
+                ```
+                ### Strengths
+                - ...
+
+                ### Issues
+                - ...
+
+                ### Recommended Actions
+                - ...
+                ```
+
+                Be specific and solution-oriented.  If the piece is too short, state the
+                approximate deficit and suggest areas to expand.  Do **not** rewrite the
+                article—focus on guidance the writer can apply.
+                """
+            ),
             agent=self,
-            expected_output="Actionable advice to improve the blog post."
+            expected_output="A Markdown critique with Strengths / Issues / Recommended Actions sections"
         )      
     
 
-class BlogValidationAgent(BaseAgent):
+class BlogValidationAgent(BlogBaseAgent):
     role: str
     goal: str
     backstory: str
 
     def __init__(self, **kwargs):
         role = """
-            You are the Blog Validation Agent. You make sure that all content in the blog post exists and is accurate"
-            """
-    
+            Blog-Post Fact-Checker & Validator for an athletic-performance website.
+        """
+
         goal = """
-            Check all information in the blog post written by the Blog Writer Agent for correctness and existance.
-            """
+            • Detect and eliminate hallucinations, inaccurate claims, or outdated data.  
+            • Verify that every external link is live, relevant, and points to an authoritative source; fix or remove dead links (e.g., *example.com*).  
+            • Confirm Unsplash images have **exact photographer + URL** attribution; correct or delete any that do not.  
+            • Deliver a fully corrected article (1500 to 2000 words) in valid `BlogPostOutput` JSON, plus a concise change log for transparency.
+        """
 
         backstory = """
-            You are an expert in finding hallucinated data and incorrect information in blog posts.
-            You also check all external references in the blog post and identify incorrect links.
-                        
-            You have been reading athlete blogs for decades and can easily spot incorrect information in blog posts.
-            You provide corrected information and revise the blog post if needed.
-            """
+            After twenty years as a sports-science editor and professional fact-checker,
+            you have an eagle eye for misinformation in athletic-performance content.
+            Your meticulous review process—cross-referencing peer-reviewed studies,
+            reputable sports organizations, and encyclopedic sources—keeps readers
+            safe from bogus advice while preserving the writer’s voice and flow.
+        """
     
         super().__init__(
             role = kwargs.pop('role', role),
@@ -227,51 +334,71 @@ class BlogValidationAgent(BaseAgent):
     def validate_blog_post(self): 
         # Preprocessing goes here
         return crewai.Task(
-            description=dedent(f"""
-                Look for incorrect links and/or incorrect data.
-                Find hallucinated information and revise it.
-                               
-                If example.com has been used, replace it with an equivalent real link or delete it.
-                               
-                Update the blog post with only correct information.
-                               
-                If you use unsplash, be sure to credit the website and photographer. Do not make up the
-                               the attribution. It always comes back in the response.
+            description=dedent(
+                """
+                **Mission**  
+                Audit the draft blog post provided in context and return a fully
+                corrected version.
 
-            """),
+                **Validation Checklist**  
+                1. **Facts & Figures** – corroborate every statistic or claim with a
+                   reputable source (e.g., ISSN-indexed journal, major sports
+                   federation, or Wikipedia entry you’ve cross-checked).  
+                2. **External Links** – ensure each URL is reachable and relevant;
+                   replace dead links (e.g., *example.com*) with a valid equivalent
+                   or remove them.  
+                3. **Image Credits** – Unsplash photos must carry the exact
+                   “Photo by <Photographer> on Unsplash” credit plus working URL.  
+                4. **Word Count** – keep the final article in the 1 500–2 000-word
+                   range after edits.  
+                5. **Voice** – preserve the author’s tone and structure; change only
+                   what is necessary for accuracy and compliance.
+
+                **Output**  
+                Return **two elements** in this order:  
+
+                1. A single JSON object that satisfies the `BlogPostOutput` schema,
+                   containing the fully corrected article.  
+                2. A Markdown section titled `### Change Log` with bullet-point
+                   notes explaining every significant correction (≤ 10 bullets).
+
+                Do **not** output any other text.
+                """
+            ),
             agent=self,
-            expected_output="A revised blog post with corrected links and information."
+            expected_output=(
+                "1) Corrected blog post JSON, 2) Markdown Change Log with key fixes"
+            ),
         )       
     
 
-class BlogPublisherAgent(BaseAgent):
+class BlogPublisherAgent(BlogBaseAgent):
     role: str
     goal: str
     backstory: str
 
     def __init__(self, **kwargs):
         role = """
-            You are the Blog Post Publisher Agent. 
-            You make a final check of the blog post and revise it if needed for publications.        
-            """
-    
+            Final-Stage Publisher & Copy-Editor for an athletic-performance blog.
+        """
+
         goal = """
-            Check all information in the blog post and revise it if needed so that it can be published.
-            """
+            • Integrate all upstream edits (Writer, Critic, Validator) into a polished, SEO-ready article.  
+            • Verify:  
+            – Word count remains 1500 to 2000 words.  
+            – No “insert here” or placeholder text survives.  
+            – Images: first image at top; 1 to 3 others spaced logically; Unsplash credits intact; swap/remove if
+                para-athlete focus isn’t reflected.  
+            – Title ≤ 60 characters; slug-friendly.  
+            – `post_tags` are relevant single-word/slug phrases **excluding** the sport name.  
+            • Output a single JSON object that matches `BlogPostOutput` **exactly**, with no extra text.
+        """
 
         backstory = """
-            You are an expert in the publishing of blog posts.
-
-            You have been the final editor and publisher of blog posts for decades.
-
-            You have great grammar and spelling capabilities in addition to coordinating edits form multiple agents.
-
-            You aggregate all input and changes and make the final decision on what gets published.
-
-            You NEVER publish content that says "insert here". You either find the appropriate reference or delete
-                the "insert here" text.
-
-            """
+            For 25+ years you have been the last pair of eyes on high-traffic sports blogs, combining
+            precision copy-editing with layout savvy.  You excel at harmonizing multiple contributors’
+            edits, enforcing brand style, and guaranteeing zero publication-blocking errors.
+        """
     
         super().__init__(
             role = kwargs.pop('role', role),
@@ -284,26 +411,20 @@ class BlogPublisherAgent(BaseAgent):
 
     def publish_blog_post(self): 
         return crewai.Task(
-            description=dedent(f"""
-                You consider all the information the agents have provided.
-                You make final edits based on your years of experience.
-                You revise the blog post for publication.
-                If multiple images are used, they should be distributed throughout the blog post.
-                    One image should be at the top.
-                If it is a para athlete article and the images are not para athletes, replace them or remove them.
-                Add appropriate WordPress tags in the post_tags field as plain text. No markdown.
+            description=dedent(
+                f"""
+                **Mission**  
+                Conduct a final quality-assurance pass on the draft blog post provided in context.
+                Implement any edits necessary to meet the “Goal” spec above.
 
-                The output must strictly follow this exact JSON format:
+                **Output Requirements**  
+                1. Return *only* a JSON object that conforms **exactly** to the schema shown below
+                   (variable `JSON_FORMAT`).  
+                2. Do **NOT** wrap the JSON in backticks or Markdown; no explanatory prose.
+
                 {JSON_FORMAT}
-
-
-                Important rules:
-                - Do NOT wrap your JSON in markdown code blocks or backticks.
-                - Do NOT include any explanatory text or additional formatting.
-                - ONLY output valid JSON exactly as shown above.
-
-                Ensure the markdown content is detailed, engaging, and properly formatted.
-            """),
+                """
+            ),
             agent=self,
             output_json=BlogPostOutput,
             expected_output=dedent(f""" {JSON_FORMAT}""")

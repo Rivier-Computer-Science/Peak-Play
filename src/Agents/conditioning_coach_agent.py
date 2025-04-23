@@ -107,5 +107,9 @@ class ConditioningCoachAgent(BaseAgent):
                 The goal is to provide a brief yet informative recap of the session without tracking long-term progress.
             """),
             agent=self,
-            expected_output="A report summarizing key information about a user's training session. Do not include the athlete profile data in the output."
+            expected_output=dedent(f"""
+            \n\n1-MONTH CONDITIONING PROGRAM for {ap['athlete_name']}\n\n
+            "A report summarizing key information about a user's training session. 
+            Do not include the athlete profile data in the output.
+            """)
         )

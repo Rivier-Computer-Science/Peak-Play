@@ -49,15 +49,15 @@ class MotivationCrew:
         # position_coach_agent = PositionCoachAgent()
         #psychology_agent = PsychologyAgent()
         # comprehensive_report_agent = ComprehensiveReportAgent()
-        #athlete_profile_agent = AthleteProfileAgent(athlete_profile=jane_smith_tennis)
+        athlete_profile_agent = AthleteProfileAgent(athlete_profile=jane_smith_tennis)
 
         agents = [
-            #athlete_profile_agent,
+            athlete_profile_agent,
             motivator_agent
         ]
 
         tasks = [
-            #athlete_profile_agent.provide_athlete_profile(),
+            athlete_profile_agent.provide_athlete_profile(),
             motivator_agent.motivate_athlete()
         ]
         

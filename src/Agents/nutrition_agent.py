@@ -67,7 +67,7 @@ class NutritionAgent(BaseAgent):
             """),
             agent=self,
             expected_output=dedent(f"""
-            \n\n1-Month Customized Meal Plan for {ap['athlete_name']}\n\n
+            \n\n1-MONTH CUSTOMIZED MEAL PLAN FOR {ap['athlete_name']}\n\n
             An age-appropriate structured 1-month meal plan designed to optimize the athlete’s performance. 
             Do not include the athlete profile data in the output."
         """)

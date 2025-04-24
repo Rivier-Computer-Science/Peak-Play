@@ -92,5 +92,10 @@ class PhysiologyAgent(BaseAgent):
                 the athlete’s age **tailored to the athlete's physical condition**.
             """),
             agent=self,
-            expected_output="An age-appropriate structured physiology report detailing injury prevention and performance enhancement strategies. Do not include the athlete profile data in the output."
+            expected_output=dedent(f"""
+            \n\nPHYSIOLOGY REPORT for {ap['athlete_name']}\n\n
+            An age-appropriate structured physiology report detailing injury prevention and performance enhancement strategies. 
+            Do not include the athlete profile data in the output"
+        """)
         )
+        

@@ -55,6 +55,8 @@ class NutritionAgent(BaseAgent):
                 The meal plan should:
                 - Be **tailored to the athlete’s specific training** and performance needs.
                 - Meal plan should be **organized by day and include Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, and Sunday**.
+                - Provide meal plan for 4 weeks broken down into 7 days for each week.
+                - Include **breakfast, lunch, snack, dinner, pre-workout, and post-workout meals**.
                 - Include **high-protein meals** for muscle recovery.
                 - Optimize **carbohydrate intake** for energy levels.
                 - Balance **fats, vitamins, and hydration** for overall health.
@@ -64,5 +66,9 @@ class NutritionAgent(BaseAgent):
                 Ensure the plan is aligned with the athlete's age and **enhances endurance, strength, and recovery**, while preventing fatigue and injury.
             """),
             agent=self,
-            expected_output="An age-appropriate structured 1-month meal plan designed to optimize the athlete’s performance. Do not include the athlete profile data in the output."
+            expected_output=dedent(f"""
+            \n\n1-MONTH CUSTOMIZED MEAL PLAN FOR {ap['athlete_name']}\n\n
+            An age-appropriate structured 1-month meal plan designed to optimize the athlete’s performance. 
+            Do not include the athlete profile data in the output."
+        """)
         )

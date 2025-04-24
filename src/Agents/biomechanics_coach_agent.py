@@ -63,7 +63,11 @@ class BiomechanicsCoachAgent(BaseAgent):
 
             """),
             agent=self,
-            expected_output="An age-appropriate biomechanics assessment report highlighting strengths, weaknesses, and recommendations. Do not include the athlete profile data in the output."
+            expected_output=dedent(f"""
+            \n\nBIOMECHANICS ASSESSMENT for {ap['athlete_name']}\n\n
+            An age-appropriate biomechanics assessment report highlighting strengths, weaknesses, and recommendations. 
+            Do not include the athlete profile data in the output.
+            """)
             
         )
 

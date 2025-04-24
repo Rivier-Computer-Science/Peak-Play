@@ -47,6 +47,7 @@ class PsychologyAgent(BaseAgent):
         self.athlete_profile = athlete_profile
 
     def generate_psychology_report(self):
+        ap = self.athlete_profile.get_athlete_profile()  #get athlete profile data
         return crewai.Task(
             description=dedent(f"""
                 Analyze the athlete profile data and generate a **psychological assessment report**  
@@ -66,5 +67,9 @@ class PsychologyAgent(BaseAgent):
                 the athlete’s age **specific psychological needs and competitive environment**.
             """),
             agent=self,
-            expected_output="An age-appropriate structured psychology report with personalized strategies to enhance the athlete’s mental game. Do not include the athlete profile data in the output."
+            expected_output=dedent(f"""
+            \n\nPSYCHOLOGICAL ASSESSMENT REPORT for {ap['athlete_name']}\n\n
+            An age-appropriate structured psychology report with personalized strategies to enhance the athlete’s mental game.
+            Do not include the athlete profile data in the output."
+            """)
         )

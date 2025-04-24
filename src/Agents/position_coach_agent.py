@@ -61,5 +61,9 @@ class PositionCoachAgent(BaseAgent):
                 the athlete’s age **specific skill level and long-term development**.
             """),
             agent=self,
-            expected_output="An age-appropriate structured coaching report tailored to the athlete’s position. Do not include the athlete profile data in the output."
+            expected_output=dedent(f"""
+            \n\nCUSTOMIZED POSITION COACHING ADVICE for {ap['athlete_name']}\n\n
+            An age-appropriate structured coaching report tailored to the athlete’s position.
+            Do not include the athlete profile data in the output."
+            """)
         )

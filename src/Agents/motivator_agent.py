@@ -87,5 +87,9 @@ class MotivatorAgent(BaseAgent):
                 Make sure the motivational message is appropriate to the athlete's age.
             """),
             agent=self,
-            expected_output="An age-appropriate inspiring, personalized message tailored to the athlete’s information. Do not include the athlete profile data in the output."
+            expected_output=dedent(f"""
+            \n\nMOTIVATIONAL MESSAGE for {ap['athlete_name']}\n\n
+            An age-appropriate inspiring, personalized message tailored to the athlete’s information. 
+            Do not include the athlete profile data in the output.
+            """)
         )

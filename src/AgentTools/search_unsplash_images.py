@@ -11,7 +11,7 @@ if not UNSPLASH_API_KEY:
 
 
 class UnsplashImage(BaseModel):
-    url: HttpUrl
+    image_url: HttpUrl
     photographer: str
 
 
@@ -37,7 +37,7 @@ def search_unsplash_images(query: str, per_page: int = 5) -> List[UnsplashImage]
             image_url = result.get("urls", {}).get("regular")
             photographer_name = result.get("user", {}).get("name")
             if image_url and photographer_name:
-                images.append(UnsplashImage(url=image_url, photographer=photographer_name))
+                images.append(UnsplashImage(image_url=image_url, photographer=photographer_name))
         return images
     else:
         raise Exception(f"Error: {response.status_code} - {response.text}")

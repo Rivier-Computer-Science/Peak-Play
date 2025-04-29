@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+
 class UpdateProgramData(BaseModel):
     athlete_name: str
     sex: str
@@ -18,6 +19,12 @@ class UpdateProgramData(BaseModel):
     motivation_level: int
     additional_comments: str    
 
+
+class LogData(BaseModel):
+    exercise: str
+    weight: float
+    reps: int
+    date: str
 
 
 

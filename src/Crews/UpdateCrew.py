@@ -1,6 +1,7 @@
 import crewai
 
 from src.Helpers.athlete_profile import AthleteProfile
+from src.Agents.agent_helpers import concatente_task_outputs
 
 # Import Agents
 from src.Agents.conditioning_coach_agent import ConditioningCoachAgent
@@ -41,5 +42,6 @@ class UpdateCrew:
             verbose=False
         )
 
-        result = crew.kickoff()       
-        return result
+        result = crew.kickoff()
+
+        return concatente_task_outputs(result)

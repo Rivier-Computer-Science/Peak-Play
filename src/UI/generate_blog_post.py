@@ -48,4 +48,17 @@ if __name__ == "__main__":
 
 
     print("Collaboration complete")
+
+    print("******* Render Markdown **********")
+    from markdown_it import MarkdownIt
+
+    md = MarkdownIt()
+    blog_post_md = blog_post["result"]["post_content"]
+    html = md.render(blog_post_md)
+
+    print(html)
+
+
+
+
     sys.exit(0)

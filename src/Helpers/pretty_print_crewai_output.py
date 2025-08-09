@@ -1,8 +1,9 @@
 from rich.console import Console
 from rich.table import Table
 import json
+import src.Models.llm_config as llm_config
 
-def display_crew_output(crew_output):
+def display_crew_output(crew_output, llm=llm_config.GPT5MiniConfig()):
     console = Console()
 
     # Check if crew_output is a string, parse it if necessary
@@ -15,8 +16,8 @@ def display_crew_output(crew_output):
             return
 
     # GPT-4o pricing
-    INPUT_TOKEN_COST = 2.5 / 1e6   # Cost per input token in USD
-    OUTPUT_TOKEN_COST = 10.0 / 1e6 # Cost per output token in USD
+    INPUT_TOKEN_COST  = llm.get_input_cost() / 1e3   # Cost per input token in USD
+    OUTPUT_TOKEN_COST = llm.get_output_cost() / 1e3  # Cost per output token in USD
 
     # Raw Output
     if crew_output.raw:

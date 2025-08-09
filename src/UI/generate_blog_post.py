@@ -2,6 +2,11 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv("/etc/secrets")
 
+import os
+# Disable CrewAI Telemetry (it is a timeout bug)
+# Must be called before importing crewai
+os.environ["CREWAI_DISABLE_TELEMETRY"] = "true" 
+
 import sys
 import logging
 
@@ -11,17 +16,14 @@ import crewai_tools as crewai_tools
 from src.Helpers.pretty_print_crewai_output import display_crew_output
 
 from src.Crews.blog_writing_crew import BlogWritingCrew
-from src.Models.llm_config import gpt_4o_llm_blog_post
+import src.Models.llm_config as llm_config
 
 import src.Utils.utils as utils
 
 
 
 # Initialize logger
-logger = utils.configure_logger(logging.INFO)
-
-# Randomize LLM for random blog posts
-
+logger = utils.configure_logger(logging.DEBUG)
 
 
 
@@ -44,7 +46,7 @@ if __name__ == "__main__":
     print("## Here is the output")
     print("########################\n")
 
-    display_crew_output(crew_output)
+    display_crew_output(crew_output, llm_config.GPT5MiniConfig())
 
 
     print("Collaboration complete")

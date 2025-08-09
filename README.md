@@ -16,3 +16,28 @@ Peak Play Sports uses CrewAI agents to help athletes optimize their training, tr
 - **Frontend:** WordPress
 - **Backend:** Python/FastAPI, PHP
 - **AI Agents:** CrewAI
+
+## Installation (Ubuntu 24.04 including WSL)
+### Install uv and venv
+
+https://docs.astral.sh/uv/#installation
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+```bash
+uv venv --python 3.10 
+```
+
+Activate the environment
+
+```bash
+source .venv/bin/activate
+```
+
+### Install Python requirements.txt
+
+```bash
+uv pip install -r requirements.txt
+```

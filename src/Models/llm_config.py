@@ -22,12 +22,17 @@ class BaseLLMConfig(ABC):
         temperature: float,
         max_tokens: int,
         presence_penalty: float,
+        num_retries: int = 3,
+        timeout: int = 120,
+        
         **kwargs: Any
     ):
         self.model_name = model_name
         self.temperature = temperature
         self.max_tokens = max_tokens
         self.presence_penalty = presence_penalty
+        self.num_retries = num_retries
+        self.timeout = timeout
         self.kwargs: Dict[str, Any] = dict(kwargs)
 
     def create_llm(self, **overrides: Any) -> crewai.LLM:
@@ -40,7 +45,9 @@ class BaseLLMConfig(ABC):
         temperature = overrides.pop("temperature", self.temperature)
         max_tokens = overrides.pop("max_tokens", self.max_tokens)
         presence_penalty = overrides.pop("presence_penalty", self.presence_penalty)
-
+        num_retries = overrides.pop("num_retries", self.kwargs.get("num_retries", 3))
+        timeout = overrides.pop("timeout", self.kwargs.get("timeout", 120))
+        
         # Merge extra kwargs (api_key, base_url, timeout, etc.)
         final_kwargs = {**self.kwargs, **overrides}
         # Normalize / drop keys LiteLLM doesn't use directly
@@ -55,6 +62,8 @@ class BaseLLMConfig(ABC):
             "temperature": temperature,
             "max_tokens": max_tokens,
             "presence_penalty": presence_penalty,
+            "num_retries": num_retries,
+            "timeout": timeout,
             # tolerate unknown params across providers
             "drop_params": True,
             "additional_drop_params": ["model_name"],

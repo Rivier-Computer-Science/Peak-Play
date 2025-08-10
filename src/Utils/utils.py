@@ -60,21 +60,30 @@ def get_knowledge_type(input_file_path:str):
 
 import logging
 
-def configure_logger(
-    logLevel: int = logging.DEBUG, 
+def configure_logger(    
+    logLevel: int = logging.INFO, 
     logger: logging.Logger = None
-) -> logging.Logger:
-    """Configures and returns a logger with the specified log level."""
+    ) -> logging.Logger:
+   """Configures and returns a logger with the specified log level."""
     
-    if logger is None:
-        logger = logging.getLogger(__name__)  
+   if logger is None:
+        #logger = logging.getLogger(__name__)  
+        logger = logging.getLogger("peak_play_logger")  
 
-    logger.setLevel(logLevel)
+   logger.setLevel(logLevel)
 
-    if not logger.handlers:
+   if not logger.handlers:
         handler = logging.StreamHandler()
         formatter = logging.Formatter('%(levelname)s - %(module)s - %(filename)s - %(funcName)s - line %(lineno)d - %(asctime)s - %(name)s - %(message)s')
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
-    return logger
+   return logger  
+
+
+
+def set_log_level(log_level: int = logging.INFO):
+    logger = logging.getLogger()
+    for h in logger.handlers:
+        h.setLevel(log_level)  
+

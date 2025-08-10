@@ -13,7 +13,7 @@ import logging
 import crewai as crewai
 import langchain_openai as lang_oai
 import crewai_tools as crewai_tools
-from src.Helpers.pretty_print_crewai_output import display_crew_output
+from src.Utils.pretty_print_crewai_output import display_crew_output
 
 from src.Crews.blog_writing_crew import BlogWritingCrew
 import src.Models.llm_config as llm_config

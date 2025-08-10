@@ -16,8 +16,8 @@ def display_crew_output(crew_output, llm=llm_config.GPT5MiniConfig()):
             return
 
     # GPT-4o pricing
-    INPUT_TOKEN_COST  = llm.get_input_cost() / 1e3   # Cost per input token in USD
-    OUTPUT_TOKEN_COST = llm.get_output_cost() / 1e3  # Cost per output token in USD
+    INPUT_TOKEN_COST  = llm.get_input_cost()
+    OUTPUT_TOKEN_COST = llm.get_output_cost() 
 
     # Raw Output
     if crew_output.raw:

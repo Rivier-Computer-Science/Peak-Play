@@ -1,14 +1,7 @@
 # Example usage:
-# gpt_41_cfg = GPT4_1Config().create_llm()
-# print(gpt_41_cfg)
+# gpt_41_llm = GPT4_1Config().create_llm()
 # print(GPT4_1Config().get_options())
 # print(GPT4_1Config().get_cost())
-
-from abc import ABC, abstractmethod
-from typing import Any, Dict
-
-
-# src/Models/llm_config.py
 
 from abc import ABC, abstractmethod
 from typing import Any, Dict
@@ -24,7 +17,6 @@ class BaseLLMConfig(ABC):
         presence_penalty: float = 0.5,
         num_retries: int = 3,
         timeout: int = 120,
-        
         **kwargs: Any
     ):
         self.model_name = model_name
@@ -45,10 +37,10 @@ class BaseLLMConfig(ABC):
         temperature = overrides.pop("temperature", self.temperature)
         max_tokens = overrides.pop("max_tokens", self.max_tokens)
         presence_penalty = overrides.pop("presence_penalty", self.presence_penalty)
-        num_retries = overrides.pop("num_retries", self.kwargs.get("num_retries", 3))
-        timeout = overrides.pop("timeout", self.kwargs.get("timeout", 120))
-        
-        # Merge extra kwargs (api_key, base_url, timeout, etc.)
+        num_retries = overrides.pop("num_retries", self.kwargs.get("num_retries", self.num_retries))
+        timeout = overrides.pop("timeout", self.kwargs.get("timeout", self.timeout))
+
+        # Merge extra kwargs (api_key, base_url, etc.)
         final_kwargs = {**self.kwargs, **overrides}
         # Normalize / drop keys LiteLLM doesn't use directly
         final_kwargs.pop("model_name", None)
@@ -71,11 +63,22 @@ class BaseLLMConfig(ABC):
         }
         return crewai.LLM(**cfg)
 
+    # --- Pricing (all values returned are **per 1,000,000 tokens**) ---
+
     @abstractmethod
-    def get_input_cost(self) -> float: ...
-    
+    def get_input_cost(self) -> float:
+        """Price per 1M input tokens."""
+        ...
+
     @abstractmethod
-    def get_output_cost(self) -> float: ...
+    def get_cached_input_cost(self) -> float:
+        """Price per 1M cached input tokens."""
+        ...
+
+    @abstractmethod
+    def get_output_cost(self) -> float:
+        """Price per 1M output tokens."""
+        ...
 
     def get_options(self) -> str:
         return (
@@ -85,10 +88,25 @@ class BaseLLMConfig(ABC):
         )
 
     def get_cost(self):
-        return {"input": self.get_input_cost(), "output": self.get_output_cost()}
+        """Convenience bundle of costs (all per 1M tokens)."""
+        return {
+            "input": self.get_input_cost(),
+            "cached_input": self.get_cached_input_cost(),
+            "output": self.get_output_cost(),
+        }
 
+
+# ----------------------------
+# Concrete configs + pricing
+# ----------------------------
 
 class GPT4_1Config(BaseLLMConfig):
+    """
+    OpenAI gpt-4.1
+    Input: $2.00 / 1M
+    Cached input: $0.50 / 1M
+    Output: $8.00 / 1M
+    """
     def __init__(
         self,
         model_name: str = "gpt-4.1",
@@ -100,13 +118,22 @@ class GPT4_1Config(BaseLLMConfig):
         super().__init__(model_name, temperature, max_tokens, presence_penalty, **kwargs)
 
     def get_input_cost(self) -> float:
-        return 2.00 / 1000  # cost per 1k tokens (input)
+        return 2.00 / 1_000_000
+
+    def get_cached_input_cost(self) -> float:
+        return 0.50 / 1_000_000
 
     def get_output_cost(self) -> float:
-        return 8.00 / 1000  # cost per 1k tokens (output)
+        return 8.00 / 1_000_000
 
 
 class GPT4oConfig(BaseLLMConfig):
+    """
+    OpenAI gpt-4o
+    Input: $2.50 / 1M
+    Cached input: $1.25 / 1M
+    Output: $10.00 / 1M
+    """
     def __init__(
         self,
         model_name: str = "gpt-4o",
@@ -118,13 +145,19 @@ class GPT4oConfig(BaseLLMConfig):
         super().__init__(model_name, temperature, max_tokens, presence_penalty, **kwargs)
 
     def get_input_cost(self) -> float:
-        return 2.50 / 1000
+        return 2.50 / 1_000_000
+
+    def get_cached_input_cost(self) -> float:
+        return 1.25 / 1_000_000
 
     def get_output_cost(self) -> float:
-        return 10.00 / 1000
+        return 10.00 / 1_000_000
 
 
-class GPT4oZeroTempConfig(BaseLLMConfig):
+class GPT4oZeroTempConfig(GPT4oConfig):
+    """
+    Same pricing as gpt-4o.
+    """
     def __init__(
         self,
         model_name: str = "gpt-4o",
@@ -133,16 +166,17 @@ class GPT4oZeroTempConfig(BaseLLMConfig):
         presence_penalty: float = 0.5,
         **kwargs: Any
     ):
-        super().__init__(model_name, temperature, max_tokens, presence_penalty, **kwargs)
-
-    def get_input_cost(self) -> float:
-        return 2.50 / 1000
-
-    def get_output_cost(self) -> float:
-        return 10.00 / 1000
+        super().__init__(model_name=model_name, temperature=temperature,
+                         max_tokens=max_tokens, presence_penalty=presence_penalty, **kwargs)
 
 
 class GPT5Config(BaseLLMConfig):
+    """
+    OpenAI gpt-5
+    Input: $1.25 / 1M
+    Cached input: $0.125 / 1M
+    Output: $10.00 / 1M
+    """
     def __init__(
         self,
         model_name: str = "gpt-5",
@@ -154,13 +188,19 @@ class GPT5Config(BaseLLMConfig):
         super().__init__(model_name, temperature, max_tokens, presence_penalty, **kwargs)
 
     def get_input_cost(self) -> float:
-        return 1.25 / 1000
+        return 1.25 / 1_000_000
+
+    def get_cached_input_cost(self) -> float:
+        return 0.125 / 1_000_000
 
     def get_output_cost(self) -> float:
-        return 10.00 / 1000
+        return 10.00 / 1_000_000
 
 
-class GPT5ZeroTempConfig(BaseLLMConfig):
+class GPT5ZeroTempConfig(GPT5Config):
+    """
+    Same pricing as gpt-5.
+    """
     def __init__(
         self,
         model_name: str = "gpt-5",
@@ -169,16 +209,17 @@ class GPT5ZeroTempConfig(BaseLLMConfig):
         presence_penalty: float = 0.6,
         **kwargs: Any
     ):
-        super().__init__(model_name, temperature, max_tokens, presence_penalty, **kwargs)
-
-    def get_input_cost(self) -> float:
-        return 1.25 / 1000
-
-    def get_output_cost(self) -> float:
-        return 10.00 / 1000
+        super().__init__(model_name=model_name, temperature=temperature,
+                         max_tokens=max_tokens, presence_penalty=presence_penalty, **kwargs)
 
 
 class GPT5MiniConfig(BaseLLMConfig):
+    """
+    OpenAI gpt-5-mini
+    Input: $0.25 / 1M
+    Cached input: $0.025 / 1M
+    Output: $2.00 / 1M
+    """
     def __init__(
         self,
         model_name: str = "gpt-5-mini",
@@ -190,13 +231,22 @@ class GPT5MiniConfig(BaseLLMConfig):
         super().__init__(model_name, temperature, max_tokens, presence_penalty, **kwargs)
 
     def get_input_cost(self) -> float:
-        return 0.25 / 1000
+        return 0.25 / 1_000_000
+
+    def get_cached_input_cost(self) -> float:
+        return 0.025 / 1_000_000
 
     def get_output_cost(self) -> float:
-        return 2.00 / 1000
+        return 2.00 / 1_000_000
 
 
 class GPT5NanoConfig(BaseLLMConfig):
+    """
+    OpenAI gpt-5-nano
+    Input: $0.05 / 1M
+    Cached input: $0.005 / 1M
+    Output: $0.40 / 1M
+    """
     def __init__(
         self,
         model_name: str = "gpt-5-nano",
@@ -208,13 +258,16 @@ class GPT5NanoConfig(BaseLLMConfig):
         super().__init__(model_name, temperature, max_tokens, presence_penalty, **kwargs)
 
     def get_input_cost(self) -> float:
-        return 0.05 / 1000
+        return 0.05 / 1_000_000
+
+    def get_cached_input_cost(self) -> float:
+        return 0.005 / 1_000_000
 
     def get_output_cost(self) -> float:
-        return 0.40 / 1000
+        return 0.40 / 1_000_000
 
 
-# Instantiations of all derived classes (now dictionaries)
+# Ready-to-use LLM instances
 gpt_41_llm = GPT4_1Config().create_llm()
 gpt_41_llm_blog_post = GPT4_1Config().create_llm()
 

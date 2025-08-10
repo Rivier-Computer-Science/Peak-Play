@@ -8,7 +8,7 @@ import pathlib as Path
 import crewai as crewai
 import langchain_openai as lang_oai
 import crewai_tools as crewai_tools
-from src.Helpers.pretty_print_crewai_output import display_crew_output
+from src.Utils.pretty_print_crewai_output import display_crew_output
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 from crewai.knowledge.source.json_knowledge_source import JSONKnowledgeSource
 

@@ -12,6 +12,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import re
+import math
 from textwrap import dedent
 from typing import List, Optional
 
@@ -25,7 +26,7 @@ from src.Helpers.sports_list import BLOG_SUMMER_SPORTS, BLOG_WINTER_SPORTS
 import src.Helpers.writing_guidelines as wg
 
 import src.Models.llm_config as llm_config
-
+import langchain_openai as lang
 
 
 # ---------------------------------------------------------------------
@@ -87,9 +88,10 @@ class BlogBaseAgent(BaseAgent):
 
     def __init__(self, **kwargs):
         # Extract required parameters
-        role = kwargs.pop('role', None)
-        goal = kwargs.pop('goal', None)
-        backstory = kwargs.pop('backstory', None)
+        role : str = kwargs.pop('role', None)
+        goal : str = kwargs.pop('goal', None)
+        backstory: str = kwargs.pop('backstory', None)
+        llm: lang.ChatOpenAI = kwargs.pop('llm',llm_config.gpt_5_mini_llm_blog_post)
 
         # Ensure required arguments are provided
         if role is None or goal is None or backstory is None:
@@ -103,7 +105,7 @@ class BlogBaseAgent(BaseAgent):
             role=role,
             goal=goal,
             backstory=backstory,
-            llm=kwargs.pop('llm', llm_config.gpt_5_mini_llm_blog_post),
+            llm=llm,
         )
 
 
@@ -217,37 +219,106 @@ class BlogWriterAgent(BlogBaseAgent):
         )
 
     def write_blog_post(self):
-        base = dedent(f"""
-            **Mission**  
-            Draft a brand-new blog post about the provided **sport** and **topic**.
+        # Compute concrete word ranges from LENGTH_OF_BLOG_POST like "2000 to 3000 words"
+        rng = re.findall(r'\d+', str(LENGTH_OF_BLOG_POST))
+        if len(rng) >= 2:
+            min_words, max_words = int(rng[0]), int(rng[1])
+        elif len(rng) == 1:
+            # Single number given? Treat as ±15% band
+            center = int(rng[0])
+            min_words, max_words = math.floor(center * 0.85), math.ceil(center * 1.15)
+        else:
+            # Sensible fallback
+            min_words, max_words = 2000, 3000
 
-            **Style & Tone**  
-            • {LENGTH_OF_BLOG_POST}  
-            • Informative, supportive, and memorable for amateur readers.  
+        def w(min_pct: float, max_pct: float) -> str:
+            """Render a 'N–M words' range from percentage band."""
+            lo = math.floor(min_words * min_pct)
+            hi = math.floor(max_words * max_pct)
+            return f"{lo}–{hi}"
+
+        # Percentage plan (~96% total, leaving room for Sources & slack)
+        # (min%, max%) for each section
+        P = {
+            "hook":           (0.04,  0.05),
+            "why_now":        (0.075, 0.08),
+            "fundamentals":   (0.045, 0.05),
+            "tech1":          (0.075, 0.08),
+            "tech2":          (0.075, 0.08),
+            "drills":         (0.11,  0.13),
+            "plan4w":         (0.11,  0.13),
+            "mistakes":       (0.06,  0.07),
+            "recovery":       (0.06,  0.07),
+            "mindset":        (0.045, 0.05),
+            "gear":           (0.035, 0.04),
+            "case":           (0.06,  0.07),
+            "faq":            (0.06,  0.07),
+            "takeaways":      (0.035, 0.04),
+            # sources kept minimal; not counted toward the main total
+            "sources":        (0.01,  0.02),
+        }
+
+        base = dedent(f"""
+            **Mission**
+            Draft a brand-new blog post about the provided **sport** and **topic** for amateur athletes.
+            Use only Markdown in `post_content` (no title there).
+
+            **Target Length**
+            Aim for **{min_words}–{max_words} words** total in `post_content`.
+
+            **Target Structure (use H2 `##` for each main section)**
+            Provide these sections in order. Word ranges are computed as a percentage of the total target:
+            1) ## Hook & Promise — {w(*P["hook"])} words (~4–5% of total)
+            2) ## Why It Matters Now — {w(*P["why_now"])} words (~7.5–8%)
+            3) ## Fundamentals in One Minute — {w(*P["fundamentals"])} words (~4.5–5%) — define key terms/jargon
+            4) ## Core Technique #1 — {w(*P["tech1"])} words (~7.5–8%) — clear steps + cues
+            5) ## Core Technique #2 — {w(*P["tech2"])} words (~7.5–8%) — clear steps + cues
+            6) ## Drills & Progressions — {w(*P["drills"])} words (~11–13%) — numbered drills; sets/reps, rest, coaching cues
+            7) ## Week-by-Week Plan (4 Weeks) — {w(*P["plan4w"])} words (~11–13%) — table or bullets: session goals, duration, intensity
+            8) ## Common Mistakes & Fixes — {w(*P["mistakes"])} words (~6–7%) — bullet pairs: mistake → fix
+            9) ## Recovery, Nutrition & Safety — {w(*P["recovery"])} words (~6–7%) — include one-sentence general-information disclaimer
+            10) ## Mindset & Motivation — {w(*P["mindset"])} words (~4.5–5%) — practical routines
+            11) ## Gear / Equipment Checklist — {w(*P["gear"])} words (~3.5–4%) — must-have vs nice-to-have
+            12) ## Case Study or Scenario — {w(*P["case"])} words (~6–7%) — concrete example with numbers/dates if sensible
+            13) ## Quick FAQ — {w(*P["faq"])} words (~6–7%) total across 3–5 Q&A items
+            14) ## Key Takeaways — {w(*P["takeaways"])} words (~3.5–4%) — 5–8 bullets, 1–2 lines each
+            15) ## Sources & Further Reading — cite 4–8 credible links (league/official, governing bodies, peer-reviewed, or vetted encyclopedias)
+
+            **Style & Tone**
+            • Informative, supportive, and memorable for amateur readers.
             • Define jargon on first use; avoid clichés and filler.
 
-            **Evidence & Links**  
-            • Link claims to credible sources (official stats, governing bodies, peer-reviewed work where applicable, or verified encyclopedia entries).  
+            **Evidence & Links**
+            • Link claims to credible sources (official stats, governing bodies, peer‑reviewed work where applicable, or verified encyclopedia entries).
             • Do **not** fabricate citations.
 
-            **Images (optional)**  
-            • 0–3 Unsplash images total; first image (if any) appears at the top.  
-            • Each image MUST include exact credit: “Photo by <Photographer> on Unsplash” plus a working URL.  
-            • If the article focuses on para-athletes or special populations, images must depict that group—or omit images.
+            **Images (optional)**
+            • 0–3 Unsplash images total; first image (if any) appears at the top.
+            • Each image MUST include exact credit: “Photo by <Photographer> on Unsplash” plus a working URL.
+            • If the topic centers on para‑athletes or special populations, images must depict that group—or omit images.
 
-            **Sensitive Content**  
-            • If nutrition/health appears, include a brief non-advice disclaimer and avoid personalized directives.
+            **Sensitive Content**
+            • If nutrition/health appears, include a brief non‑advice disclaimer and avoid personalized directives.
 
-            **Style Check (required)**  
-            • Call the StyleCheck tool on your draft content (title + headings + body + captions + alt text).  
-            • If any violations are flagged (banned tokens, semicolons, em dashes), revise until they are zero.  
+            **Length Enforcement**
+            • Ensure `post_content` falls within **{min_words}–{max_words} words**.
+            • If total < {min_words}, expand Sections 6, 7, 8, and 13 first; if still short, expand 2 and 12.
+            • If total > {max_words}, compress Sections 2, 9, and 10 (keep clarity and evidence).
+
+            **Style Check (required)**
+            • Call the StyleCheck tool on your draft content (title + headings + body + captions + alt text).
+            • If any violations are flagged (banned tokens, semicolons, em dashes), revise until they are zero.
             • Aim for ~20–30 words per sentence on average; reduce sentences >30 words.
 
-            **Output**  
-            Return a *single* JSON object complying with `BlogPostOutput`.  
-            Do **NOT** include the title inside `post_content`.  
-            In `change_log`, add a one-liner like: `style_compliance: {{semicolons:0, em_dashes:0, banned_tokens_fixed:N}}`.
+            **Output**
+            Return a *single* JSON object complying with `BlogPostOutput`.
+            Do **NOT** include the title inside `post_content`.
+            In `change_log`, add:
+            - `style_compliance: {{semicolons:0, em_dashes:0, banned_tokens_fixed:N}}`
+            - `word_count: <approx total words in post_content>`
+            - `sections: 15`
         """)
+
         return crewai.Task(
             description=wg.with_style(wg.with_guardrails(base, include_quality_bar=True)),
             agent=self,
@@ -255,25 +326,108 @@ class BlogWriterAgent(BlogBaseAgent):
             expected_output=f"A {LENGTH_OF_BLOG_POST} JSON blog post with Markdown content"
         )
 
+
+
     def revise_blog_post(self):
+        # Compute concrete word ranges from LENGTH_OF_BLOG_POST like "2000 to 3000 words"
+        rng = re.findall(r'\d+', str(LENGTH_OF_BLOG_POST))
+        if len(rng) >= 2:
+            min_words, max_words = int(rng[0]), int(rng[1])
+        elif len(rng) == 1:
+            center = int(rng[0])
+            min_words, max_words = math.floor(center * 0.85), math.ceil(center * 1.15)
+        else:
+            min_words, max_words = 2000, 3000
+
+        def w(min_pct: float, max_pct: float) -> str:
+            lo = math.floor(min_words * min_pct)
+            hi = math.floor(max_words * max_pct)
+            return f"{lo}–{hi}"
+
+        # Percentage allocation (~96% of total, leaving slack for Sources and rounding)
+        P = {
+            "hook":           (0.04,  0.05),
+            "why_now":        (0.075, 0.08),
+            "fundamentals":   (0.045, 0.05),
+            "tech1":          (0.075, 0.08),
+            "tech2":          (0.075, 0.08),
+            "drills":         (0.11,  0.13),
+            "plan4w":         (0.11,  0.13),
+            "mistakes":       (0.06,  0.07),
+            "recovery":       (0.06,  0.07),
+            "mindset":        (0.045, 0.05),
+            "gear":           (0.035, 0.04),
+            "case":           (0.06,  0.07),
+            "faq":            (0.06,  0.07),
+            "takeaways":      (0.035, 0.04),
+            "sources":        (0.01,  0.02),
+        }
+
         base = dedent(f"""
-            **Mission**  
-            Improve the draft blog post based on critique notes you'll receive as context.
+            **Mission**
+            You are revising the prior draft using the **BlogCriticAgent** feedback provided in context
+            under `### Strengths`, `### Issues`, and `### Recommended Actions`. Produce an updated article
+            that preserves the original thesis and audience while implementing the critic’s guidance.
 
-            **Revision Checklist**  
-            1) Tighten flow and clarity; preserve the original voice.  
-            2) Add, remove, or swap Unsplash images to better support the text and comply with attribution rules.  
-            3) Ensure word count remains {LENGTH_OF_BLOG_POST}.  
-            4) Validate JSON output matches the `BlogPostOutput` schema.  
-            5) Ensure all guardrails are met (no profanity/slurs; constructive tone; no fabricated facts).
+            **Target Length**
+            Ensure `post_content` totals **{min_words}–{max_words} words**.
 
-            **Style Check (required)**  
-            • Call the StyleCheck tool on the revised content; eliminate any violations (banned tokens, semicolons, em dashes).  
-            • Keep average sentence length near 20–30 words; split sentences >30 words.
-            • Add content if the length is below {LENGTH_OF_BLOG_POST}
+            **Structure (use H2 `##` for each main section)**
+            Keep or realign the draft to this 15‑section structure. Meet the percentage‑based ranges:
+            1) ## Hook & Promise — {w(*P["hook"])} words (~4–5%)
+            2) ## Why It Matters Now — {w(*P["why_now"])} words (~7.5–8%)
+            3) ## Fundamentals in One Minute — {w(*P["fundamentals"])} words (~4.5–5%) — define key terms/jargon
+            4) ## Core Technique #1 — {w(*P["tech1"])} words (~7.5–8%) — clear steps + cues
+            5) ## Core Technique #2 — {w(*P["tech2"])} words (~7.5–8%) — clear steps + cues
+            6) ## Drills & Progressions — {w(*P["drills"])} words (~11–13%) — numbered drills; sets/reps, rest, coaching cues
+            7) ## Week-by-Week Plan (4 Weeks) — {w(*P["plan4w"])} words (~11–13%) — table/bullets: session goals, duration, intensity
+            8) ## Common Mistakes & Fixes — {w(*P["mistakes"])} words (~6–7%) — mistake → fix bullets
+            9) ## Recovery, Nutrition & Safety — {w(*P["recovery"])} words (~6–7%) — include one‑sentence general‑information disclaimer
+            10) ## Mindset & Motivation — {w(*P["mindset"])} words (~4.5–5%) — practical routines
+            11) ## Gear / Equipment Checklist — {w(*P["gear"])} words (~3.5–4%) — must‑have vs nice‑to‑have
+            12) ## Case Study or Scenario — {w(*P["case"])} words (~6–7%) — concrete example with numbers/dates if sensible
+            13) ## Quick FAQ — {w(*P["faq"])} words (~6–7%) total across 3–5 Q&A items
+            14) ## Key Takeaways — {w(*P["takeaways"])} words (~3.5–4%) — 5–8 bullets, 1–2 lines each
+            15) ## Sources & Further Reading — cite 4–8 credible links (league/official, governing bodies, peer‑reviewed, or vetted encyclopedias)
 
-            **Output**  
-            Return a single updated JSON object—same format as in the *write* task—and update `change_log` with succinct bullets, including a `style_compliance` line.
+            **Integrating Critic Feedback**
+            - Treat **Recommended Actions** as must‑fix unless they conflict with guardrails or verifiable facts.
+            - If a recommendation conflicts, keep the safer/factual option and add a one‑line `skipped:` note in `change_log` explaining why.
+            - Address explicit calls to expand, compress, reorder, add citations, fix tone, or adjust SEO/headings.
+            - Do not invent new facts; add or replace with credible sources when support is requested.
+
+            **Style & Tone**
+            • Informative, supportive, memorable; define jargon on first use; avoid clichés and filler.
+
+            **Evidence & Links**
+            • Link claims to credible sources (official stats, governing bodies, peer‑reviewed work where applicable, or verified encyclopedia entries).
+            • Do **not** fabricate citations.
+
+            **Images (optional)**
+            • 0–3 Unsplash images total; first image (if any) appears at the top.
+            • Each image MUST include: “Photo by <Photographer> on Unsplash” + working URL.
+            • If the topic centers on para‑athletes or special populations, images must depict that group—or omit images.
+
+            **Sensitive Content**
+            • If nutrition/health appears, include a brief non‑advice disclaimer and avoid personalized directives.
+
+            **Length Enforcement**
+            • If total < {min_words}, expand Sections 6, 7, 8, and 13 first; then 2 and 12 if still short.
+            • If total > {max_words}, compress Sections 2, 9, and 10 (preserve clarity and evidence).
+
+            **Style Check (required)**
+            • Run the StyleCheck tool on the revised content (title + headings + body + captions + alt text).
+            • Eliminate violations (banned tokens, semicolons, em dashes) and target ~20–30 words/sentence; split >30‑word sentences.
+
+            **Output**
+            Return a *single* JSON object that satisfies `BlogPostOutput`.
+            Do **NOT** include the title inside `post_content`.
+            Update `change_log` with concise past‑tense bullets including:
+            - `style_compliance: {{semicolons:0, em_dashes:0, banned_tokens_fixed:N}}`
+            - `word_count: <approx total words in post_content>`
+            - `sections: 15`
+            - `critic_applied: <brief list of implemented actions>`
+            - Any `skipped:` items with one‑line reasons.
         """)
         return crewai.Task(
             description=wg.with_style(wg.with_guardrails(base, include_quality_bar=True)),
@@ -281,6 +435,7 @@ class BlogWriterAgent(BlogBaseAgent):
             output_json=BlogPostOutput,
             expected_output=f"An enhanced {LENGTH_OF_BLOG_POST} JSON blog post and concise change log"
         )
+
 
 
 # ---------------------------------------------------------------------

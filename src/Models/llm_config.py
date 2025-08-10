@@ -18,10 +18,10 @@ import crewai as crewai
 class BaseLLMConfig(ABC):
     def __init__(
         self,
-        model_name: str,
-        temperature: float,
-        max_tokens: int,
-        presence_penalty: float,
+        model_name: str = 'gpt-4o',
+        temperature: float = 0.7,
+        max_tokens: int = 5000,
+        presence_penalty: float = 0.5,
         num_retries: int = 3,
         timeout: int = 120,
         

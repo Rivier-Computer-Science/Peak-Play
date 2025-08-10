@@ -1,11 +1,18 @@
 # Example usage:
-# gpt_41_llm = GPT4_1Config().create_llm()
+# gpt_41_cfg = GPT4_1Config().create_llm()
+# print(gpt_41_cfg)
 # print(GPT4_1Config().get_options())
 # print(GPT4_1Config().get_cost())
 
-import langchain_openai as lang_oai
 from abc import ABC, abstractmethod
 from typing import Any, Dict
+
+
+# src/Models/llm_config.py
+
+from abc import ABC, abstractmethod
+from typing import Any, Dict
+import crewai as crewai
 
 
 class BaseLLMConfig(ABC):
@@ -21,35 +28,45 @@ class BaseLLMConfig(ABC):
         self.temperature = temperature
         self.max_tokens = max_tokens
         self.presence_penalty = presence_penalty
-        # Extra args (api_key, base_url, timeout, etc.)
         self.kwargs: Dict[str, Any] = dict(kwargs)
 
-    def create_llm(self, **overrides: Any):
+    def create_llm(self, **overrides: Any) -> crewai.LLM:
         """
-        Build a ChatOpenAI with either the stored defaults or per-call overrides.
-        Example: create_llm(max_tokens=2048, temperature=0.0)
+        Return a crewai.LLM instance ready to use in agents.
         """
-        model_name = overrides.pop("model_name", self.model_name)
+        # Resolve core fields (overrides win)
+        model = overrides.pop("model", overrides.pop("model_name", self.model_name))
+        provider = overrides.pop("provider", self.kwargs.get("provider", "openai"))
         temperature = overrides.pop("temperature", self.temperature)
         max_tokens = overrides.pop("max_tokens", self.max_tokens)
         presence_penalty = overrides.pop("presence_penalty", self.presence_penalty)
+
+        # Merge extra kwargs (api_key, base_url, timeout, etc.)
         final_kwargs = {**self.kwargs, **overrides}
+        # Normalize / drop keys LiteLLM doesn't use directly
+        final_kwargs.pop("model_name", None)
+        final_kwargs.pop("provider", None)
 
-        return lang_oai.ChatOpenAI(
-            model_name=model_name,              # keep 'model_name' for compatibility with your env
-            temperature=temperature,
-            max_tokens=max_tokens,
-            presence_penalty=presence_penalty,
-            **final_kwargs
-        )
+        # Build a provider-qualified model id (recommended by CrewAI/LiteLLM)
+        model_id = model if "/" in model else f"{provider}/{model}"
+
+        cfg: Dict[str, Any] = {
+            "model": model_id,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "presence_penalty": presence_penalty,
+            # tolerate unknown params across providers
+            "drop_params": True,
+            "additional_drop_params": ["model_name"],
+            **final_kwargs,
+        }
+        return crewai.LLM(**cfg)
 
     @abstractmethod
-    def get_input_cost(self) -> float:
-        pass
-
+    def get_input_cost(self) -> float: ...
+    
     @abstractmethod
-    def get_output_cost(self) -> float:
-        pass
+    def get_output_cost(self) -> float: ...
 
     def get_options(self) -> str:
         return (
@@ -59,10 +76,7 @@ class BaseLLMConfig(ABC):
         )
 
     def get_cost(self):
-        return {
-            "input": self.get_input_cost(),
-            "output": self.get_output_cost()
-        }
+        return {"input": self.get_input_cost(), "output": self.get_output_cost()}
 
 
 class GPT4_1Config(BaseLLMConfig):
@@ -191,7 +205,7 @@ class GPT5NanoConfig(BaseLLMConfig):
         return 0.40 / 1000
 
 
-# Instantiations of all derived classes
+# Instantiations of all derived classes (now dictionaries)
 gpt_41_llm = GPT4_1Config().create_llm()
 gpt_41_llm_blog_post = GPT4_1Config().create_llm()
 

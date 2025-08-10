@@ -1,5 +1,7 @@
 import os
 
+from typing import Dict
+
 import crewai as crewai
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 from crewai.memory import LongTermMemory
@@ -16,7 +18,7 @@ import src.Utils.utils as utils
 
 
 class BlogWritingCrew:
-    def __init__(self,  llm: lang.ChatOpenAI = llm_config.gpt_4o_llm_blog_post, logger=None):        
+    def __init__(self,  llm: crewai.LLM = llm_config.gpt_4o_llm_blog_post, logger=None):        
         self.llm = llm
         if logger is None:
             self.logger = utils.configure_logger()

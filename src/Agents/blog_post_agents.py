@@ -14,7 +14,7 @@ import json
 import re
 import math
 from textwrap import dedent
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 import crewai as crewai
 from pydantic import BaseModel
@@ -26,7 +26,6 @@ from src.Helpers.sports_list import BLOG_SUMMER_SPORTS, BLOG_WINTER_SPORTS
 import src.Helpers.writing_guidelines as wg
 
 import src.Models.llm_config as llm_config
-import langchain_openai as lang
 
 
 # ---------------------------------------------------------------------
@@ -91,7 +90,7 @@ class BlogBaseAgent(BaseAgent):
         role : str = kwargs.pop('role', None)
         goal : str = kwargs.pop('goal', None)
         backstory: str = kwargs.pop('backstory', None)
-        llm: lang.ChatOpenAI = kwargs.pop('llm',llm_config.gpt_5_mini_llm_blog_post)
+        llm: crewai.LLM = kwargs.pop('llm',llm_config.gpt_5_mini_llm_blog_post)
 
         # Ensure required arguments are provided
         if role is None or goal is None or backstory is None:

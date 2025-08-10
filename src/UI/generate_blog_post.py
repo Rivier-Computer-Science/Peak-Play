@@ -31,7 +31,7 @@ if __name__ == "__main__":
     print("## Write Blog Post")
     print('-------------------------------')
 
-    blogging_crew = BlogWritingCrew()
+    blogging_crew = BlogWritingCrew(logger=logger)
     logger.info("Blog Writing crew initialized successfully")
 
     try:       

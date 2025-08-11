@@ -94,7 +94,7 @@ class BaseLLMConfig(ABC):
             **final_kwargs,
         }
 
-        self.loggner.debug("Creating LLM")
+        self.logger.debug("Creating LLM")
         self.logger.info(pprint.pprint(cfg, sort_dicts=False, width=80))
         return crewai.LLM(**cfg)
 

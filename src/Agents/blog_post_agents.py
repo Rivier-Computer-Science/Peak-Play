@@ -85,12 +85,13 @@ class BlogBaseAgent(BaseAgent):
     goal: str
     backstory: str
 
-    def __init__(self, **kwargs):
+    def __init__(self, llm: crewai.LLM, **kwargs):
         # Extract required parameters
         role : str = kwargs.pop('role', None)
         goal : str = kwargs.pop('goal', None)
         backstory: str = kwargs.pop('backstory', None)
-        llm: crewai.LLM = kwargs.pop('llm',llm_config.gpt_5_mini_llm_blog_post)
+        llm = llm
+        kwargs.pop('llm', None)  #Remove it from kwargs
 
         # Ensure required arguments are provided
         if role is None or goal is None or backstory is None:

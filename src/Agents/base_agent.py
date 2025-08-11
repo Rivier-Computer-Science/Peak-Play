@@ -7,6 +7,8 @@ import crewai as crewai
 from pydantic import ConfigDict
 import logging
 
+import src.Utils.utils as utils
+
 
 class BaseAgent(crewai.Agent):
     model_config = ConfigDict(extra='allow',arbitrary_types_allowed=True)
@@ -30,7 +32,7 @@ class BaseAgent(crewai.Agent):
             goal=goal,
             backstory=backstory,
             #tools=kwargs.get('tools', []),   #[my_tool1, my_tool2],  # Optional, defaults to an empty list
-            llm=kwargs.pop('llm', llm_config.gpt_4o_llm),
+            llm=kwargs.pop('llm', llm_config.GPT5MiniConfig().create_llm()),
             allow_delegation=kwargs.pop('allow_delegation', False),
             #function_calling_llm=my_llm,  # Optional
             max_iter=kwargs.pop('max_iter', 15),  # Optional
@@ -52,16 +54,7 @@ class BaseAgent(crewai.Agent):
             **kwargs
         )
 
-
-      # Initialize the logger
-        self.logger = logging.getLogger(self.__class__.__name__)
-        if not self.logger.handlers:
-            # Set up logging format and level if not already configured
-            handler = logging.StreamHandler()
-            formatter = logging.Formatter('[%(levelname)s] %(name)s: %(message)s')
-            handler.setFormatter(formatter)
-            self.logger.addHandler(handler)
-            self.logger.setLevel(logging.INFO)
+        self.logger = utils.configure_logger()
         
     def register_crew(self, crew):
         self.crew = crew

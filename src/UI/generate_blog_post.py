@@ -9,6 +9,7 @@ os.environ["CREWAI_DISABLE_TELEMETRY"] = "true"
 
 import sys
 import logging
+from typing import Dict, Any
 
 import crewai as crewai
 import langchain_openai as lang_oai
@@ -24,14 +25,23 @@ import src.Utils.utils as utils
 
 # Initialize logger
 logger = utils.configure_logger(logging.DEBUG)
+#llm = llm_config.gpt_5_mini_llm_blog_post
+#llm = llm_config.GPT5MiniConfig(max_tokens=15000).create_llm()
 
+cfg: Dict[str, Any] = {
+    "model": "gpt-4o",
+    "num_retries": 3,
+    "timeout": 120,
+}
+
+llm = crewai.LLM(**cfg)
 
 
 if __name__ == "__main__":
     print("## Write Blog Post")
     print('-------------------------------')
 
-    blogging_crew = BlogWritingCrew(logger=logger)
+    blogging_crew = BlogWritingCrew( llm=llm, logger=logger)
     logger.info("Blog Writing crew initialized successfully")
 
     try:       

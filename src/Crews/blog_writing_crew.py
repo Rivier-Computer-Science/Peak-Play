@@ -8,22 +8,26 @@ from crewai.memory import LongTermMemory
 from crewai.memory.storage.ltm_sqlite_storage import LTMSQLiteStorage
 
 import logging
-import langchain_openai as lang
+import pprint
 
 from src.Agents.blog_post_agents import BlogWriterAgent, BlogCriticAgent, BlogTopicAgent, BlogValidationAgent, BlogPublisherAgent
-from src.Models.llm_config import gpt_4o_llm_blog_post
+#from src.Models.llm_config import gpt_4o_llm_blog_post
 import src.Models.llm_config as llm_config
 import src.Agents.agent_helpers as agent_helpers
 import src.Utils.utils as utils
 
 
+
 class BlogWritingCrew:
-    def __init__(self,  llm: crewai.LLM = llm_config.gpt_4o_llm_blog_post, logger=None):        
+    def __init__(self,  llm: crewai.LLM, logger: logging.Logger = None):        
         self.llm = llm
         if logger is None:
             self.logger = utils.configure_logger()
         else:
             self.logger = logger
+
+        self.logger.debug("INIT BLOG WRITING CREW\n%s", pprint.pprint(llm, width=80))
+
 
     def run(self):
         blog_topic_agent  = BlogTopicAgent(llm=self.llm)

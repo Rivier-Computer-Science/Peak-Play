@@ -1,9 +1,27 @@
-# Reusable prompts
-
 from textwrap import dedent
 import json
 import re
+import math
 
+LENGTH_OF_BLOG_POST = "4000 to 5000 words"
+
+# JSON format aligned with Pydantic schema
+JSON_FORMAT = dedent("""
+{
+  "success": "true",
+  "result": {
+    "post_title": "A short and descriptive blog title",
+    "post_content": "Detailed Markdown content **WITHOUT** repeating the title...",
+    "sport": "The sport (e.g., Fencing, Archery, etc.)",
+    "post_tags": ["tag-one", "tag-two", "tag-three"]
+  },
+  "change_log": ["revisions made to blog post"]
+}
+""").strip()
+
+#-----------------------------------------------------
+# WRITING_GUIDELINES
+#-----------------------------------------------------
 WRITING_GUIDELINES = """
 You are a human writer following comprehensive writing guidelines. Every sentence must adhere to these guidelines exactly.
 
@@ -27,6 +45,9 @@ PROHIBITED PUNCTUATION: Never use semicolons (;) or em dashes (—)
 FAILURE TO COMPLY WITH ANY PROHIBITION INVALIDATES THE OUTPUT.
 """.strip()
 
+#-----------------------------------------------------
+# GUARD_RAILS
+#-----------------------------------------------------
 GUARD_RAILS = dedent("""
 - No profanity or masked profanity; no slurs, hate speech, harassment, or demeaning language.
 - No sexual content; no self-harm facilitation; no instructions enabling illegal or unsafe activity.
@@ -37,6 +58,9 @@ GUARD_RAILS = dedent("""
 - Output hygiene: be clear, concise, and professional; no swearing; keep JSON valid when requested; do not reveal chain-of-thought.
 """).strip()
 
+#-----------------------------------------------------
+# QUALITY_BAR
+#-----------------------------------------------------
 QUALITY_BAR = dedent("""
 - Accurate, current, and verifiable (no fabricated sources).
 - Actionable, high-signal guidance for amateur athletes and coaches.
@@ -46,6 +70,9 @@ QUALITY_BAR = dedent("""
 - Fully compliant with the guardrails above.
 """).strip()
 
+#-----------------------------------------------------
+# BANNED_WORDS
+#-----------------------------------------------------
 BANNED_WORDS = [
     "additionally",
     "arguably",
@@ -103,7 +130,9 @@ BANNED_WORDS = [
     "whispering",
 ]
 
-
+#-----------------------------------------------------
+# BANNED_PHRASES
+#-----------------------------------------------------
 BANNED_PHRASES = [
     "as a matter of fact",
     "as previously mentioned",
@@ -243,4 +272,68 @@ def style_check(text: str) -> str:
         "ok": ok,
         "notes": notes or ["No style issues detected."]
     })
+
+
+# Percentage plan for blog post sections
+P = {
+    "intro":           (0.04,  0.05),
+    "why_now":        (0.075, 0.08),
+    "fundamentals":   (0.045, 0.05),
+    "tech1":          (0.075, 0.08),
+    "tech2":          (0.075, 0.08),
+    "drills":         (0.11,  0.13),
+    "plan4w":         (0.11,  0.13),
+    "mistakes":       (0.06,  0.07),
+    "recovery":       (0.06,  0.07),
+    "mindset":        (0.045, 0.05),
+    "gear":           (0.035, 0.04),
+    "case":           (0.06,  0.07),
+    "faq":            (0.06,  0.07),
+    "takeaways":      (0.035, 0.04),
+    "sources":        (0.01,  0.02),
+}
+
+def get_min_max_words():
+    # Compute concrete word ranges from LENGTH_OF_BLOG_POST like "2000 to 3000 words"
+    rng = re.findall(r'\d+', str(LENGTH_OF_BLOG_POST))
+    if len(rng) >= 2:
+        min_words, max_words = int(rng[0]), int(rng[1])
+    elif len(rng) == 1:
+        center = int(rng[0])
+        min_words, max_words = math.floor(center * 0.85), math.ceil(center * 1.15)
+    else:
+        min_words, max_words = 2000, 3000
+
+    return min_words, max_words
+
+def get_blog_post_structure(min_words, max_words):
+    """Computes the word count ranges for each section of the blog post."""
+    def w(min_pct: float, max_pct: float) -> str:
+        """Render a 'N–M words' range from percentage band."""
+        lo = math.floor(min_words * min_pct)
+        hi = math.floor(max_words * max_pct)
+        return f"{lo}–{hi}"
+
+    return dedent(f"""
+        **Target Length**
+        Aim for **{min_words}–{max_words} words** total in `post_content`.
+
+        **Target Structure (use H2 `##` for each main section)**
+        Provide these sections in order. Word ranges are computed as a percentage of the total target:
+        1) ## Introduction — {w(*P["intro"])} words (~4–5% of total)
+        2) ## Why It Matters Now — {w(*P["why_now"])} words (~7.5–8%)
+        3) ## Fundamentals in One Minute — {w(*P["fundamentals"])} words (~4.5–5%) — define key terms/jargon
+        4) ## Core Technique #1 — {w(*P["tech1"])} words (~7.5–8%) — clear steps + cues
+        5) ## Core Technique #2 — {w(*P["tech2"])} words (~7.5–8%) — clear steps + cues
+        6) ## Drills & Progressions — {w(*P["drills"])} words (~11–13%) — numbered drills; sets/reps, rest, coaching cues
+        7) ## Week-by-Week Plan (4 Weeks) — {w(*P["plan4w"])} words (~11–13%) — table or bullets: session goals, duration, intensity
+        8) ## Common Mistakes & Fixes — {w(*P["mistakes"])} words (~6–7%) — bullet pairs: mistake → fix
+        9) ## Recovery, Nutrition & Safety — {w(*P["recovery"])} words (~6–7%) — include one-sentence general-information disclaimer
+        10) ## Mindset & Motivation — {w(*P["mindset"])} words (~4.5–5%) — practical routines
+        11) ## Gear / Equipment Checklist — {w(*P["gear"])} words (~3.5–4%) — must-have vs nice-to-have
+        12) ## Case Study or Scenario — {w(*P["case"])} words (~6–7%) — concrete example with numbers/dates if sensible
+        13) ## Quick FAQ — {w(*P["faq"])} words (~6–7%) total across 3–5 Q&A items
+        14) ## Key Takeaways — {w(*P["takeaways"])} words (~3.5–4%) — 5–8 bullets, 1–2 lines each
+        15) ## Sources & Further Reading — cite 4–8 credible links (league/official, governing bodies, peer-reviewed, or vetted encyclopedias)
+    """)
 

@@ -1,6 +1,13 @@
-import os
+#######################################################################
+# Agents
+# - BlogTopicAgent: Select sport and topic
+# - BlogWriterAgent: Write the blog post and improve it based on critique
+# - BlogCriticAgent: Critique the blog post
+# - BlogValidationAgent: Fact-check and fix
+# - BlogPublisherAgent: Final packaging
+#######################################################################
 
-from typing import Dict
+import os
 
 import crewai as crewai
 from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
@@ -10,12 +17,16 @@ from crewai.memory.storage.ltm_sqlite_storage import LTMSQLiteStorage
 import logging
 import pprint
 
-from src.Agents.blog_post_agents import BlogWriterAgent, BlogCriticAgent, BlogTopicAgent, BlogValidationAgent, BlogPublisherAgent
-#from src.Models.llm_config import gpt_4o_llm_blog_post
+# Agents
+from src.Agents.BlogAgents.blog_topic_agent import BlogTopicAgent
+from src.Agents.BlogAgents.blog_writer_agent import BlogWriterAgent
+from src.Agents.BlogAgents.blog_critic_agent import BlogCriticAgent
+from src.Agents.BlogAgents.blog_validation_agent import BlogValidationAgent
+from src.Agents.BlogAgents.blog_publisher_agent import BlogPublisherAgent
+
 import src.Models.llm_config as llm_config
 import src.Agents.agent_helpers as agent_helpers
 import src.Utils.utils as utils
-
 
 
 class BlogWritingCrew:
